@@ -1,2 +1,80 @@
 ---
-# defaults file for .
+
+nginx_apt_package: nginx-full
+
+#
+# Nginx shared variables
+#
+nginx_root: "/var/www"
+nginx_log_dir: '/var/log/nginx'
+nginx_ssl_dir: '/etc/nginx/ssl'
+nginx_resolver:
+  hosts: ['208.67.222.222', '208.67.220.220'] # OpenDNS
+  valid: '300'
+  timeout: '5'
+nginx_error_log_level: 'warn' # http://nginx.org/en/docs/ngx_core_module.html#error_log
+nginx_dh_length: 2048
+
+
+#
+# Load upstream
+#
+
+# PHP
+nginx_php: false 
+nginx_php_method: "unix"
+nginx_php_unix_sockets: 
+  - "/var/run/php5-fpm.sock"
+nginx_php_tcp_sockets:
+  - host: "127.0.0.1"
+    port: "15000"
+    weight: "1"
+    max_fails: "5"
+    fail_timeout: "10s"
+
+#
+# Nginx configuration
+#
+nginx_user: 'www-data'
+nginx_worker_processes: '{{ ansible_processor_vcpus }}'
+nginx_pid: '/run/nginx.pid'
+
+nginx_events:
+  worker_connections: '512'
+  multi_accept: 'on'
+  use: 'epoll'
+
+#
+# Nginx HTTP
+#
+nginx_http:
+  access_log: 'off'
+  error_log: 'off'
+  client_body_buffer_size: '1M'
+  client_header_buffer_size: '1M'
+  client_max_body_size: '10M'
+  large_client_header_buffers: '8 8k'
+  client_body_timeout: '60'
+  client_header_timeout: '60'
+  keepalive_timeout: '30 30'
+  send_timeout: '120'
+  ignore_invalid_headers: 'on'
+  keepalive_requests: '100'
+  recursive_error_pages: 'on'
+  sendfile: 'on'
+  server_name_in_redirect: 'off'
+  server_tokens: 'off'
+  tcp_nodelay: 'on'
+  tcp_nopush: 'on'
+  reset_timedout_connection: 'on'
+  gzip: 'on'
+  gzip_buffers: '16 8k'
+  gzip_comp_level: '9'
+  gzip_http_version: '1.0'
+  gzip_min_length: '0'
+  gzip_types: 'text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml'
+  gzip_vary: 'on'
+  gzip_disable: '"msie6"'
+#  etag: 'off'
+
+nginx_vhosts: []

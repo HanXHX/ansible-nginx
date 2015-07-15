@@ -1,0 +1,49 @@
+---
+
+- name: FILE | Create root folders (foreach nginx_vhosts)
+  file: path={{ nginx_root }}/{{ item.name }} state=directory recurse=yes owner=www-data group=www-data mode=0755
+  file: path={{ nginx_root }}/{{ item.name }}/public state=directory recurse=yes owner=www-data group=www-data mode=0755
+  with_items: nginx_vhosts
+
+- name: TEMPLATE | Create vhosts
+  template: src=etc/nginx/sites-available/{{ item.template }}.j2 dest=/etc/nginx/sites-available/{{ item.name }}
+  with_items: nginx_vhosts
+  notify: reload nginx
+
+- name: COMMAND | Get sites available
+  command: ls -1 /etc/nginx/sites-available
+  register: old_vhosts
+  changed_when: false
+  ignore_errors: true
+
+- name: Delete unmanaged vhosts
+  file: path=/etc/nginx/sites-enabled/{{ item }} state=absent
+  file: path=/etc/nginx/sites-available/{{ item }} state=absent
+  with_items: old_vhosts.stdout_lines
+  when: item not in nginx_vhosts|map(attribute='name') and item != 'default'
+
+#- name: COPY | Add index.html / index.php
+#  copy: src={{ item }} dest={{ nginx_root }}/{{ item.name }}/public/{{ item }} owner=www-data group=www-data mode=0666
+#  with_fileglob: "*"
+
+- name: FILE | Enable vhosts (symlink to sites-enabled)
+  file: src=/etc/nginx/sites-available/{{ item.name }} dest=/etc/nginx/sites-enabled/{{ item.name }} state=link
+  with_items: nginx_vhosts
+  notify: reload nginx
+
+- name: FILE | Create ssl dir per vhost (if needed)
+  file: dest=/etc/nginx/ssl/{{ item.name }} owner=root mode=0750 state=directory
+  with_items: nginx_vhosts
+  when: item.ssl.use is defined and item.ssl.use
+
+# TODO...
+#- name: COPY | Deploy SSL keys if needed
+#  copy: src=keys/{{ item.name }}/{{ item.name }}.crt dest=/etc/nginx/ssl/{{ item.name }} mode=660
+#  copy: src=keys/{{ item.name }}/{{ item.name }}.key dest=/etc/nginx/ssl/{{ item.name }} mode=660
+#  with_items: nginx_vhosts
+#  when: item.ssl.use and not generatekey
+
+# TODO:
+# - deploy defaults files (index.html/index.php) allready in files/
+# - work with role "ssl_autosign"
+

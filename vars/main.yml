@@ -1,2 +1,1 @@
----
-# vars file for .
+nginx_dh_path: /etc/nginx/ssl/dhparams.pem

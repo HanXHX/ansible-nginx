@@ -1,0 +1,26 @@
+{% if item.ssl is defined and item.ssl.use is defined and item.ssl.use %}
+	listen {{ item.listen | default('443') }};
+#	server_name {{ item.name | join(' ')}}; # TODO: gérer plusieurs vhosts
+	server_name {{ item.name }};
+	ssl on;
+	ssl_certificate {{ nginx_ssl_dir }}/{{ item.name }}/{{ item.name }}.crt;
+	ssl_certificate_key {{ nginx_ssl_dir }}/{{ item.name }}/{{ item.name }}.key;
+	include /etc/nginx/helpers/ssl-{{ item.ssl.template | default('strong') }};
+{% else %}
+	listen {{ item.listen | default('80') }};
+#	server_name {{ item.name | join(' ')}}; # TODO: gérer plusieurs vhosts
+	server_name {{ item.name }};
+{% endif %}
+
+	root {{ nginx_root }}/{{ item.name }}/public;
+
+{% if item.use_access_log is defined and item.use_access_log %}
+	access_log {{ nginx_log_dir }}/{{ item.name }}_access.log combined;
+{% else %}
+	access_log off;
+{% endif %}
+{% if item.use_error_log is defined and item.use_error_log %}
+	error_log {{ nginx_log_dir }}/{{ item.name }}_error.log {{ nginx_error_log_level }};
+{% else %}
+	error_log off;
+{% endif %}

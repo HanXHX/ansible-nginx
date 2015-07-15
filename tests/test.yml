@@ -1,5 +1,13 @@
 ---
 
 - hosts: all
+  vars:
+    nginx_vhosts:
+      - name: 'test.local'
+        template: 'static'
+        ssl:
+          use: false
+          generatekey: false
+          template: 'strong'
   roles:
     - ../../

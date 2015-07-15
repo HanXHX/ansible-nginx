@@ -1,0 +1,26 @@
+#
+# {{ ansible_managed }}
+#
+
+{% if nginx_php_method == 'unix' %}
+upstream php {
+	{% for item in php_fpm_unix_sockets %}
+	server unix:{{ item }};
+	{% endfor %}
+}
+{% elif nginx_php_method == 'tcp' %}
+upstream php {
+	{% if nginx_cluster_php_method is defined %}
+	{{ nginx_cluster_php_method }};
+	{% endif %}
+	{% for item in nginx_cluster_servers %}
+	server {{ item.host }}:{{ item.port }} weight={{ item.weight | default('100') }} max_fails={{ item.max_fails | default('5') }} fail_timeout={{ item.fail_timeout | default('10s') }};
+	{% endfor %}
+}
+{% else %}
+#
+# Bad configuration...
+#
+{% endif%}
+
+# vim:filetype=nginx
