@@ -23,8 +23,8 @@
   with_fileglob: '../templates/etc/nginx/helpers/*.j2'
   notify: reload nginx
 
-- name: INCLUDE | PHP configuration
-  include: php.yml
+- name: INCLUDE | Upstream configuration
+  include: upstream.yml
   when: nginx_php
 
 - name: INCLUDE | Vhosts configuration

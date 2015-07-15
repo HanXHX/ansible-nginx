@@ -1,13 +1,18 @@
 ---
 
 - hosts: all
+  pre_tasks:
+    - apt: pkg=php5-fpm update_cache=yes cache_valid_time=3600 state=present
   vars:
+    nginx_php: true
     nginx_vhosts:
       - name: 'test.local'
         template: 'static'
         ssl:
           use: false
-          generatekey: false
-          template: 'strong'
+      - name: 'test-php.local'
+        template: 'wordpress'
+        ssl:
+          use: false
   roles:
     - ../../
