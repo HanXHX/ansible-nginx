@@ -10,6 +10,9 @@
     nginx_php: true
     nginx_vhosts:
       - name: 'test.local'
+        aliases:
+          - test-alias.local
+          - test2-alias.local
         template: 'static'
         ssl:
           use: false

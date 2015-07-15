@@ -1,15 +1,17 @@
+{% set server_name = [ item.name ] %}
+{% set aliases = item.aliases if item.aliases is defined else [] %}
+{% set ignore = server_name.extend(aliases) %}
+
 {% if item.ssl is defined and item.ssl.use is defined and item.ssl.use %}
 	listen {{ item.listen | default('443') }};
-#	server_name {{ item.name | join(' ')}}; # TODO: gérer plusieurs vhosts
-	server_name {{ item.name }};
+	server_name {{ server_name | join(' ') }};
 	ssl on;
 	ssl_certificate {{ nginx_ssl_dir }}/{{ item.name }}/{{ item.name }}.crt;
 	ssl_certificate_key {{ nginx_ssl_dir }}/{{ item.name }}/{{ item.name }}.key;
 	include /etc/nginx/helpers/ssl-{{ item.ssl.template | default('strong') }};
 {% else %}
 	listen {{ item.listen | default('80') }};
-#	server_name {{ item.name | join(' ')}}; # TODO: gérer plusieurs vhosts
-	server_name {{ item.name }};
+	server_name {{ server_name | join(' ') }};
 {% endif %}
 
 	root {{ nginx_root }}/{{ item.name }}/public;
