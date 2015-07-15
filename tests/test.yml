@@ -2,7 +2,10 @@
 
 - hosts: all
   pre_tasks:
-    - apt: pkg=php5-fpm update_cache=yes cache_valid_time=3600 state=present
+    - apt: pkg={{ item }} update_cache=yes cache_valid_time=3600 state=present
+      with_items:
+        - php5-fpm
+    - lineinfile: dest=/etc/hosts line="127.0.2.2 {{ nginx_vhosts|map(attribute='name')| join(' ') }}"
   vars:
     nginx_php: true
     nginx_vhosts:
@@ -16,3 +19,9 @@
           use: false
   roles:
     - ../../
+  post_tasks:
+    - name: -- VERIFY VHOSTS --
+      get_url: dest="/tmp/ansible_{{ item.name }}.txt" url="http://{{ item.name }}" validate_certs=no
+      with_items: nginx_vhosts
+      changed_when: false
+
