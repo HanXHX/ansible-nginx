@@ -8,7 +8,7 @@
     - lineinfile: dest=/etc/hosts line="127.0.2.2 {{ nginx_vhosts|map(attribute='name')| join(' ') }}"
   vars:
     nginx_php: true
-    nginx_php_unix_sockets:
+    nginx_php_sockets:
       - unix_socket: "/var/run/php5-fpm.sock"
     nginx_vhosts:
       - name: 'test.local'
@@ -25,6 +25,10 @@
   roles:
     - ../../
   post_tasks:
+    - name: -- Add PHP file --
+      copy: dest=/var/www/test-php.local/public/index.php content="<?php phpinfo();"
+    - name: -- Add HTML file --
+      copy: dest=/var/www/test.local/public/index.html content="HTML Message"
     - name: -- VERIFY VHOSTS --
       get_url: dest="/tmp/ansible_{{ item.name }}.txt" url="http://{{ item.name }}" validate_certs=no
       with_items: nginx_vhosts
