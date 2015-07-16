@@ -21,9 +21,9 @@ nginx_dh_length: 2048
 #
 
 # PHP
-nginx_php: false 
+nginx_php: false
 nginx_php_method: "unix"
-nginx_php_sockets: 
+nginx_php_sockets:
   - unix: "/var/run/php5-fpm.sock"
   - host: "127.0.0.1"
     port: "15000"

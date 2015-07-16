@@ -3,13 +3,13 @@
 #
 
 upstream php {
-	{% for item in nginx_php_sockets %}
-	{% if item.unix_socket is defined %}
+{% for item in nginx_php_sockets %}
+{% if item.unix_socket is defined %}
 	server unix:{{ item.unix_socket }} weight={{ item.weight | default('1') }};
-	{% else %}
+{% else %}
 	server {{ item.host }}:{{ item.port }} weight={{ item.weight | default('1') }} max_fails={{ item.max_fails | default('5') }} fail_timeout={{ item.fail_timeout | default('10s') }};
-	{% endif %}
-	{% endfor %}
+{% endif %}
+{% endfor %}
 }
 
 # vim:filetype=nginx
