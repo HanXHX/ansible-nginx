@@ -14,7 +14,11 @@
 	server_name {{ server_name | join(' ') }};
 {% endif %}
 
+{% if item.root is defined %}
+	root {{ item.root }};
+{% else %}
 	root {{ nginx_root }}/{{ item.name }}/public;
+{% endif %}
 
 {% if item.use_access_log is defined and item.use_access_log %}
 	access_log {{ nginx_log_dir }}/{{ item.name }}_access.log combined;

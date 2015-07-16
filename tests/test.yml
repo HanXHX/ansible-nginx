@@ -8,6 +8,8 @@
     - lineinfile: dest=/etc/hosts line="127.0.2.2 {{ nginx_vhosts|map(attribute='name')| join(' ') }}"
   vars:
     nginx_php: true
+    nginx_php_unix_sockets:
+      - unix_socket: "/var/run/php5-fpm.sock"
     nginx_vhosts:
       - name: 'test.local'
         aliases:

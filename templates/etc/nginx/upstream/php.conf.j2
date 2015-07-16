@@ -1,22 +1,15 @@
 #
 # {{ ansible_managed }}
 #
-{% if nginx_php_method == 'tcp' %}
+
 upstream php {
-	{% if nginx_cluster_php_method is defined %}
-	{{ nginx_cluster_php_method }};
+	{% for item in nginx_php_sockets %}
+	{% if item.unix_socket is defined %}
+	server unix:{{ item.unix_socket }} weight={{ item.weight | default('1') }};
+	{% else %}
+	server {{ item.host }}:{{ item.port }} weight={{ item.weight | default('1') }} max_fails={{ item.max_fails | default('5') }} fail_timeout={{ item.fail_timeout | default('10s') }};
 	{% endif %}
-	{% for item in nginx_php_tcp_sockets %}
-	server {{ item.host }}:{{ item.port }} weight={{ item.weight | default('100') }} max_fails={{ item.max_fails | default('5') }} fail_timeout={{ item.fail_timeout | default('10s') }};
 	{% endfor %}
 }
-{% elif nginx_php_method == 'unix' %}
-upstream php {
-	{% for item in nginx_php_unix_sockets %}
-	server unix:{{ item }};
-	{% endfor %}
-}
-{% else %}
-{% endif %}
 
 # vim:filetype=nginx
