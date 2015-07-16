@@ -6,7 +6,7 @@ location ~ \.php$ {
 	fastcgi_pass php;
 	fastcgi_index index.php;
 	fastcgi_intercept_errors on;
-	include fastcgi_params;
+	include fastcgi.conf;
 
 	# TODO...
 	# Newrelic custom header: https://docs.newrelic.com/docs/apm/other-features/request-queueing/request-queue-server-configuration-examples
