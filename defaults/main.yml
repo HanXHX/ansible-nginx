@@ -71,7 +71,7 @@ nginx_http:
   gzip_comp_level: '9'
   gzip_http_version: '1.0'
   gzip_min_length: '0'
-  gzip_types: 'text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml'
+  gzip_types: 'text/plain text/css application/json application/x-javascript application/javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml'
   gzip_vary: 'on'
   gzip_disable: '"msie6"'
 #  etag: 'off'
