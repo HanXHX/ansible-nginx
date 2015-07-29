@@ -4,7 +4,7 @@
 
 user {{ nginx_user }};
 worker_processes {{ nginx_worker_processes }};
-pid {{ nginx_pid }}; 
+pid /run/nginx.pid;
 
 events {
 {% for key, value in nginx_events.iteritems() %}
@@ -16,7 +16,7 @@ http {
 	types_hash_max_size 2048;
 	include /etc/nginx/mime.types;
 	default_type application/octet-stream;
-	
+
 	# From Ansible
 {% for key, value in nginx_http.iteritems() %}
 {{ "\t%-30s %s" | format(key, value) }};

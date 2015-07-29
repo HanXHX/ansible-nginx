@@ -38,7 +38,6 @@ Socket:
 
   - `nginx_user`
   - `nginx_worker_processes`
-  - `nginx_pid`
   - `nginx_events`: key/value in events block
   - `nginx_http`: key/value in http block
 

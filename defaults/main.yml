@@ -36,7 +36,6 @@ nginx_php_sockets:
 #
 nginx_user: 'www-data'
 nginx_worker_processes: '{{ ansible_processor_vcpus }}'
-nginx_pid: '/run/nginx.pid'
 
 nginx_events:
   worker_connections: '512'
