@@ -1,5 +1,6 @@
 {% set __listen = item.listen | default(['80']) %}
 {% set __listen_ssl = item.listen_ssl | default(['443']) %}
+{% set __location = item.location | default({}) %}
 #
 # {{ ansible_managed }}
 #
@@ -30,7 +31,7 @@ server {
 {% block template_custom_location %}
 {% endblock %}
 
-	location  ~ /\.ht {
+	location ~ /\.ht {
 		deny all;
 	}
 
@@ -44,6 +45,17 @@ server {
 		expires 30d;
 		log_not_found off;
 	}
+
+{% if __location is iterable and __location | length > 0 %}
+	# --> Custom locations
+{% for location, opts in __location.iteritems() %}
+	location {{ location }} {
+{% for opt in opts %}
+		{{ opt }}
+{% endfor  %}
+	}
+{% endfor %}	# <-- Custom locations
+{% endif %}
 
 {% if item.use_access_log is defined and item.use_access_log %}
 	access_log {{ nginx_log_dir }}/{{ item.name }}_access.log combined;

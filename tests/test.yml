@@ -19,6 +19,11 @@
           - 'test-alias.local'
           - 'test2-alias.local'
         template: '_base'
+        location:
+          '/test':
+            - 'return 403;'
+          '/gunther':
+            - 'return 404;'
       - name:
           - 'test-php.local'
         redirect_from:
