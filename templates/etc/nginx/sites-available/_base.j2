@@ -12,13 +12,11 @@ server {
 	listen {{ port }};
 {% endfor %}
 	server_name {{ item.name | join(' ') }};
-
 {% if item.root is defined %}
 	root {{ item.root }};
 {% else %}
 	root {{ nginx_root }}/{{ item.name[0] }}/public;
 {% endif %}
-
 {% block template_index %}
 	index {{ item.index | default('index.html index.htm') }};
 {% endblock %}
@@ -27,13 +25,22 @@ server {
 	try_files $uri $uri/ =404;
 {% endblock %}
 
+{% block template_upstream_location %}
+{% endblock %}
 {% block template_custom_location %}
 {% endblock %}
 
 	location  ~ /\.ht {
 		deny all;
 	}
-	location ~* \.(txt|js|css|png|jpg|jpeg|gif|ico|svg)$ {
+
+	location = /favicon.ico {
+		expires 30d;
+		access_log off;
+		log_not_found off;
+	}
+
+	location ~* \.(txt|js|css|png|jpe?g|gif|ico|svg)$ {
 		expires 30d;
 		log_not_found off;
 	}
@@ -49,6 +56,14 @@ server {
 	error_log off;
 {% endif %}
 }
+
+{#
+ssl on;
+ssl_certificate {{ nginx_ssl_dir }}/{{ item.name }}/{{ item.name }}.crt;
+ssl_certificate_key {{ nginx_ssl_dir }}/{{ item.name }}/{{ item.name }}.key;
+include /etc/nginx/helpers/ssl-{{ item.ssl.template | default('strong') }};
+#}
+
 
 # HTTPS
 #server {

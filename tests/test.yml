@@ -18,13 +18,9 @@
           - 'test-alias.local'
           - 'test2-alias.local'
         template: '_base'
-        ssl:
-          use: false
       - name:
           - 'test-php.local'
         template: '_php'
-        ssl:
-          use: false
   roles:
     - ../../
   post_tasks:

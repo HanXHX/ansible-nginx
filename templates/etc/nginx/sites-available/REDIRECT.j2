@@ -1,6 +1,0 @@
-{% if item.redirect_server_name is defined %}
-server {
-	server_name {{ item.redirect_server_name | join(' ') }};
-	return 301 {% if item.ssl.use %}https{% else %}http{% endif %}://{{ item.server_name[0] }}$request_uri;
-}
-{% endif %}

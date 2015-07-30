@@ -1,0 +1,22 @@
+{% extends "_php.j2" %}
+
+{% block template_index %}
+	index doku.php;
+{% endblock %}
+
+{% block template_try_files %}
+	try_files $uri $uri/ @dokuwiki =404;
+{% endblock %}
+
+{% block template_custom_location %}
+	location @dokuwiki {
+		rewrite ^/_media/(.*) /lib/exe/fetch.php?media=$1 last;
+		rewrite ^/_detail/(.*) /lib/exe/detail.php?media=$1 last;
+		rewrite ^/_export/([^/]+)/(.*) /doku.php?do=export_$1&id=$2 last;
+		rewrite ^/(.*) /doku.php?id=$1 last;
+	}
+
+	location ~ /(data|conf|bin|inc)/ {
+		deny all;
+	}
+{% endblock %}
