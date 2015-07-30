@@ -13,8 +13,6 @@
         line="127.0.3.3 {% for n in nginx_vhosts %}{% if n.redirect_from is defined %}{% for r in n.redirect_from %}{{ r }} {% endfor %}{% endif %}{% endfor %}"
   vars:
     nginx_php: true
-    nginx_php_sockets:
-      - unix_socket: "/var/run/php5-fpm.sock"
     nginx_vhosts:
       - name:
           - 'test.local'

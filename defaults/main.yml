@@ -25,11 +25,6 @@ nginx_php: false
 nginx_php_method: "unix"
 nginx_php_sockets:
   - unix: "/var/run/php5-fpm.sock"
-  - host: "127.0.0.1"
-    port: "15000"
-    weight: "1"
-    max_fails: "5"
-    fail_timeout: "10s"
 
 #
 # Nginx configuration
