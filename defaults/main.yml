@@ -5,7 +5,7 @@ nginx_apt_package: nginx-full
 #
 # Nginx shared variables
 #
-nginx_root: "/var/www"
+nginx_root: "/srv/www"
 nginx_log_dir: '/var/log/nginx'
 nginx_ssl_dir: '/etc/nginx/ssl'
 nginx_resolver:

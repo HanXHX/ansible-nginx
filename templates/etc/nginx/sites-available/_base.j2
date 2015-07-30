@@ -1,0 +1,70 @@
+{% set __listen = item.listen | default(['80']) %}
+{% set __listen_ssl = item.listen_ssl | default(['443']) %}
+#
+# {{ ansible_managed }}
+#
+
+#
+# HTTP
+#
+server {
+{% for port in __listen %}
+	listen {{ port }};
+{% endfor %}
+	server_name {{ item.name | join(' ') }};
+
+{% if item.root is defined %}
+	root {{ item.root }};
+{% else %}
+	root {{ nginx_root }}/{{ item.name[0] }}/public;
+{% endif %}
+
+{% block template_index %}
+	index {{ item.index | default('index.html index.htm') }};
+{% endblock %}
+
+{% block template_try_files %}
+	try_files $uri $uri/ =404;
+{% endblock %}
+
+{% block template_custom_location %}
+{% endblock %}
+
+	location  ~ /\.ht {
+		deny all;
+	}
+	location ~* \.(txt|js|css|png|jpg|jpeg|gif|ico|svg)$ {
+		expires 30d;
+		log_not_found off;
+	}
+
+{% if item.use_access_log is defined and item.use_access_log %}
+	access_log {{ nginx_log_dir }}/{{ item.name }}_access.log combined;
+{% else %}
+	access_log off;
+{% endif %}
+{% if item.use_error_log is defined and item.use_error_log %}
+	error_log {{ nginx_log_dir }}/{{ item.name }}_error.log {{ nginx_error_log_level }};
+{% else %}
+	error_log off;
+{% endif %}
+}
+
+# HTTPS
+#server {
+#}
+
+{% if item.redirect_from is defined and item.redirect_from is iterable %}
+#
+# Redirect from
+#
+server {
+{% for port in __listen %}
+	listen {{ port }};
+{% endfor %}
+	server_name {{ item.redirect_from | join(' ') }};
+	return 301 $scheme://{{ item.name[0] }}$request_uri;
+}
+{% endif %}
+
+# vim:filetype=nginx

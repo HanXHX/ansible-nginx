@@ -1,41 +1,53 @@
 ---
 
 - name: FILE | Create root folders (foreach nginx_vhosts)
-  file: path={{ nginx_root }}/{{ item.name }} state=directory recurse=yes owner=www-data group=www-data mode=0755
-  file: path={{ nginx_root }}/{{ item.name }}/public state=directory recurse=yes owner=www-data group=www-data mode=0755
+  file: >
+    path={{ nginx_root }}/{{ item.name[0] }}/public
+    state=directory
+    recurse=yes
+    owner={{ item.owner | default('www-data') }}
+    group={{ item.group | default('www-data') }}
+    mode={{ item.mode | default('0755') }}
   with_items: nginx_vhosts
   when: item.root is not defined
 
 - name: TEMPLATE | Create vhosts
-  template: src=etc/nginx/sites-available/{{ item.template }}.j2 dest=/etc/nginx/sites-available/{{ item.name }}
+  template: >
+    src=etc/nginx/sites-available/{{ item.template }}.j2
+    dest=/etc/nginx/sites-available/{{ item.name[0] }}
   with_items: nginx_vhosts
   notify: reload nginx
-
-- name: COMMAND | Get sites available
-  command: ls -1 /etc/nginx/sites-available
-  register: old_vhosts
-  changed_when: false
-  ignore_errors: true
-
-- name: Delete unmanaged vhosts
-  file: path=/etc/nginx/sites-enabled/{{ item }} state=absent
-  file: path=/etc/nginx/sites-available/{{ item }} state=absent
-  with_items: old_vhosts.stdout_lines
-  when: item not in nginx_vhosts|map(attribute='name') and item != 'default'
 
 #- name: COPY | Add index.html / index.php
 #  copy: src={{ item }} dest={{ nginx_root }}/{{ item.name }}/public/{{ item }} owner=www-data group=www-data mode=0666
 #  with_fileglob: "web/*"
 
-- name: FILE | Enable vhosts (symlink to sites-enabled)
-  file: src=/etc/nginx/sites-available/{{ item.name }} dest=/etc/nginx/sites-enabled/{{ item.name }} state=link
+- name: FILE | Delete vhosts
+  file: dest=/etc/nginx/sites-enabled/{{ item.name[0] }} state=absent
+  file: dest=/etc/nginx/sites-available/{{ item.name[0] }} state=absent
   with_items: nginx_vhosts
   notify: reload nginx
+  when: item.delete is defined and item.delete
 
-- name: FILE | Create ssl dir per vhost (if needed)
-  file: dest=/etc/nginx/ssl/{{ item.name }} owner=root mode=0750 state=directory
+- name: FILE | Enable vhosts
+  file: >
+    src=/etc/nginx/sites-available/{{ item.name[0] }}
+    dest=/etc/nginx/sites-enabled/{{ item.name[0] }}
+    state=link
   with_items: nginx_vhosts
-  when: item.ssl.use is defined and item.ssl.use
+  notify: reload nginx
+  when: item.enabled is not defined or (item.enabled is defined and item.enabled)
+
+- name: FILE | Disable vhosts
+  file: dest=/etc/nginx/sites-enabled/{{ item.name[0] }} state=absent
+  with_items: nginx_vhosts
+  notify: reload nginx
+  when: item.enabled is defined and not item.enabled
+
+#- name: FILE | Create ssl dir per vhost (if needed)
+#  file: dest=/etc/nginx/ssl/{{ item.name }} owner=root mode=0750 state=directory
+#  with_items: nginx_vhosts
+#  when: item.ssl.use is defined and item.ssl.use
 
 # TODO...
 #- name: COPY | Deploy SSL keys if needed

@@ -5,32 +5,35 @@
     - apt: pkg={{ item }} update_cache=yes cache_valid_time=3600 state=present
       with_items:
         - php5-fpm
-    - lineinfile: dest=/etc/hosts line="127.0.2.2 {{ nginx_vhosts|map(attribute='name')| join(' ') }}"
+    - lineinfile: >
+        dest=/etc/hosts
+        line="127.0.2.2 {% for name in nginx_vhosts|map(attribute='name') %}{{ name | join(' ') }} {% endfor %}"
   vars:
     nginx_php: true
     nginx_php_sockets:
       - unix_socket: "/var/run/php5-fpm.sock"
     nginx_vhosts:
-      - name: 'test.local'
-        aliases:
-          - test-alias.local
-          - test2-alias.local
-        template: 'static'
+      - name:
+          - 'test.local'
+          - 'test-alias.local'
+          - 'test2-alias.local'
+        template: '_base'
         ssl:
           use: false
-      - name: 'test-php.local'
-        template: 'wordpress'
+      - name:
+          - 'test-php.local'
+        template: '_php'
         ssl:
           use: false
   roles:
     - ../../
   post_tasks:
     - name: -- Add PHP file --
-      copy: dest=/var/www/test-php.local/public/index.php content="<?php phpinfo();"
+      copy: dest="{{ nginx_root }}/test-php.local/public/index.php" content="<?php phpinfo();"
     - name: -- Add HTML file --
-      copy: dest=/var/www/test.local/public/index.html content="HTML Message"
+      copy: dest="{{ nginx_root }}/test.local/public/index.html" content="Index HTML test OK\n"
     - name: -- VERIFY VHOSTS --
-      get_url: dest="/tmp/ansible_{{ item.name }}.txt" url="http://{{ item.name }}" validate_certs=no
+      get_url: dest="/tmp/ansible_{{ item.name[0] }}.txt" url="http://{{ item.name[0] }}" validate_certs=no
       with_items: nginx_vhosts
       changed_when: false
 

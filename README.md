@@ -52,7 +52,7 @@ Few tips:
   - you can use your own templates, you must keep the same directory organization
   - you should see COMMON.j2 to see all abilities
 
-You can see many examples in: [tests/test.yml].
+You can see many examples in: [tests/test.yml](tests/test.yml).
 
 Dependencies
 ------------
