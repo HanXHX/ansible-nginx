@@ -17,6 +17,7 @@
     dest=/etc/nginx/sites-available/{{ item.name[0] }}
   with_items: nginx_vhosts
   notify: reload nginx
+  when: item.delete is not defined or not item.delete
 
 #- name: COPY | Add index.html / index.php
 #  copy: src={{ item }} dest={{ nginx_root }}/{{ item.name }}/public/{{ item }} owner=www-data group=www-data mode=0666
@@ -36,13 +37,16 @@
     state=link
   with_items: nginx_vhosts
   notify: reload nginx
-  when: item.enabled is not defined or (item.enabled is defined and item.enabled)
+  when: >
+    ((item.enable is not defined) or
+    (item.enable is defined and item.enable)) and
+    (item.delete is not defined or not item.delete)
 
 - name: FILE | Disable vhosts
   file: dest=/etc/nginx/sites-enabled/{{ item.name[0] }} state=absent
   with_items: nginx_vhosts
   notify: reload nginx
-  when: item.enabled is defined and not item.enabled
+  when: item.enable is defined and not item.enable
 
 #- name: FILE | Create ssl dir per vhost (if needed)
 #  file: dest=/etc/nginx/ssl/{{ item.name }} owner=root mode=0750 state=directory

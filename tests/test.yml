@@ -29,6 +29,10 @@
         redirect_from:
           - 'www.test-php.local'
         template: '_php'
+      - name:
+          - 'deleted.local'
+        template: '_base'
+        delete: true
   roles:
     - ../../
   post_tasks:
