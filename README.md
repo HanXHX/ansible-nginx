@@ -1,7 +1,9 @@
 Nginx for Debian Ansible role
 =============================
 
-Install and configure Nginx on Debian
+Install and configure Nginx on Debian.
+
+This role is not production ready. SSL management wille come later.
 
 Requirements
 ------------
@@ -43,14 +45,28 @@ Socket:
 
 ### Vhost management
 
-  - `nginx_vhosts`:
+  - `nginx_vhosts`: List of dict. A vhost has few keys. See bellow.
 
-You need at least : "name". you can configure many templates (and yours !).
+####
 
-Few tips:
-  - if you need another root (glpi, phpmyadmin... etc), you can specify "root"
-  - you can use your own templates, you must keep the same directory organization
-  - you should see COMMON.j2 to see all abilities
+  - `name`: (M) List of domain used. The first occurence is the most important!
+  - `template`: (M) template used to create vhost
+  - `enable`: (O) Enable the vhost (default is true)
+  - `delete`: (O) Delete the vhost (default is false)
+  - `redirect_from`: (O) Domain list to redirect to the first `name`. You can use this key to redirect non-www to www.
+  - `location`: Add new custom locations (it does not overwrite!)
+
+(O) : Optional
+(M) : Mandatory
+
+#### Templates
+
+  - `base`: static template
+  - `php`: PHP base template. Can work with many frameworks/tools.
+  - `wordpress`
+  - `dokuwiki`
+
+Templates works as parent-child.
 
 You can see many examples in: [tests/test.yml](tests/test.yml).
 
