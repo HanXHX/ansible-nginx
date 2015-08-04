@@ -5,6 +5,7 @@
     - apt: pkg={{ item }} update_cache=yes cache_valid_time=3600 state=present
       with_items:
         - php5-fpm
+        - curl
   vars:
     nginx_php: true
     nginx_vhosts:
