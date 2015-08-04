@@ -5,12 +5,6 @@
     - apt: pkg={{ item }} update_cache=yes cache_valid_time=3600 state=present
       with_items:
         - php5-fpm
-    - lineinfile: >
-        dest=/etc/hosts
-        line="127.0.2.2 {% for name in nginx_vhosts|map(attribute='name') %}{{ name | join(' ') }} {% endfor %}"
-    - lineinfile: >
-        dest=/etc/hosts
-        line="127.0.3.3 {% for n in nginx_vhosts %}{% if n.redirect_from is defined %}{% for r in n.redirect_from %}{{ r }} {% endfor %}{% endif %}{% endfor %}"
   vars:
     nginx_php: true
     nginx_vhosts:
@@ -41,7 +35,11 @@
     - name: -- Add HTML file --
       copy: dest="{{ nginx_root }}/test.local/public/index.html" content="Index HTML test OK\n"
     - name: -- VERIFY VHOSTS --
-      get_url: dest="/tmp/ansible_{{ item.name[0] }}.txt" url="http://{{ item.name[0] }}" validate_certs=no
+      command: "curl -H 'Host: {{ item.name[0] }}' http://127.0.0.1/"
       with_items: nginx_vhosts
       changed_when: false
-
+    - name: -- VERIFY REDIRECT VHOSTS --
+      command: "curl -H 'Host: {{ item.redirect_from[0] }}' http://127.0.0.1/"
+      with_items: nginx_vhosts
+      when: item.redirect_from is defined
+      changed_when: false
