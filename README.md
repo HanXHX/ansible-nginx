@@ -1,6 +1,8 @@
 Nginx for Debian Ansible role
 =============================
 
+[![Build Status](https://travis-ci.org/HanXHX/ansible-nginx.svg)](https://travis-ci.org/HanXHX/ansible-nginx)
+
 Install and configure Nginx on Debian.
 
 This role is not production ready. SSL management wille come later.
