@@ -4,7 +4,6 @@
   file: >
     path={{ nginx_root }}/{{ item.name[0] }}/public
     state=directory
-    recurse=yes
     owner={{ item.owner | default('www-data') }}
     group={{ item.group | default('www-data') }}
     mode={{ item.mode | default('0755') }}
