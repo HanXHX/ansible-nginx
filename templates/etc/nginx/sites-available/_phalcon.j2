@@ -1,0 +1,5 @@
+{% extends "_php.j2" %}
+
+{% block template_try_files %}
+	try_files $uri $uri/ /index.php?_url=$uri;
+{% endblock %}
