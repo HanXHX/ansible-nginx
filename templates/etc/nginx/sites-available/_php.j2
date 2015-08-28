@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block template_try_files %}
-	try_files $uri $uri/ /index.php;
+		try_files $uri $uri/ /index.php;
 {% endblock %}
 
 {% block template_upstream_location %}
@@ -18,11 +18,5 @@
 {% else %}
 		include fastcgi.conf;
 {% endif %}
-
-		# TODO...
-		# Newrelic custom header: https://docs.newrelic.com/docs/apm/other-features/request-queueing/request-queue-server-configuration-examples
-		#fastcgi_param HTTP_X_REQUEST_START "t=${msec}";
-		# Newrelic custom PHP appname: https://docs.newrelic.com/docs/agents/php-agent/configuration/php-directory-ini-settings#perdir-nginx
-		#fastcgi_param PHP_VALUE "newrelic.appname=${host}";
 	}
 {% endblock %}
