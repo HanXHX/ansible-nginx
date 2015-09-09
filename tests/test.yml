@@ -14,6 +14,8 @@
           - 'test-alias.local'
           - 'test2-alias.local'
         template: '_base'
+        more:
+          - 'etag off;'
         location:
           '/test':
             - 'return 403;'

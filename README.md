@@ -55,8 +55,9 @@ Socket:
   - `template`: (M) template used to create vhost
   - `enable`: (O) Enable the vhost (default is true)
   - `delete`: (O) Delete the vhost (default is false)
-  - `redirect_from`: (O) Domain list to redirect to the first `name`. You can use this key to redirect non-www to www.
-  - `location`: Add new custom locations (it does not overwrite!)
+  - `redirect_from`: (O) Domain list to redirect to the first `name`. You can use this key to redirect non-www to www
+  - `location`: (O) Add new custom locations (it does not overwrite!)
+  - `more`: (O) Add more custom infos.
 
 (O) : Optional
 (M) : Mandatory

@@ -22,6 +22,12 @@ server {
 	index {{ item.index | default('index.html index.htm') }};
 {% endblock %}
 
+{% if item.more is defined and item.more is iterable %}
+{% for line in item.more %}
+	{{ item.more }}
+{% endfor %}
+{% endif %}
+
 	location / {
 {% block template_try_files %}
 		try_files $uri $uri/ =404;
