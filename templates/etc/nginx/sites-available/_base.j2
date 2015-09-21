@@ -24,7 +24,7 @@ server {
 
 {% if item.more is defined and item.more is iterable %}
 {% for line in item.more %}
-	{{ item.more }}
+	{{ line }}
 {% endfor %}
 {% endif %}
 

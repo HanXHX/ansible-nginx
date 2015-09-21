@@ -15,7 +15,7 @@
           - 'test2-alias.local'
         template: '_base'
         more:
-          - 'etag off;'
+          - 'autoindex off;'
         location:
           '/test':
             - 'return 403;'
@@ -23,6 +23,8 @@
             - 'return 404;'
       - name:
           - 'test-php.local'
+        upstream_params:
+          - 'fastcgi_param FOO bar;'
         redirect_from:
           - 'www.test-php.local'
         template: '_php'

@@ -58,6 +58,7 @@ Socket:
   - `redirect_from`: (O) Domain list to redirect to the first `name`. You can use this key to redirect non-www to www
   - `location`: (O) Add new custom locations (it does not overwrite!)
   - `more`: (O) Add more custom infos.
+  - `upstream_params`: (O) Add upstream params (useful when you want to pass variables to PHP)
 
 (O) : Optional
 (M) : Mandatory
