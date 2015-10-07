@@ -1,7 +1,7 @@
 Nginx for Debian Ansible role
 =============================
 
-[![Build Status](https://travis-ci.org/HanXHX/ansible-nginx.svg)](https://travis-ci.org/HanXHX/ansible-nginx)
+[![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-HanXHX.nginx.svg)](https://galaxy.ansible.com/list#/roles/4399)[![Build Status](https://travis-ci.org/HanXHX/ansible-nginx.svg)](https://travis-ci.org/HanXHX/ansible-nginx)
 
 Install and configure Nginx on Debian.
 
