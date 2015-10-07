@@ -1,11 +1,13 @@
 env:
-- PLATFORM=debian-wheezy
-- PLATFORM=debian-jessie
+  - PLATFORM=debian-wheezy
+  - PLATFORM=debian-jessie
 
-sudo: true
+sudo: required
 
-install:
-- curl -sLo - http://j.mp/install-travis-docker | sh -xe
+language: python
+
+services:
+  - docker
 
 script:
-- ./run 'docker build -f tests/$PLATFORM.Dockerfile -t test-$PLATFORM . && docker run --name $PLATFORM test-$PLATFORM'
+  - docker build -f tests/$PLATFORM.Dockerfile -t test-$PLATFORM . && docker run --name $PLATFORM test-$PLATFORM
