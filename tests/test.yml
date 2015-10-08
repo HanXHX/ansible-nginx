@@ -8,6 +8,13 @@
         - curl
   vars:
     nginx_php: true
+    nginx_upstreams:
+      - name: 'test'
+        servers:
+          - name: '127.0.0.1:10000'
+            max_conns: 150
+            weight: 10
+            down: false
     nginx_vhosts:
       - name:
           - 'test.local'
@@ -28,6 +35,10 @@
         redirect_from:
           - 'www.test-php.local'
         template: '_php'
+      - name:
+          - 'test-proxy.local'
+        template: '_proxy'
+        upstream_name: 'test'
       - name:
           - 'deleted.local'
         template: '_base'

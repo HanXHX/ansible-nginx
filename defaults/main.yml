@@ -70,3 +70,4 @@ nginx_http:
 #  etag: 'off'
 
 nginx_vhosts: []
+nginx_upstreams: []

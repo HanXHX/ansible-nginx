@@ -1,0 +1,23 @@
+{% extends "_base.j2" %}
+
+{% block template_try_files %}
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		
+		proxy_pass http://{{ item.upstream_name }};
+		proxy_read_timeout 90;
+		
+		{#proxy_redirect http://{{ upstream.name }} https://jenkins.domain.tld;#}
+
+{% if item.proxy_params is defined and item.proxy_params is iterable %}
+{% for param in item.proxy_params %}
+		{{ param }}
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{# We flush the default local content (locations) #}
+{% block template_local_content %}
+{% endblock %}

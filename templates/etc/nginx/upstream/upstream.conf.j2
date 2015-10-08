@@ -1,0 +1,19 @@
+{%- macro s(key, value, is_bool, min_version) %}
+{% if nginx_version.stdout | version_compare(min_version, 'ge') %}
+{% if is_bool and value %} {{ key }}{% else %} {{ key }}={{ value }}{% endif %}
+{% endif %}
+{%- endmacro -%}
+#
+# {{ ansible_managed }}
+#
+
+upstream {{ item.name }} {
+{% for server in item.servers %}
+	server {{ server.name }}{% for p in nginx_upstream_server_params if server[p.key] is defined %}{{ s(p.key, server[p.key] | default(p.default), p.is_bool | default(false), p.min_version | default('0.0.1')) }}{% endfor %};
+{% endfor %}
+{% if item.params is defined and item.params is iterable %}
+{% for param in item.params %}
+	{{ param }};
+{% endfor %}
+{% endif %}
+}

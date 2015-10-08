@@ -43,6 +43,7 @@ server {
 		deny all;
 	}
 
+{% block template_local_content %}
 	location = /favicon.ico {
 		expires 30d;
 		access_log off;
@@ -53,6 +54,7 @@ server {
 		expires 30d;
 		log_not_found off;
 	}
+{% endblock %}
 
 {% if __location is iterable and __location | length > 0 %}
 	# --> Custom locations
