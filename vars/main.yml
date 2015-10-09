@@ -16,9 +16,10 @@ nginx_upstream_server_params:
     default: 'configuration_error'
   - key: 'slow_start'
     default: 0
-  - key: 'max_conns'
-    default: 0
-    min_version: '1.5.9'
-  - key: 'resolve'
-    is_bool: true
-    min_version: '1.5.12'
+# Nginx Plus only
+#  - key: 'max_conns'
+#    default: 0
+#    min_version: '1.5.9'
+#  - key: 'resolve'
+#    is_bool: true
+#    min_version: '1.5.12'

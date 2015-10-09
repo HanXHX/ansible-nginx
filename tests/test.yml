@@ -11,7 +11,7 @@
     nginx_upstreams:
       - name: 'test'
         servers:
-          - name: '127.0.0.1:80'
+          - path: '127.0.0.1:80'
             max_conns: 150
             weight: 10
             down: false

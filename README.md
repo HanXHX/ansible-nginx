@@ -47,9 +47,11 @@ Socket:
 
 ### Vhost management
 
+You can see many examples in: [tests/test.yml](tests/test.yml).
+
   - `nginx_vhosts`: List of dict. A vhost has few keys. See bellow.
 
-####
+#### Common
 
   - `name`: (M) List of domain used. The first occurence is the most important!
   - `template`: (M) template used to create vhost
@@ -69,10 +71,48 @@ Socket:
   - `php`: PHP base template. Can work with many frameworks/tools.
   - `wordpress`
   - `dokuwiki`
+  - `proxy`
 
 Templates works as parent-child.
 
-You can see many examples in: [tests/test.yml](tests/test.yml).
+#### About proxy template
+
+Proxy template allow you to use Nginx as reverse proxy. Usefull when you have application serveur such as Redmine, Jenkins...
+
+You have many key added to vhost key:
+
+  - `upstream_name`: (O) upstream name used to pass proxy
+  - `proxy_params`: (M) list of raw params passed to the vhost
+
+(O) : Optional
+(M) : Mandatory
+
+
+### Upstream management
+
+  - `nginx_upstreams`: List of dict. An upstream has few keys. See bellow.
+
+Note: Few params are unavailable on old Nginx version. But this role don't put it if your version is too old!
+
+#### Upstream params
+
+- `name`: upstream name. Can be use in vhost with *proxy_pass http://upstream_name*
+- `params`: list of param (hash, zone...)
+- `servers`: each upstream MUST have at least 1 server
+
+#### Server params
+
+You must set a `path`. For example: *192.168.0.50:8080* or *unix:/tmp/my.sock*.
+
+All this params are optional. You should see [Nginx upstream doc](http://nginx.org/en/docs/http/ngx_http_upstream_module.html).
+
+  - `weight`
+  - `max`fails`
+  - `fail`timeout`
+  - `backup`
+  - `down`
+  - `route`
+  - `slow`start`
 
 Dependencies
 ------------

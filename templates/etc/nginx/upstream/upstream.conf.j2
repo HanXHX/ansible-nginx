@@ -9,7 +9,7 @@
 
 upstream {{ item.name }} {
 {% for server in item.servers %}
-	server {{ server.name }}{% for p in nginx_upstream_server_params if server[p.key] is defined %}{{ s(p.key, server[p.key] | default(p.default), p.is_bool | default(false), p.min_version | default('0.0.1')) }}{% endfor %};
+	server {{ server.path }}{% for p in nginx_upstream_server_params if server[p.key] is defined %}{{ s(p.key, server[p.key] | default(p.default), p.is_bool | default(false), p.min_version | default('0.0.1')) }}{% endfor %};
 {% endfor %}
 {% if item.params is defined and item.params is iterable %}
 {% for param in item.params %}
