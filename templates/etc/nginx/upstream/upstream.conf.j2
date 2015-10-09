@@ -1,6 +1,6 @@
 {%- macro s(key, value, is_bool, min_version) %}
 {% if nginx_version.stdout | version_compare(min_version, 'ge') %}
-{% if is_bool and value %} {{ key }}{% else %} {{ key }}={{ value }}{% endif %}
+{% if is_bool and value %} {{ key }}{% elif not is_bool %} {{ key }}={{ value }}{% endif %}
 {% endif %}
 {%- endmacro -%}
 #
