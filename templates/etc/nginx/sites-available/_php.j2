@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block template_try_files %}
-		try_files $uri $uri/ /index.php;
+		try_files {{ override_try_files | default('$uri $uri/ /index.php') }};
 {% endblock %}
 
 {% block template_upstream_location %}

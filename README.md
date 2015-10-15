@@ -61,6 +61,7 @@ You can see many examples in: [tests/test.yml](tests/test.yml).
   - `location`: (O) Add new custom locations (it does not overwrite!)
   - `more`: (O) Add more custom infos.
   - `upstream_params`: (O) Add upstream params (useful when you want to pass variables to PHP)
+  - `override_try_files`: (O) overrides default try\_files defined in template
 
 (O) : Optional
 (M) : Mandatory
