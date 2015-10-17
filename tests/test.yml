@@ -21,6 +21,7 @@
           - 'test-alias.local'
           - 'test2-alias.local'
         template: '_base'
+        override_try_files: '$uri $uri index.htm index.html'
         more:
           - 'autoindex off;'
         location:
