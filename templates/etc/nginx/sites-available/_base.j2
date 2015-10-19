@@ -44,7 +44,7 @@ server {
 	}
 
 {% block template_local_content %}
-{% if manage_local_content is defined and not manage_local_content %}
+{% if item.manage_local_content is not defined or item.manage_local_content %}
 	location = /favicon.ico {
 		expires 30d;
 		access_log off;
