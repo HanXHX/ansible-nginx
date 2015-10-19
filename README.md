@@ -62,6 +62,7 @@ You can see many examples in: [tests/test.yml](tests/test.yml).
   - `more`: (O) Add more custom infos.
   - `upstream_params`: (O) Add upstream params (useful when you want to pass variables to PHP)
   - `override_try_files`: (O) overrides default try\_files defined in template
+  - `manage_local_content`: (O) Boolean. Set to false if you don't want to manage local content (images, css...). This option is useless if you use proxy `template`
 
 (O) : Optional
 (M) : Mandatory
