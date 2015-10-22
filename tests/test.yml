@@ -30,21 +30,18 @@
             - 'return 403;'
           '/gunther':
             - 'return 404;'
-      - name:
-          - 'test-php.local'
+      - name: 'test-php.local'
         upstream_params:
           - 'fastcgi_param FOO bar;'
         redirect_from:
           - 'www.test-php.local'
         template: '_php'
-      - name:
-          - 'test-proxy.local'
+      - name: 'test-proxy.local'
         listen:
           - 8080
         template: '_proxy'
         upstream_name: 'test'
-      - name:
-          - 'deleted.local'
+      - name: 'deleted.local'
         template: '_base'
         delete: true
   roles:

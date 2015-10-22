@@ -53,7 +53,7 @@ You can see many examples in: [tests/test.yml](tests/test.yml).
 
 #### Common
 
-  - `name`: (M) List of domain used. The first occurence is the most important!
+  - `name`: (M) Domain or list of domain used.
   - `template`: (M) template used to create vhost
   - `enable`: (O) Enable the vhost (default is true)
   - `delete`: (O) Delete the vhost (default is false)

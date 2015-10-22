@@ -12,7 +12,7 @@ server {
 {% for port in __listen %}
 	listen {{ port }};
 {% endfor %}
-	server_name {{ item.name | join(' ') }};
+	server_name {% if item.name is string %}{{ item.name }}{% else %}{{ item.name | join(' ') }}{% endif %};
 {% if item.root is defined %}
 	root {{ item.root }};
 {% else %}
