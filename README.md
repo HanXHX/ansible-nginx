@@ -5,7 +5,7 @@ Nginx for Debian Ansible role
 
 Install and configure Nginx on Debian.
 
-This role is not production ready. SSL management wille come later.
+SSL management will come later.
 
 Requirements
 ------------
