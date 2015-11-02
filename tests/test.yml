@@ -55,7 +55,7 @@
     - name: -- Add HTML file --
       copy: dest="{{ nginx_root }}/test.local/public/index.html" content="Index HTML test OK\n"
     - name: -- VERIFY VHOSTS --
-      shell: "curl -H 'Host: {{ item.name if item.name is string else item.name[0] }}' http://127.0.0.1{% if item.listen is defined %}:{{ item.listen[0] }}{% endif %}/"
+      command: "curl -H 'Host: {{ item.name if item.name is string else item.name[0] }}' http://127.0.0.1{% if item.listen is defined %}:{{ item.listen[0] }}{% endif %}/"
       with_items: nginx_vhosts
       when: item.delete is undefined or not item.delete
       changed_when: false
@@ -65,7 +65,7 @@
       failed_when: f.stdout.find('403 Forbidden') == -1
       changed_when: false
     - name: -- VERIFY REDIRECT VHOSTS --
-      shell: "curl -H 'Host: {{ item.redirect_from[0] }}' http://127.0.0.1/"
+      command: "curl -H 'Host: {{ item.redirect_from[0] }}' http://127.0.0.1/"
       with_items: nginx_vhosts
       when: item.redirect_from is defined and (item.delete is undefined or not item.delete)
       changed_when: false
