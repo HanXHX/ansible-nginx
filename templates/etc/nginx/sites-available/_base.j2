@@ -16,7 +16,7 @@ server {
 {% if item.root is defined %}
 	root {{ item.root }};
 {% else %}
-	root {{ nginx_root }}/{{ item.name[0] }}/public;
+	root {{ nginx_root }}/{{ item.name if item.name is string else item.name[0] }}/public;
 {% endif %}
 {% block template_index %}
 	index {{ item.index | default('index.html index.htm') }};

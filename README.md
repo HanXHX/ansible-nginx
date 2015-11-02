@@ -70,10 +70,12 @@ You can see many examples in: [tests/test.yml](tests/test.yml).
 #### Templates
 
   - `base`: static template
-  - `php`: PHP base template. Can work with many frameworks/tools.
-  - `wordpress`
   - `dokuwiki`
+  - `phalcon`: Phalcon PHP Framework
+  - `php`: PHP base template. Can work with many frameworks/tools
+  - `php_index`: Same as above. But you can only run index.php
   - `proxy`
+  - `wordpress`
 
 Templates works as parent-child.
 
