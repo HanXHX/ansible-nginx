@@ -28,11 +28,13 @@ server {
 {% endfor %}
 {% endif %}
 
+{% if not __location.has_key('/') %}
 	location / {
 {% block template_try_files %}
 		try_files {{ override_try_files | default('$uri $uri/ =404') }};
 {% endblock %}
 	}
+{% endif %}
 
 {% block template_upstream_location %}
 {% endblock %}

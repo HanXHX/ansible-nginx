@@ -30,6 +30,11 @@
             - 'return 403;'
           '/gunther':
             - 'return 404;'
+      - name: 'test-location.local'
+        template: '_base'
+        location:
+          '/':
+            - 'alias /var/tmp;'
       - name: 'test-php.local'
         upstream_params:
           - 'fastcgi_param FOO bar;'
@@ -53,7 +58,8 @@
       copy: dest="{{ nginx_root }}/{{ item }}/public/index.php" content="<?php phpinfo();"
       with_items: ['test-php.local', 'test-php-index.local']
     - name: -- Add HTML file --
-      copy: dest="{{ nginx_root }}/test.local/public/index.html" content="Index HTML test OK\n"
+      copy: dest="{{ item }}/index.html" content="Index HTML test OK\n"
+      with_items: ['{{ nginx_root }}/test.local/public', '/var/tmp']
     - name: -- VERIFY VHOSTS --
       command: "curl -H 'Host: {{ item.name if item.name is string else item.name[0] }}' http://127.0.0.1{% if item.listen is defined %}:{{ item.listen[0] }}{% endif %}/"
       with_items: nginx_vhosts
