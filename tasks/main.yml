@@ -3,6 +3,9 @@
 - name: APT | Install nginx
   apt: pkg={{ nginx_apt_package }} state=latest update_cache=yes cache_valid_time=3600
 
+- name: SERVICE | Ensure nginx is started
+  service: name=nginx state=started
+
 - name: SHELL | Get Nginx version
   shell: nginx -v 2>&1 | sed -r 's#.*/##;' | cut -d ' ' -f 1
   register: nginx_version
@@ -10,7 +13,7 @@
 
 - name: TEMPLATE | Deploy nginx.conf
   template: src=etc/nginx/nginx.conf.j2 dest=/etc/nginx/nginx.conf validate= "nginx -t"
-  notify: restart nginx
+  notify: reload nginx
 
 - name: FILE | Create /etc/nginx/helpers
   file: dest=/etc/nginx/helpers owner=root mode=0755 state=directory
