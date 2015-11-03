@@ -14,6 +14,7 @@
   template: >
     src=etc/nginx/sites-available/{{ item.template }}.j2
     dest=/etc/nginx/sites-available/{{ item.name if item.name is string else item.name[0] }}
+    validate='nginx -t'
   with_items: nginx_vhosts
   notify: reload nginx
   when: item.delete is not defined or not item.delete

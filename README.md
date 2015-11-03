@@ -44,6 +44,7 @@ Socket:
   - `nginx_worker_processes`
   - `nginx_events`: key/value in events block
   - `nginx_http`: key/value in http block
+  - `nginx_pid`: daemon pid file 
 
 ### Vhost management
 
@@ -138,6 +139,4 @@ GPLv2
 Author Information
 ------------------
 
-  - You can find many other roles in my GitHub "lab": https://github.com/HanXHX/my-ansible-playbooks
-  - All issues, pull-request are welcome :)
-
+- Twitter: https://twitter.com/hanxhx

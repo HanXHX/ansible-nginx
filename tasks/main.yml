@@ -12,7 +12,10 @@
   changed_when: false
 
 - name: TEMPLATE | Deploy nginx.conf
-  template: src=etc/nginx/nginx.conf.j2 dest=/etc/nginx/nginx.conf validate= "nginx -t"
+  template: >
+    src=etc/nginx/nginx.conf.j2
+    dest=/etc/nginx/nginx.conf
+    validate= "nginx -t"
   notify: reload nginx
 
 - name: FILE | Create /etc/nginx/helpers
@@ -27,7 +30,10 @@
 #    creates: "{{ nginx_dh_path }}"
 
 - name: TEMPLATE | Deploy all helpers
-  template: src={{ item }} dest=/etc/nginx/helpers/{{ item | basename | regex_replace('\.j2$','') }}
+  template: >
+    src={{ item }}
+    dest=/etc/nginx/helpers/{{ item | basename | regex_replace('\.j2$','') }}
+    validate= "nginx -t"
   with_fileglob: '../templates/etc/nginx/helpers/*.j2'
   notify: reload nginx
 

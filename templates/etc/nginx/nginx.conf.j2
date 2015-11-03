@@ -4,7 +4,7 @@
 
 user {{ nginx_user }};
 worker_processes {{ nginx_worker_processes }};
-pid /run/nginx.pid;
+pid {{ nginx_pid }};
 
 events {
 {% for key, value in nginx_events.iteritems() %}

@@ -8,8 +8,9 @@ nginx_apt_package: nginx-full
 nginx_root: "/srv/www"
 nginx_log_dir: '/var/log/nginx'
 nginx_ssl_dir: '/etc/nginx/ssl'
+nginx_pid: '/run/nginx.pid'
 nginx_resolver:
-  hosts: ['208.67.222.222', '208.67.220.220'] # OpenDNS
+  hosts: ['8.8.8.8', '8.8.4.4'] # OpenDNS
   valid: '300'
   timeout: '5'
 nginx_error_log_level: 'warn' # http://nginx.org/en/docs/ngx_core_module.html#error_log
