@@ -1,5 +1,10 @@
 ---
 
+- name: FILE | Create root directory
+  file: >
+    path={{ nginx_root }}
+    state=directory
+
 - name: FILE | Create root folders (foreach nginx_vhosts)
   file: >
     path={{ nginx_root }}/{{ item.name if item.name is string else item.name[0] }}/public
