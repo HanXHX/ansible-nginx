@@ -7,6 +7,16 @@
 
 - name: FILE | Create root folders (foreach nginx_vhosts)
   file: >
+    path={{ nginx_root }}/{{ item.name if item.name is string else item.name[0] }}
+    state=directory
+    owner={{ item.owner | default('www-data') }}
+    group={{ item.group | default('www-data') }}
+    mode={{ item.mode | default('0755') }}
+  with_items: nginx_vhosts
+  when: item.root is not defined and item.template != '_proxy'
+
+- name: FILE | Create root public folders (foreach nginx_vhosts)
+  file: >
     path={{ nginx_root }}/{{ item.name if item.name is string else item.name[0] }}/public
     state=directory
     owner={{ item.owner | default('www-data') }}
