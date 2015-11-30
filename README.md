@@ -55,7 +55,7 @@ You can see many examples in: [tests/test.yml](tests/test.yml).
 #### Common
 
   - `name`: (M) Domain or list of domain used.
-  - `template`: (M) template used to create vhost
+  - `template`: (M) template used to create vhost. Optional if you set `delete` to true.
   - `enable`: (O) Enable the vhost (default is true)
   - `delete`: (O) Delete the vhost (default is false)
   - `redirect_from`: (O) Domain list to redirect to the first `name`. You can use this key to redirect non-www to www

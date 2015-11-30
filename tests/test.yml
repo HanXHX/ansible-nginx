@@ -49,7 +49,6 @@
         template: '_proxy'
         upstream_name: 'test'
       - name: 'deleted.local'
-        template: '_base'
         delete: true
   roles:
     - ../../

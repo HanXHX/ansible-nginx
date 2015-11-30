@@ -13,7 +13,10 @@
     group={{ item.group | default('www-data') }}
     mode={{ item.mode | default('0755') }}
   with_items: nginx_vhosts
-  when: item.root is not defined and item.template != '_proxy'
+  when: >
+    item.root is not defined and
+    (item.template is defined and item.template != '_proxy') and
+    (item.delete is not defined or not item.delete)
 
 - name: FILE | Create root public folders (foreach nginx_vhosts)
   file: >
@@ -23,7 +26,10 @@
     group={{ item.group | default('www-data') }}
     mode={{ item.mode | default('0755') }}
   with_items: nginx_vhosts
-  when: item.root is not defined and item.template != '_proxy'
+  when: >
+    item.root is not defined and
+    (item.template is defined and item.template != '_proxy') and
+    (item.delete is not defined or not item.delete)
 
 - name: TEMPLATE | Create vhosts
   template: >
