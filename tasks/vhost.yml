@@ -44,8 +44,7 @@
 #  with_fileglob: "web/*"
 
 - name: FILE | Delete vhosts
-  file: dest=/etc/nginx/sites-enabled/{{ item.name if item.name is string else item.name[0] }} state=absent
-  file: dest=/etc/nginx/sites-available/{{ item.name if item.name is string else item.name[0] }} state=absent
+  file: path=/etc/nginx/sites-available/{{ item.name if item.name is string else item.name[0] }} state=absent
   with_items: nginx_vhosts
   notify: reload nginx
   when: item.delete is defined and item.delete
@@ -63,10 +62,10 @@
     (item.delete is not defined or not item.delete)
 
 - name: FILE | Disable vhosts
-  file: dest=/etc/nginx/sites-enabled/{{ item.name if item.name is string else item.name[0] }} state=absent
+  file: path=/etc/nginx/sites-enabled/{{ item.name if item.name is string else item.name[0] }} state=absent
   with_items: nginx_vhosts
   notify: reload nginx
-  when: item.enable is defined and not item.enable
+  when: (item.enable is defined and not item.enable) or (item.delete is defined and item.delete)
 
 #- name: FILE | Create ssl dir per vhost (if needed)
 #  file: dest=/etc/nginx/ssl/{{ item.name }} owner=root mode=0750 state=directory
