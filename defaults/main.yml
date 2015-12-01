@@ -10,7 +10,7 @@ nginx_log_dir: '/var/log/nginx'
 nginx_ssl_dir: '/etc/nginx/ssl'
 nginx_pid: '/run/nginx.pid'
 nginx_resolver:
-  hosts: ['8.8.8.8', '8.8.4.4'] # OpenDNS
+  hosts: ['8.8.8.8', '8.8.4.4']
   valid: '300'
   timeout: '5'
 nginx_error_log_level: 'warn' # http://nginx.org/en/docs/ngx_core_module.html#error_log
@@ -25,6 +25,7 @@ nginx_dh_length: 2048
 nginx_php: false
 nginx_php_sockets:
   - unix_socket: "/var/run/php5-fpm.sock"
+nginx_upstreams: []
 
 #
 # Nginx configuration
@@ -70,5 +71,7 @@ nginx_http:
   gzip_disable: '"msie6"'
 #  etag: 'off'
 
+#
+# Vhosts
+#
 nginx_vhosts: []
-nginx_upstreams: []

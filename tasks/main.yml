@@ -39,6 +39,3 @@
 - name: INCLUDE | Vhosts configuration
   include: vhost.yml
 
-# TODO:
-# - Python
-# - Ruby (SHIT!)

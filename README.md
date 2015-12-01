@@ -64,7 +64,7 @@ You can see many examples in: [tests/test.yml](tests/test.yml).
   - `more`: (O) Add more custom infos.
   - `upstream_params`: (O) Add upstream params (useful when you want to pass variables to PHP)
   - `override_try_files`: (O) overrides default try\_files defined in template
-  - `manage_local_content`: (O) Boolean. Set to false if you don't want to manage local content (images, css...). This option is useless if you use proxy `template`
+  - `manage_local_content`: (O) Boolean. Set to false if you don't want to manage local content (images, css...). This option is useless if you use `_proxy` template or `redirect_to` feature.
 
 (O): Optional
 (M): Mandatory
@@ -72,13 +72,14 @@ You can see many examples in: [tests/test.yml](tests/test.yml).
 
 #### Templates
 
-  - `base`: static template
-  - `dokuwiki`
-  - `phalcon`: Phalcon PHP Framework
-  - `php`: PHP base template. Can work with many frameworks/tools
-  - `php_index`: Same as above. But you can only run index.php
-  - `proxy`
-  - `wordpress`
+  - `_base`: static template
+  - `_dokuwiki`
+  - `_redirect`: should not be called explicitly
+  - `_phalcon`: Phalcon PHP Framework
+  - `_php`: PHP base template. Can work with many frameworks/tools
+  - `_php_index`: Same as above. But you can only run index.php
+  - `_proxy`
+  - `_wordpress`
 
 Templates works as parent-child.
 
@@ -93,7 +94,6 @@ You have many key added to vhost key:
 
 (O) : Optional
 (M) : Mandatory
-
 
 ### Upstream management
 
@@ -114,8 +114,8 @@ You must set a `path`. For example: *192.168.0.50:8080* or *unix:/tmp/my.sock*.
 All this params are optional. You should see [Nginx upstream doc](http://nginx.org/en/docs/http/ngx_http_upstream_module.html).
 
   - `weight`
-  - `max`fails`
-  - `fail`timeout`
+  - `max_fails`
+  - `fail_timeout`
   - `backup`
   - `down`
   - `route`
@@ -129,9 +129,7 @@ None
 Example Playbook
 ----------------
 
-    - hosts: servers
-      roles:
-         - { role: HanXHX.nginx }
+See [tests/test.yml](tests/test.yml).
 
 License
 -------
@@ -141,4 +139,5 @@ GPLv2
 Author Information
 ------------------
 
-- Twitter: https://twitter.com/hanxhx
+- Twitter: [@hanxhx_](https://twitter.com/hanxhx_)
+

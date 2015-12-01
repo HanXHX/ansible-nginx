@@ -2,6 +2,7 @@
 
 - name: TEMPLATE | Deploy PHP upstream to Nginx
   template: src=etc/nginx/upstream/php.conf.j2 dest=/etc/nginx/conf.d/php.conf
+  when: nginx_php
   notify: reload nginx
 
 - name: TEMPLATE | Deploy other upstreams
