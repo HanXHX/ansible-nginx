@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block template_try_files %}
-		return 302 {{ item.redirect_to }}$request_uri;
+		return {{ item.redirect_to_code | default('302') }} {{ item.redirect_to }}$request_uri;
 {% endblock %}
 
 {% block template_local_content %}
