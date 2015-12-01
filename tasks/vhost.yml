@@ -16,7 +16,8 @@
   when: >
     item.root is not defined and
     (item.template is defined and item.template != '_proxy') and
-    (item.delete is not defined or not item.delete)
+    (item.delete is not defined or not item.delete) and
+    item.redirect_to is not defined
 
 - name: FILE | Create root public folders (foreach nginx_vhosts)
   file: >
@@ -29,11 +30,12 @@
   when: >
     item.root is not defined and
     (item.template is defined and item.template != '_proxy') and
-    (item.delete is not defined or not item.delete)
+    (item.delete is not defined or not item.delete) and
+    item.redirect_to is not defined
 
 - name: TEMPLATE | Create vhosts
   template: >
-    src=etc/nginx/sites-available/{{ item.template }}.j2
+    src=etc/nginx/sites-available/{{ item.template if item.redirect_to is not defined else '_redirect' }}.j2
     dest=/etc/nginx/sites-available/{{ item.name if item.name is string else item.name[0] }}
   with_items: nginx_vhosts
   notify: reload nginx

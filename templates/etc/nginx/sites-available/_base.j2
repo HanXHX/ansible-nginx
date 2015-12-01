@@ -13,11 +13,13 @@ server {
 	listen {{ port }};
 {% endfor %}
 	server_name {% if item.name is string %}{{ item.name }}{% else %}{{ item.name | join(' ') }}{% endif %};
+{% block root %}
 {% if item.root is defined %}
 	root {{ item.root }};
 {% else %}
 	root {{ nginx_root }}/{{ item.name if item.name is string else item.name[0] }}/public;
 {% endif %}
+{% endblock %}
 {% block template_index %}
 	index {{ item.index | default('index.html index.htm') }};
 {% endblock %}
@@ -41,12 +43,12 @@ server {
 {% block template_custom_location %}
 {% endblock %}
 
+{% block template_local_content %}
+{% if item.manage_local_content is not defined or item.manage_local_content %}
 	location ~ /\.ht {
 		deny all;
 	}
 
-{% block template_local_content %}
-{% if item.manage_local_content is not defined or item.manage_local_content %}
 	location = /favicon.ico {
 		expires 30d;
 		access_log off;

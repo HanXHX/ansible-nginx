@@ -50,6 +50,8 @@
         upstream_name: 'test'
       - name: 'deleted.local'
         delete: true
+      - name: 'redirect-to.local'
+        redirect_to: 'http://test.local'
   roles:
     - ../../
   post_tasks:

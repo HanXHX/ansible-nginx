@@ -55,18 +55,20 @@ You can see many examples in: [tests/test.yml](tests/test.yml).
 #### Common
 
   - `name`: (M) Domain or list of domain used.
-  - `template`: (M) template used to create vhost. Optional if you set `delete` to true.
+  - `template`: (D) template used to create vhost. Optional if you set `delete` to true or using `redirect_tor`.
   - `enable`: (O) Enable the vhost (default is true)
   - `delete`: (O) Delete the vhost (default is false)
   - `redirect_from`: (O) Domain list to redirect to the first `name`. You can use this key to redirect non-www to www
+  - `redirect_to`: (O) Redirect (302) all requests to this domain. Please set scheme (http:// or https:// or $sheme).
   - `location`: (O) Add new custom locations (it does not overwrite!)
   - `more`: (O) Add more custom infos.
   - `upstream_params`: (O) Add upstream params (useful when you want to pass variables to PHP)
   - `override_try_files`: (O) overrides default try\_files defined in template
   - `manage_local_content`: (O) Boolean. Set to false if you don't want to manage local content (images, css...). This option is useless if you use proxy `template`
 
-(O) : Optional
-(M) : Mandatory
+(O): Optional
+(M): Mandatory
+(D): Depends other keys...
 
 #### Templates
 
