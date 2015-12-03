@@ -23,3 +23,13 @@ nginx_upstream_server_params:
 #  - key: 'resolve'
 #    is_bool: true
 #    min_version: '1.5.12'
+
+nginx_dirs:
+  - "{{ nginx_htpasswd_dir }}"
+  - "{{ nginx_ssl_dir }}"
+  - "{{ nginx_helper_dir }}"
+
+nginx_htpasswd_dir: '/etc/nginx/htpasswd'
+nginx_ssl_dir: '/etc/nginx/ssl'
+nginx_helper_dir: '/etc/nginx/helper'
+

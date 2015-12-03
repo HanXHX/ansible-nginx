@@ -67,7 +67,13 @@ server {
 {% for location, opts in __location.iteritems() %}
 	location {{ location }} {
 {% for opt in opts %}
+{% if opt.htpasswd is defined %}{% for ht in nginx_htpasswd %}{% if ht.name == opt.htpasswd %}
+		auth_basic "{{ ht.description }}";
+		auth_basic_user_file {{ nginx_htpasswd_dir }}/{{ opt.htpasswd }};
+{% endif %}{% endfor %}
+{% else %}
 		{{ opt }}
+{% endif %}
 {% endfor  %}
 	}
 {% endfor %}	# <-- Custom locations
@@ -86,15 +92,12 @@ server {
 }
 
 {#
+# HTTPS
+#server {
 ssl on;
 ssl_certificate {{ nginx_ssl_dir }}/{{ item.name }}/{{ item.name }}.crt;
 ssl_certificate_key {{ nginx_ssl_dir }}/{{ item.name }}/{{ item.name }}.key;
-include /etc/nginx/helpers/ssl-{{ item.ssl.template | default('strong') }};
-#}
-
-
-# HTTPS
-#server {
+include {{ nginx_helper_dir }}/ssl-{{ item.ssl.template | default('strong') }};
 #}
 
 {% if item.redirect_from is defined and item.redirect_from is iterable %}

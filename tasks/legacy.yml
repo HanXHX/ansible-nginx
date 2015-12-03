@@ -1,0 +1,4 @@
+---
+
+- name: FILE | Remove old directories
+  file: path=/etc/nginx/helpers state=absent

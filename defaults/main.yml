@@ -75,3 +75,8 @@ nginx_http:
 # Vhosts
 #
 nginx_vhosts: []
+
+#
+# htpasswd
+#
+nginx_htpasswd: []

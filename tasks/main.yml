@@ -1,7 +1,10 @@
 ---
 
-- name: APT | Install nginx
-  apt: pkg={{ nginx_apt_package }} state=latest update_cache=yes cache_valid_time=3600
+- name: APT | Install nginx and dependencies
+  apt: pkg={{ item }} state=latest update_cache=yes cache_valid_time=3600
+  with_items:
+    - "{{ nginx_apt_package }}"
+    - python-passlib
 
 - name: SHELL | Get Nginx version
   shell: nginx -v 2>&1 | sed -r 's#.*/##;' | cut -d ' ' -f 1
@@ -14,11 +17,12 @@
     dest=/etc/nginx/nginx.conf
   notify: reload nginx
 
-- name: FILE | Create /etc/nginx/helpers
-  file: dest=/etc/nginx/helpers owner=root mode=0755 state=directory
+- name: INCLUDE | Fix legacy
+  include: legacy.yml
 
-- name: FILE | Create /etc/nginx/ssl
-  file: dest=/etc/nginx/ssl owner=root mode=0755 state=directory
+- name: FILE | Create folders
+  file: dest={{ item }} owner=root mode=0755 state=directory
+  with_items: "{{ nginx_dirs }}"
 
 #- name: COMMAND | Creates DH file
 #  command: openssl dhparam -out {{ nginx_dh_path }} {{ nginx_dh_length }}
@@ -28,13 +32,16 @@
 - name: TEMPLATE | Deploy all helpers
   template: >
     src={{ item }}
-    dest=/etc/nginx/helpers/{{ item | basename | regex_replace('\.j2$','') }}
-  with_fileglob: '../templates/etc/nginx/helpers/*.j2'
+    dest={{ nginx_helper_dir }}/{{ item | basename | regex_replace('\.j2$','') }}
+  with_fileglob: '../templates/etc/nginx/helper/*.j2'
   notify: reload nginx
 
 - name: INCLUDE | Upstream configuration
   include: upstream.yml
   when: nginx_php
+
+- name: INCLUDE | htpasswd configuration
+  include: htpasswd.yml
 
 - name: INCLUDE | Vhosts configuration
   include: vhost.yml
