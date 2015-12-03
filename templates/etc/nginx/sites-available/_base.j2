@@ -1,6 +1,12 @@
 {% set __listen = item.listen | default(['80']) %}
 {% set __listen_ssl = item.listen_ssl | default(['443']) %}
 {% set __location = item.location | default({}) %}
+{% macro htpasswd(htpasswd_name, indent=2) -%}
+{% for ht in nginx_htpasswd %}{% if ht.name == htpasswd_name %}
+{{ "\t" * indent }}auth_basic "{{ ht.description }}";
+{{ "\t" * indent }}auth_basic_user_file {{ nginx_htpasswd_dir }}/{{ ht.name }};
+{% endif %}{% endfor%}
+{%- endmacro %}
 #
 # {{ ansible_managed }}
 #
@@ -67,11 +73,7 @@ server {
 {% for location, opts in __location.iteritems() %}
 	location {{ location }} {
 {% for opt in opts %}
-{% if opt.htpasswd is defined %}{% for ht in nginx_htpasswd %}{% if ht.name == opt.htpasswd %}
-		auth_basic "{{ ht.description }}";
-		auth_basic_user_file {{ nginx_htpasswd_dir }}/{{ opt.htpasswd }};
-{% endif %}{% endfor %}
-{% else %}
+{% if opt.htpasswd is defined %}{{ htpasswd(opt.htpasswd, 2) }}{% else %}
 		{{ opt }}
 {% endif %}
 {% endfor  %}
