@@ -66,6 +66,7 @@ You can see many examples in: [tests/test.yml](tests/test.yml).
   - `upstream_params`: (O) Add upstream params (useful when you want to pass variables to PHP)
   - `override_try_files`: (O) overrides default try\_files defined in template
   - `manage_local_content`: (O) Boolean. Set to false if you don't want to manage local content (images, css...). This option is useless if you use `_proxy` template or `redirect_to` feature.
+  - `htpasswd`: (0) References name key in `nginx_htpasswd`. Enable auth basic on all vhost.
 
 (O): Optional
 (M): Mandatory
@@ -96,6 +97,10 @@ You have many key added to vhost key:
 (O) : Optional
 (M) : Mandatory
 
+#### About custom location
+
+`location` is list of instructions (like *echo*, *return*...). Do not forget to end all your instructions with *;*. You can use a special key to use auth basic. It works in the same way as in `nginx_vhost`
+
 ### Upstream management
 
   - `nginx_upstreams`: List of dict. An upstream has few keys. See bellow.
@@ -121,6 +126,18 @@ All this params are optional. You should see [Nginx upstream doc](http://nginx.o
   - `down`
   - `route`
   - `slow`start`
+
+### Auth Basic management
+
+Auth basic is managed in a separate list. Each auth file can be shared between locations or vhosts.
+
+Each htpasswd has few keys:
+
+  - `name`: (M) used to create file and as pointee
+  - `description`: (M) Used for the message box :)
+  - `users`: each users is composed with 3 keys: `name` (M), `password` (M) and `state` present/absent (default: present)
+  - `state`: (O) present or absent. Default: present
+
 
 Dependencies
 ------------
