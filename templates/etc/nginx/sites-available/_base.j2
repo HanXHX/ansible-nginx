@@ -1,7 +1,7 @@
 {% set __listen = item.listen | default(['80']) %}
 {% set __listen_ssl = item.listen_ssl | default(['443']) %}
 {% set __location = item.location | default({}) %}
-{% macro htpasswd(htpasswd_name, indent=2) -%}
+{% macro htpasswd(htpasswd_name, indent=1) -%}
 {% for ht in nginx_htpasswd %}{% if ht.name == htpasswd_name %}
 {{ "\t" * indent }}auth_basic "{{ ht.description }}";
 {{ "\t" * indent }}auth_basic_user_file {{ nginx_htpasswd_dir }}/{{ ht.name }};
@@ -34,6 +34,10 @@ server {
 {% for line in item.more %}
 	{{ line }}
 {% endfor %}
+{% endif %}
+
+{% if item.htpasswd is defined %}
+{{ htpasswd(item.htpasswd, 1) }}
 {% endif %}
 
 {% if not __location.has_key('/') %}

@@ -83,7 +83,7 @@
       with_items: ['test-php.local', 'test-php-index.local']
     - name: -- Add HTML file --
       copy: dest="{{ item }}/index.html" content="Index HTML test OK\n"
-      with_items: ['{{ nginx_root }}/test.local/public', '/var/tmp']
+      with_items: ['{{ nginx_root }}/test.local/public', '/var/tmp', '{{ nginx_root }}/test-htpasswd-all.local/public']
     - name: -- VERIFY VHOSTS --
       command: "curl -H 'Host: {{ item.name if item.name is string else item.name[0] }}' http://127.0.0.1{% if item.listen is defined %}:{{ item.listen[0] }}{% endif %}/"
       with_items: nginx_vhosts
@@ -116,3 +116,13 @@
       changed_when: false
       register: authok
       failed_when: authok.stdout.find('hello') == -1
+    - name: -- VERIFY AUTH BASIC FAIL GLOBAL --
+      command: "curl -u fail:fail -H 'Host: test-htpasswd-all.local' http://127.0.0.1/"
+      changed_when: false
+      register: authgfail
+      failed_when: authgfail.stdout.find('401 Authorization Required') == -1
+    - name: -- VERIFY AUTH BASIC OK --
+      command: "curl -u hanx:qwerty -H 'Host: test-htpasswd-all.local' http://127.0.0.1/"
+      changed_when: false
+      register: authgok
+      failed_when: authgok.stdout.find('401 Authorization Required') != -1
