@@ -28,6 +28,8 @@
         description: 'Please login!'
         users: []
         state: 'absent'
+    nginx_custom_http:
+      - 'add_header X-ansible 1;'
     nginx_vhosts:
       - name:
           - 'test.local'

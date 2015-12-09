@@ -45,6 +45,7 @@ Socket:
   - `nginx_pid`: daemon pid file 
   - `nginx_events_*`: all variables in events block
   - `nginx_http_*`: all variables in http block
+  - `nginx_custom_http`: instructions list (will put data in `/etc/nginx/conf.d/custom.conf`)
 
 ### Vhost management
 

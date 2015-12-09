@@ -36,6 +36,12 @@
   with_fileglob: '../templates/etc/nginx/helper/*.j2'
   notify: reload nginx
 
+- name: TEMPLATE | Deploy custom http configuration
+  template: >
+    src=etc/nginx/conf.d/custom.conf.j2
+    dest=/etc/nginx/conf.d/custom.conf
+  notify: reload nginx
+
 - name: INCLUDE | Upstream configuration
   include: upstream.yml
   when: nginx_php
