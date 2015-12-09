@@ -42,9 +42,9 @@ Socket:
 
   - `nginx_user`
   - `nginx_worker_processes`
-  - `nginx_events`: key/value in events block
-  - `nginx_http`: key/value in http block
   - `nginx_pid`: daemon pid file 
+  - `nginx_events_*`: all variables in events block
+  - `nginx_http_*`: all variables in http block
 
 ### Vhost management
 

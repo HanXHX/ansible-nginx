@@ -33,43 +33,45 @@ nginx_upstreams: []
 nginx_user: 'www-data'
 nginx_worker_processes: '{{ ansible_processor_vcpus }}'
 
-nginx_events:
-  worker_connections: '512'
-  multi_accept: 'on'
-  use: 'epoll'
+#
+# Nginx events
+#
+nginx_events_worker_connections: '512'
+nginx_events_multi_accept: 'on'
+nginx_events_use: 'epoll'
 
 #
 # Nginx HTTP
 #
-nginx_http:
-  access_log: 'off'
-  error_log: 'off'
-  client_body_buffer_size: '1M'
-  client_header_buffer_size: '1M'
-  client_max_body_size: '10M'
-  large_client_header_buffers: '8 8k'
-  client_body_timeout: '60'
-  client_header_timeout: '60'
-  keepalive_timeout: '30 30'
-  send_timeout: '120'
-  ignore_invalid_headers: 'on'
-  keepalive_requests: '100'
-  recursive_error_pages: 'on'
-  sendfile: 'on'
-  server_name_in_redirect: 'off'
-  server_tokens: 'off'
-  tcp_nodelay: 'on'
-  tcp_nopush: 'on'
-  reset_timedout_connection: 'on'
-  gzip: 'on'
-  gzip_buffers: '16 8k'
-  gzip_comp_level: '9'
-  gzip_http_version: '1.0'
-  gzip_min_length: '0'
-  gzip_types: 'text/plain text/css application/json application/x-javascript application/javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml'
-  gzip_vary: 'on'
-  gzip_disable: '"msie6"'
-#  etag: 'off'
+nginx_http_types_hash_max_size: 2048
+nginx_http_default_type: 'application/octet-stream'
+nginx_http_access_log: 'off'
+nginx_http_error_log: 'off'
+nginx_http_client_body_buffer_size: '1M'
+nginx_http_client_header_buffer_size: '1M'
+nginx_http_client_max_body_size: '10M'
+nginx_http_large_client_header_buffers: '8 8k'
+nginx_http_client_body_timeout: '60'
+nginx_http_client_header_timeout: '60'
+nginx_http_keepalive_timeout: '30 30'
+nginx_http_send_timeout: '120'
+nginx_http_ignore_invalid_headers: 'on'
+nginx_http_keepalive_requests: '100'
+nginx_http_recursive_error_pages: 'on'
+nginx_http_sendfile: 'on'
+nginx_http_server_name_in_redirect: 'off'
+nginx_http_server_tokens: 'off'
+nginx_http_tcp_nodelay: 'on'
+nginx_http_tcp_nopush: 'on'
+nginx_http_reset_timedout_connection: 'on'
+nginx_http_gzip: 'on'
+nginx_http_gzip_buffers: '16 8k'
+nginx_http_gzip_comp_level: '9'
+nginx_http_gzip_http_version: '1.0'
+nginx_http_gzip_min_length: '0'
+nginx_http_gzip_types: 'text/plain text/css application/json application/x-javascript application/javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml'
+nginx_http_gzip_vary: 'on'
+nginx_http_gzip_disable: '"msie6"'
 
 #
 # Vhosts

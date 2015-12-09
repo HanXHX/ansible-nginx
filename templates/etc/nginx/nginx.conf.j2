@@ -7,21 +7,43 @@ worker_processes {{ nginx_worker_processes }};
 pid {{ nginx_pid }};
 
 events {
-{% for key, value in nginx_events.iteritems() %}
-{{ "\t%-30s %s" | format(key, value) }};
-{% endfor %}
+	worker_connections {{ nginx_events_worker_connections }};
+	multi_accept {{ nginx_events_multi_accept }};
+	use {{ nginx_events_use }};
 }
 
 http {
-	types_hash_max_size 2048;
+	types_hash_max_size {{ nginx_http_types_hash_max_size }};
 	include /etc/nginx/mime.types;
-	default_type application/octet-stream;
 
-	# From Ansible
-{% for key, value in nginx_http.iteritems() %}
-{{ "\t%-30s %s" | format(key, value) }};
-{% endfor %}
-	# /From Ansible
+	default_type {{ nginx_http_default_type }};
+	access_log {{ nginx_http_access_log }};
+	error_log {{ nginx_http_error_log }};
+	client_body_buffer_size {{ nginx_http_client_body_buffer_size }};
+	client_header_buffer_size {{ nginx_http_client_header_buffer_size }};
+	client_max_body_size {{ nginx_http_client_max_body_size }};
+	large_client_header_buffers {{ nginx_http_large_client_header_buffers }};
+	client_body_timeout {{ nginx_http_client_body_timeout }};
+	client_header_timeout {{ nginx_http_client_header_timeout }};
+	keepalive_timeout {{ nginx_http_keepalive_timeout }};
+	send_timeout {{ nginx_http_send_timeout }};
+	ignore_invalid_headers {{ nginx_http_ignore_invalid_headers }};
+	keepalive_requests {{ nginx_http_keepalive_requests }};
+	recursive_error_pages {{ nginx_http_recursive_error_pages }};
+	sendfile {{ nginx_http_sendfile }};
+	server_name_in_redirect {{ nginx_http_server_name_in_redirect }};
+	server_tokens {{ nginx_http_server_tokens }};
+	tcp_nodelay {{ nginx_http_tcp_nodelay }};
+	tcp_nopush {{ nginx_http_tcp_nopush }};
+	reset_timedout_connection {{ nginx_http_reset_timedout_connection }};
+	gzip {{ nginx_http_gzip }};
+	gzip_buffers {{ nginx_http_gzip_buffers }};
+	gzip_comp_level {{ nginx_http_gzip_comp_level }};
+	gzip_http_version {{ nginx_http_gzip_http_version }};
+	gzip_min_length {{ nginx_http_gzip_min_length }};
+	gzip_types {{ nginx_http_gzip_types }};
+	gzip_vary {{ nginx_http_gzip_vary }};
+	gzip_disable {{ nginx_http_gzip_disable }};
 
 	include /etc/nginx/conf.d/*.conf;
 	include /etc/nginx/sites-enabled/*;
