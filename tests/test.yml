@@ -6,6 +6,7 @@
       with_items:
         - php5-fpm
         - curl
+        - fcgiwrap
   vars:
     nginx_php: true
     nginx_upstreams:
@@ -77,9 +78,13 @@
         delete: true
       - name: 'redirect-to.local'
         redirect_to: 'http://test.local'
+      - name: 'backuppc.local'
+        template: '_backuppc'
+        htpasswd: 'hello'
   roles:
     - ../../
   post_tasks:
+    - apt: pkg=backuppc state=present
     - name: -- Add PHP file --
       copy: dest="{{ nginx_root }}/{{ item }}/public/index.php" content="<?php phpinfo();"
       with_items: ['test-php.local', 'test-php-index.local']
@@ -128,3 +133,8 @@
       changed_when: false
       register: authgok
       failed_when: authgok.stdout.find('401 Authorization Required') != -1
+    - name: -- VERIFY BACKUPPC --
+      command: "curl -u hanx:qwerty -H 'Host: backuppc.local' http://127.0.0.1/"
+      changed_when: false
+      register: authbpc
+      failed_when: authbpc.stdout.find('BackupPC Server Status') == -1

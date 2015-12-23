@@ -76,6 +76,7 @@ You can see many examples in: [tests/test.yml](tests/test.yml).
 #### Templates
 
   - `_base`: static template
+  - `_backuppc`: access to [BackupPC](http://backuppc.sourceforge.net/) (be careful: you need to install [fcgiwrap](https://packages.debian.org/jessie/fcgiwrap))
   - `_dokuwiki`
   - `_redirect`: should not be called explicitly
   - `_phalcon`: Phalcon PHP Framework

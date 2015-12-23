@@ -1,0 +1,33 @@
+{% extends "_base.j2" %}
+
+{% block root %}
+	root /usr/share/backuppc/cgi-bin;
+{% endblock %}
+
+{% block template_try_files %}
+{% endblock %}
+
+{% block template_index %}
+	index index.cgi;
+{% endblock %}
+
+{% block template_local_content %}
+    location ~ /\.ht {
+	deny all;
+    }
+
+	location /backuppc/image {
+		alias /usr/share/backuppc/image;
+		expires 60d;
+	}
+{% endblock %}
+
+{% block template_upstream_location %}
+	location ~ \.cgi$ {
+		gzip off;
+		include /etc/nginx/fastcgi_params;
+		fastcgi_pass unix:/var/run/fcgiwrap.socket;
+		fastcgi_index BackupPC_Admin;
+		fastcgi_param SCRIPT_FILENAME /usr/share/backuppc/cgi-bin$fastcgi_script_name;
+	}
+{% endblock %}
