@@ -7,6 +7,8 @@
         - php5-fpm
         - curl
         - fcgiwrap
+    - service: name=fcgiwrap state=started
+    - pause: seconds=5
   vars:
     nginx_php: true
     nginx_upstreams:
