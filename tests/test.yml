@@ -87,6 +87,7 @@
     - ../../
   post_tasks:
     - apt: pkg=backuppc state=present
+    - service: name=backuppc state=started
     - name: -- Add PHP file --
       copy: dest="{{ nginx_root }}/{{ item }}/public/index.php" content="<?php phpinfo();"
       with_items: ['test-php.local', 'test-php-index.local']
