@@ -9,7 +9,9 @@
         - curl
         - fcgiwrap
     - service: name=fcgiwrap state=started
+      register: sf
     - pause: seconds=5
+      when: sf.changed
   vars:
     nginx_backports: true
     nginx_php: true
@@ -33,6 +35,56 @@
         description: 'Please login!'
         users: []
         state: 'absent'
+    nginx_ssl_pairs:
+      - name: 'test-ssl.local'
+        key: |
+          -----BEGIN RSA PRIVATE KEY-----
+          MIIEpAIBAAKCAQEAvavrJWFp3Al2VwRgKx+4Y2mbRRvoxvyd2pyN0xMJ/tCJscaG
+          8s60v6WZ9FcCOeMkSI2DXsk4z7pbQdQn0h2GDr/5MOJkPAVWSWEN46tpaLZ3v0zp
+          88ZIbnEk1G0PsdFuW/pnLsakPlAMrl1VArFsV6YsatLt30UIYYcRO97StkoOehCx
+          A5w+XqtfHZeQZ0/DS81633gwYUcMuSTUFZ60r7ge1/m77DTSKg3rTVk5sebP8cjS
+          +aWHvxP/GyvvDsT+3gjRJx2/5O3JkfH0zaOsaU2Avj0PR0c5rhynrNO/l1k+GJJB
+          cbBrM+yA8Ofzp4oXUrCfaIq3RuL3Pd+khcKsiwIDAQABAoIBAQCPpAMQ7BUfbosQ
+          m1+5SOx7XR8Z12kSSX3CcY12rJSFRakB2TeZ6rE38lIFmV82N67iw0kaH4nGx3sU
+          /3aoyXMc+IXfX5RJYEFYkQfTw5ywkH9fgQAsfZ2dBlK+DVo1cEYDoj9CTW1VQ4pX
+          Ape+0l8agd5hiBxdWgpe0ctbbARnx584viLiA/iPBDNxKi9zEYw+WP7hSj5QWahr
+          a09tubcC4L6tjvv8CoZTRSKfCW64vWRDvE6vmA+zJN9Arc1WTYzF1KO1Gybwf8h7
+          stJb191smAgGDFhKo0j58ncyAnrS1k4mapm86QQhlfIA6DKvvC0qm3KdQns5b7HM
+          PyzW0hwBAoGBAO2mTVTOsziom9vtBwM0nRMMEgynR2X3EKMJz2mjcCf66f1F+aQ5
+          DvQFM2V8S2s1nGnPh8NKKZ8DxW1NKuR4qx82zeAXpUs9ibHxOnw4YRC485zqc2Wt
+          fSO1OEDYeKyzWP1nGGtCntYUXzJnWn/wz0mBGKzLKTuLwyFIKx1b7bybAoGBAMxR
+          N+lT57rX6d4GUqcgNOuWMZ/D8egnE5+hsoiFnHOisRLOgUgBBSy4rwAZx+rdHYT+
+          RO11L1PLYEzyvnO0f13R+N7aqKwNXDSzZGA+jb4pjkVidIC2smG/JYKJH5Z+kakw
+          mwMKP0wdRZJsCaMgScHmWJS8d6Ox/XJJoWrTWTbRAoGAWJlEgVaiaIArwz1F/QLz
+          gHNik0cWDkSi9jWlFxwwpycbbypUXM5M7dq2g6JoN6sACk6trbgLdlYgl5RKZm06
+          VuPGs0H9hOSHXkix5jfasDJT2G9r4D9ixRo9w6cwriobBjYWW3612tgzeYYgrkwn
+          655uhZUkZSfA8rqGIGbyZfsCgYAf5WH8G+wmIATTc1s92epJCOZwUY+XNVp75itP
+          4sPczX4lOHW4PuiG5cH0GxI5mRE9rNAn3c5on2xGNvMCbyAfDmNyruH8Eg3d8E9w
+          MvO/xw79x/P2EA9i8QszCKMUxGeK6RqZ6+SbxkoRJKqQe77n9UTI228179hoGhSH
+          77ySsQKBgQC8SSZn6a8PpSIIFXB9WCFMwfGFYbUz0wvpaeZP8GKx3BEzMeJqSUaJ
+          hrQgpwQXkueeamlCQcvV3AUCoBRWTYRLDrWiUIXuIgikDWBFp6TBvTnVRI7iktly
+          fNED7jXOSjJqnFmdkZlAI5V8dM++mVYVykJD6jcaVRQvxqFLrhSaRg==
+          -----END RSA PRIVATE KEY-----
+        cert: |
+          -----BEGIN CERTIFICATE-----
+          MIIDBTCCAe2gAwIBAgIJALKJfbk5vuieMA0GCSqGSIb3DQEBBQUAMBkxFzAVBgNV
+          BAMMDnRlc3Qtc3NsLmxvY2FsMB4XDTE2MDExMTE2NDI0NFoXDTI2MDEwODE2NDI0
+          NFowGTEXMBUGA1UEAwwOdGVzdC1zc2wubG9jYWwwggEiMA0GCSqGSIb3DQEBAQUA
+          A4IBDwAwggEKAoIBAQC9q+slYWncCXZXBGArH7hjaZtFG+jG/J3anI3TEwn+0Imx
+          xobyzrS/pZn0VwI54yRIjYNeyTjPultB1CfSHYYOv/kw4mQ8BVZJYQ3jq2lotne/
+          TOnzxkhucSTUbQ+x0W5b+mcuxqQ+UAyuXVUCsWxXpixq0u3fRQhhhxE73tK2Sg56
+          ELEDnD5eq18dl5BnT8NLzXrfeDBhRwy5JNQVnrSvuB7X+bvsNNIqDetNWTmx5s/x
+          yNL5pYe/E/8bK+8OxP7eCNEnHb/k7cmR8fTNo6xpTYC+PQ9HRzmuHKes07+XWT4Y
+          kkFxsGsz7IDw5/OnihdSsJ9oirdG4vc936SFwqyLAgMBAAGjUDBOMB0GA1UdDgQW
+          BBRaSF1L+ivPhmIVGQjtviBqZWDS9DAfBgNVHSMEGDAWgBRaSF1L+ivPhmIVGQjt
+          viBqZWDS9DAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBQUAA4IBAQCjrgB9+Zuq
+          Rx7T2mRUl4jf75dLabuBQD0ePALTtvNyBSghhzSr90mE7GlFOYAv0JsmEa3R1LVF
+          wLPIdrIhNHpt7hN0PkhUlfgmxBnRSCfhpiq4xxsDVFM7ehtDz4+dv1LUDMXo07+E
+          f24g9aqmypiFzHisUQrYIhtQmHxRpKyGp6kDAW9qNxg6k/Um00aHdYfuD9ER4ksR
+          f8Hto7f+vssKxCRY2OZXqq13PxEwC5+hgAUkTdrycA/moXFuHJi3lCnCND7sSzvG
+          tXBggOusyFZFC4bs2m+V+Z+RN+tK2c/c0nq5HR8MV5HwIm4Z8GoT2/0BfJ00cgWL
+          lVz0gDBfdH8f
+          -----END CERTIFICATE-----
     nginx_custom_http:
       - 'add_header X-ansible 1;'
     nginx_vhosts:
@@ -85,6 +137,10 @@
       - name: 'backuppc.local'
         template: '_backuppc'
         htpasswd: 'hello'
+      - name: 'test-ssl.local'
+        proto: ['http', 'https']
+        template: '_base'
+        ssl_name: 'test-ssl.local'
   roles:
     - ../../
   post_tasks:
@@ -95,7 +151,7 @@
       with_items: ['test-php.local', 'test-php-index.local']
     - name: -- Add HTML file --
       copy: dest="{{ item }}/index.html" content="Index HTML test OK\n"
-      with_items: ['{{ nginx_root }}/test.local/public', '/var/tmp', '{{ nginx_root }}/test-htpasswd-all.local/public']
+      with_items: ['{{ nginx_root }}/test.local/public', '/var/tmp', '{{ nginx_root }}/test-htpasswd-all.local/public', '{{ nginx_root }}/test-ssl.local/public']
     - name: -- VERIFY VHOSTS --
       command: "curl -H 'Host: {{ item.name if item.name is string else item.name[0] }}' http://127.0.0.1{% if item.listen is defined %}:{{ item.listen[0] }}{% endif %}/"
       with_items: nginx_vhosts
@@ -143,3 +199,8 @@
       changed_when: false
       register: authbpc
       failed_when: authbpc.stdout.find('BackupPC Server Status') == -1
+    - name: -- VERIFY SSL --
+      command: "curl --insecure -H 'Host: test-ssl.local' https://127.0.0.1/"
+      changed_when: false
+      failed_when: authok.stdout.find('Index HTML test OK') != -1
+

@@ -1,0 +1,11 @@
+---
+
+- name: SHELL | Get Nginx version
+  shell: nginx -v 2>&1 | sed -r 's#.*/##;' | cut -d ' ' -f 1
+  register: nginx_version
+  changed_when: false
+
+- name: FILE | Create folders
+  file: dest={{ item }} owner=root mode=0755 state=directory
+  with_items: "{{ nginx_dirs }}"
+

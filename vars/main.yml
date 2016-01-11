@@ -29,7 +29,4 @@ nginx_dirs:
   - "{{ nginx_ssl_dir }}"
   - "{{ nginx_helper_dir }}"
 
-nginx_htpasswd_dir: '/etc/nginx/htpasswd'
-nginx_ssl_dir: '/etc/nginx/ssl'
-nginx_helper_dir: '/etc/nginx/helper'
 

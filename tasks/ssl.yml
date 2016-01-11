@@ -1,0 +1,33 @@
+---
+
+- name: COMMAND | Creates DH file
+  command: openssl dhparam -out {{ nginx_dh_path }} {{ nginx_dh_length }}
+  args:
+    creates: "{{ nginx_dh_path }}"
+
+- name: FILE | Create SSL directories
+  file: >
+    path="{{ nginx_ssl_dir + '/' + item.name }}"
+    state=directory
+  with_items: nginx_ssl_pairs
+
+- name: COPY | Deploy SSL keys
+  copy: >
+    content="{{ item.key }}"
+    dest="{{ nginx_ssl_dir + '/' + item.name + '/' + item.name + '.key' }}"
+  with_items: nginx_ssl_pairs
+  notify: reload nginx
+
+- name: COPY | Deploy SSL certs
+  copy: >
+    content="{{ item.cert }}"
+    dest="{{ nginx_ssl_dir + '/' + item.name + '/' + item.name + '.crt' }}"
+  with_items: nginx_ssl_pairs
+  notify: reload nginx
+
+#- name: FAIL | Missmatch vhost SSL configuration
+#  fail: msg="FUCK {{ item.name }}"
+#
+#
+#
+#  nginx_ssl_dir + '/' + ssl_name + '/' + ssl_name + '.key'

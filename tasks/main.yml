@@ -1,51 +1,13 @@
 ---
 
-- name: APT | Install nginx and dependencies
-  apt: >
-    pkg={{ nginx_apt_package }}
-    state=present
-    update_cache=yes
-    cache_valid_time=3600
-    default_release={{ ansible_distribution_release + '-backports' if nginx_backports else ansible_distribution_release }}
+- name: INCLUDE | Install
+  include: install.yml
 
-- name: APT | Install python-passlib
-  apt: pkg=python-passlib state=present
+- name: INCLUDE | Prepare
+  include: prepare.yml
 
-- name: SHELL | Get Nginx version
-  shell: nginx -v 2>&1 | sed -r 's#.*/##;' | cut -d ' ' -f 1
-  register: nginx_version
-  changed_when: false
-
-- name: TEMPLATE | Deploy nginx.conf
-  template: >
-    src=etc/nginx/nginx.conf.j2
-    dest=/etc/nginx/nginx.conf
-  notify: reload nginx
-
-- name: INCLUDE | Fix legacy
-  include: legacy.yml
-
-- name: FILE | Create folders
-  file: dest={{ item }} owner=root mode=0755 state=directory
-  with_items: "{{ nginx_dirs }}"
-
-#- name: COMMAND | Creates DH file
-#  command: openssl dhparam -out {{ nginx_dh_path }} {{ nginx_dh_length }}
-#  args:
-#    creates: "{{ nginx_dh_path }}"
-
-- name: TEMPLATE | Deploy all helpers
-  template: >
-    src={{ item }}
-    dest={{ nginx_helper_dir }}/{{ item | basename | regex_replace('\.j2$','') }}
-  with_fileglob: '../templates/etc/nginx/helper/*.j2'
-  notify: reload nginx
-
-- name: TEMPLATE | Deploy custom http configuration
-  template: >
-    src=etc/nginx/conf.d/custom.conf.j2
-    dest=/etc/nginx/conf.d/custom.conf
-  notify: reload nginx
+- name: INCLUDE | Install
+  include: config.yml
 
 - name: INCLUDE | Upstream configuration
   include: upstream.yml
@@ -53,6 +15,9 @@
 
 - name: INCLUDE | htpasswd configuration
   include: htpasswd.yml
+
+- name: INCLUDE | Vhosts configuration
+  include: ssl.yml
 
 - name: INCLUDE | Vhosts configuration
   include: vhost.yml

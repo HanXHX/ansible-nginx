@@ -1,11 +1,19 @@
+{% set __proto = item.proto | default(['http']) %}
+{% set __main_name =  item.name if item.name is string else item.name[0] %}
 {% set __listen = item.listen | default(['80']) %}
 {% set __listen_ssl = item.listen_ssl | default(['443']) %}
 {% set __location = item.location | default({}) %}
 {% macro htpasswd(htpasswd_name, indent=1) -%}
-{% for ht in nginx_htpasswd %}{% if ht.name == htpasswd_name %}
+{% for ht in nginx_htpasswd if ht.name == htpasswd_name %}
 {{ "\t" * indent }}auth_basic "{{ ht.description }}";
 {{ "\t" * indent }}auth_basic_user_file {{ nginx_htpasswd_dir }}/{{ ht.name }};
-{% endif %}{% endfor%}
+{% endfor%}
+{%- endmacro %}
+{% macro ssl(ssl_name) %}
+{% for sn in nginx_ssl_pairs if sn.name == ssl_name %}
+	ssl_certificate {{ nginx_ssl_dir + '/' + ssl_name + '/' + ssl_name + '.crt' }};
+	ssl_certificate_key {{ nginx_ssl_dir + '/' + ssl_name + '/' + ssl_name + '.key' }};
+{% endfor %}
 {%- endmacro %}
 #
 # {{ ansible_managed }}
@@ -15,9 +23,18 @@
 # HTTP
 #
 server {
+{% if 'http' in __proto %}
 {% for port in __listen %}
 	listen {{ port }};
 {% endfor %}
+{% endif %}
+{% if 'https' in __proto %}
+{% for port in __listen_ssl %}
+	listen {{ port }} ssl;
+{% endfor %}
+{{ ssl(item.ssl_name) }}
+	include {{ nginx_helper_dir + '/ssl-' + item.ssl_template | default('strong') }};
+{% endif %}
 	server_name {% if item.name is string %}{{ item.name }}{% else %}{{ item.name | join(' ') }}{% endif %};
 {% block root %}
 {% if item.root is defined %}
@@ -96,15 +113,6 @@ server {
 	error_log off;
 {% endif %}
 }
-
-{#
-# HTTPS
-#server {
-ssl on;
-ssl_certificate {{ nginx_ssl_dir }}/{{ item.name }}/{{ item.name }}.crt;
-ssl_certificate_key {{ nginx_ssl_dir }}/{{ item.name }}/{{ item.name }}.key;
-include {{ nginx_helper_dir }}/ssl-{{ item.ssl.template | default('strong') }};
-#}
 
 {% if item.redirect_from is defined and item.redirect_from is iterable %}
 #

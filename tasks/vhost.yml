@@ -69,19 +69,3 @@
   notify: reload nginx
   when: (item.enable is defined and not item.enable) or (item.delete is defined and item.delete)
 
-#- name: FILE | Create ssl dir per vhost (if needed)
-#  file: dest=/etc/nginx/ssl/{{ item.name }} owner=root mode=0750 state=directory
-#  with_items: nginx_vhosts
-#  when: item.ssl.use is defined and item.ssl.use
-
-# TODO...
-#- name: COPY | Deploy SSL keys if needed
-#  copy: src=keys/{{ item.name }}/{{ item.name }}.crt dest=/etc/nginx/ssl/{{ item.name }} mode=660
-#  copy: src=keys/{{ item.name }}/{{ item.name }}.key dest=/etc/nginx/ssl/{{ item.name }} mode=660
-#  with_items: nginx_vhosts
-#  when: item.ssl.use and not generatekey
-
-# TODO:
-# - deploy defaults files (index.html/index.php) allready in files/
-# - work with role "ssl_autosign"
-

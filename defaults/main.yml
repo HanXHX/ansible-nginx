@@ -8,15 +8,19 @@ nginx_backports: false
 #
 nginx_root: "/srv/www"
 nginx_log_dir: '/var/log/nginx'
-nginx_ssl_dir: '/etc/nginx/ssl'
 nginx_pid: '/run/nginx.pid'
-nginx_resolver:
-  hosts: ['8.8.8.8', '8.8.4.4']
-  valid: '300'
-  timeout: '5'
+nginx_resolver_hosts: ['8.8.8.8', '8.8.4.4']
+nginx_resolver_valid: '300s'
+nginx_resolver_timeout: '5s'
 nginx_error_log_level: 'warn' # http://nginx.org/en/docs/ngx_core_module.html#error_log
 nginx_dh_length: 2048
 
+#
+# Nginx directories
+#
+nginx_htpasswd_dir: '/etc/nginx/htpasswd'
+nginx_ssl_dir: '/etc/nginx/ssl'
+nginx_helper_dir: '/etc/nginx/helper'
 
 #
 # Load upstream
@@ -88,3 +92,8 @@ nginx_vhosts: []
 # htpasswd
 #
 nginx_htpasswd: []
+
+#
+# SSL pairs
+#
+nginx_ssl_pairs: []

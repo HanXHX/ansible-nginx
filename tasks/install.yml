@@ -1,0 +1,13 @@
+---
+
+- name: APT | Install nginx and dependencies
+  apt: >
+    pkg={{ nginx_apt_package }}
+    state=present
+    update_cache=yes
+    cache_valid_time=3600
+    default_release={{ ansible_distribution_release + '-backports' if nginx_backports else ansible_distribution_release }}
+
+- name: APT | Install python-passlib
+  apt: pkg=python-passlib state=present
+
