@@ -2,6 +2,7 @@
 
 - hosts: all
   pre_tasks:
+    - apt_repository: repo='deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main' state=present
     - apt: pkg={{ item }} update_cache=yes cache_valid_time=3600 state=present
       with_items:
         - php5-fpm
@@ -10,6 +11,7 @@
     - service: name=fcgiwrap state=started
     - pause: seconds=5
   vars:
+    nginx_backports: true
     nginx_php: true
     nginx_upstreams:
       - name: 'test'

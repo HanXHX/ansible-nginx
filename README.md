@@ -10,12 +10,13 @@ SSL management will come later.
 Requirements
 ------------
 
-None.
+None. If you set true to `nginx_backports`, you must install backports repository before lauching this role.
 
 Role Variables
 --------------
 
   - `nginx_apt_package`: APT nginx package (try: apt-cache search ^nginx)
+  - `nginx_backports`: Install nginx from backport repository (bool)
   - `nginx_root`: root directory where you want to have your files
   - `nginx_log_dir`: log directory (if you change it, don't forget to change logrotate config)
   - `nginx_ssl_dir`: directory where you install your SSL/TLS keys
