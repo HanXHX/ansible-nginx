@@ -19,18 +19,21 @@
     path="{{ nginx_ssl_dir + '/' + item.name }}"
     state=directory
   with_items: nginx_ssl_pairs
+  when: item.dest_key is not defined or item.dest_cert is not defined
 
 - name: COPY | Deploy SSL keys
   copy: >
     content="{{ item.key }}"
-    dest="{{ nginx_ssl_dir + '/' + item.name + '/' + item.name + '.key' }}"
+    dest="{{ nginx_ssl_dir + '/' + item.name + '/' + item.name + '.key' if item.dest_key is not defined else item.dest_key }}"
   with_items: nginx_ssl_pairs
+  when: item.key is defined
   notify: reload nginx
 
 - name: COPY | Deploy SSL certs
   copy: >
     content="{{ item.cert }}"
-    dest="{{ nginx_ssl_dir + '/' + item.name + '/' + item.name + '.crt' }}"
+    dest="{{ nginx_ssl_dir + '/' + item.name + '/' + item.name + '.crt' if item.dest_cert is not defined else item.dest_cert }}"
   with_items: nginx_ssl_pairs
+  when: item.cert is defined
   notify: reload nginx
 

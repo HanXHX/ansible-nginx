@@ -12,6 +12,9 @@
       register: sf
     - pause: seconds=5
       when: sf.changed
+    - file: path=/etc/ansible-ssl state=directory
+    - copy: src=file/test.crt dest=/etc/ansible-ssl/test.crt
+    - copy: src=file/test.key dest=/etc/ansible-ssl/test.key
   vars:
     nginx_backports: true
     nginx_php: true
@@ -36,6 +39,9 @@
         users: []
         state: 'absent'
     nginx_ssl_pairs:
+      - name: 'test-ssl-predeployed.local'
+        dest_key: /etc/ansible-ssl/test.key
+        dest_cert: /etc/ansible-ssl/test.crt
       - name: 'test-ssl.local'
         key: |
           -----BEGIN RSA PRIVATE KEY-----
@@ -141,6 +147,10 @@
         proto: ['http', 'https']
         template: '_base'
         ssl_name: 'test-ssl.local'
+      - name: 'test-ssl-predeployed.local'
+        proto: ['http', 'https']
+        template: '_base'
+        ssl_name: 'test-ssl-predeployed.local'
   roles:
     - ../../
   post_tasks:
@@ -151,7 +161,7 @@
       with_items: ['test-php.local', 'test-php-index.local']
     - name: -- Add HTML file --
       copy: dest="{{ item }}/index.html" content="Index HTML test OK\n"
-      with_items: ['{{ nginx_root }}/test.local/public', '/var/tmp', '{{ nginx_root }}/test-htpasswd-all.local/public', '{{ nginx_root }}/test-ssl.local/public']
+      with_items: ['{{ nginx_root }}/test.local/public', '/var/tmp', '{{ nginx_root }}/test-htpasswd-all.local/public', '{{ nginx_root }}/test-ssl.local/public', '{{ nginx_root }}/test-ssl-predeployed.local/public']
     - name: -- VERIFY VHOSTS --
       command: "curl -H 'Host: {{ item.name if item.name is string else item.name[0] }}' http://127.0.0.1{% if item.listen is defined %}:{{ item.listen[0] }}{% endif %}/"
       with_items: nginx_vhosts
@@ -200,7 +210,10 @@
       register: authbpc
       failed_when: authbpc.stdout.find('BackupPC Server Status') == -1
     - name: -- VERIFY SSL --
-      command: "curl --insecure -H 'Host: test-ssl.local' https://127.0.0.1/"
+      command: "curl --insecure -H 'Host: {{ item }}' https://127.0.0.1/"
       changed_when: false
       failed_when: authok.stdout.find('Index HTML test OK') != -1
+      with_items:
+        - 'test-ssl-predeployed.local'
+        - 'test-ssl.local'
 

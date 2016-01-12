@@ -18,10 +18,25 @@ Cert/Key pairs
 This list have 3 mandatory keys:
 
 - `name`: MUST be unique 
+
 - `key`: content of the private key
 - `cert`: content of the public key
 
+OR
+
+- `dest_cert`: remote path where certificate is located
+- `dest_key`: remote path where key is located
+
+
 Note: `name` is used to deploy key/cert. With defaults values dans `name` = "foo", key is -> /etc/nginx/ssl/foo/foo.key
+
+Tips
+----
+
+Deploying key/cert is not mandatory with this role. You can manage it in other place ([letsencrypt](https://letsencrypt.org/)? :)). You just need to set `dest_cert` and `dest_key`!
+
+If you set all, you can deploy your key everywhere with wanted data!
+
 
 Diffie-Hellman
 --------------
