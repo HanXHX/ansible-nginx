@@ -15,7 +15,7 @@ Each htpasswd has few keys:
 
 `nginx_htpasswd` should be placed in a vaut file.
 
-Exemple
+Example
 -------
 
 ```

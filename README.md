@@ -5,7 +5,13 @@ Nginx for Debian Ansible role
 
 Install and configure Nginx on Debian.
 
-SSL management will come later.
+Features:
+
+- SSL/TLS "hardened" support
+- Manage basic auth on vhost / location
+- Proxy + Upstream
+- Fast PHP configuration
+- Preconfigured vhost templates (should work on many app)
 
 Requirements
 ------------
@@ -17,24 +23,24 @@ Role Variables
 
 ### Packaging
 
-  - `nginx_apt_package`: APT nginx package (try: apt-cache search ^nginx)
-  - `nginx_backports`: Install nginx from backport repository (bool)
+- `nginx_apt_package`: APT nginx package (try: apt-cache search ^nginx)
+- `nginx_backports`: Install nginx from backport repository (bool)
 
 ### Shared
 
-  - `nginx_root`: root directory where you want to have your files
-  - `nginx_log_dir`: log directory (if you change it, don't forget to change logrotate config)
-  - `nginx_resolver`: list of DNS resolver (default: OpenDNS)
-  - `nginx_error_log_level`: default log level
+- `nginx_root`: root directory where you want to have your files
+- `nginx_log_dir`: log directory (if you change it, don't forget to change logrotate config)
+- `nginx_resolver`: list of DNS resolver (default: OpenDNS)
+- `nginx_error_log_level`: default log level
 
 ### Nginx Configuration
 
-  - `nginx_user`
-  - `nginx_worker_processes`
-  - `nginx_pid`: daemon pid file
-  - `nginx_events_*`: all variables in events block
-  - `nginx_http_*`: all variables in http block
-  - `nginx_custom_http`: instructions list (will put data in `/etc/nginx/conf.d/custom.conf`)
+- `nginx_user`
+- `nginx_worker_processes`
+- `nginx_pid`: daemon pid file
+- `nginx_events_*`: all variables in events block
+- `nginx_http_*`: all variables in http block
+- `nginx_custom_http`: instructions list (will put data in `/etc/nginx/conf.d/custom.conf`)
 
 Fine configuration
 ------------------

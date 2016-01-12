@@ -15,3 +15,4 @@ Each socket have:
 - `max_fails`
 - `fail_timeout`
 
+With default configuration, it works fine with PHP-FPM. But if you install PHP7 with Dotdeb, path changed between version, you must set well this list.
