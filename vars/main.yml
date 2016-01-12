@@ -1,5 +1,3 @@
-nginx_dh_path: /etc/nginx/ssl/dhparams.pem
-
 nginx_upstream_server_params:
   - key: 'weight'
     default: 1
@@ -28,5 +26,4 @@ nginx_dirs:
   - "{{ nginx_htpasswd_dir }}"
   - "{{ nginx_ssl_dir }}"
   - "{{ nginx_helper_dir }}"
-
 

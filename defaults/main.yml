@@ -13,7 +13,6 @@ nginx_resolver_hosts: ['8.8.8.8', '8.8.4.4']
 nginx_resolver_valid: '300s'
 nginx_resolver_timeout: '5s'
 nginx_error_log_level: 'warn' # http://nginx.org/en/docs/ngx_core_module.html#error_log
-nginx_dh_length: 2048
 
 #
 # Nginx directories
@@ -97,3 +96,10 @@ nginx_htpasswd: []
 # SSL pairs
 #
 nginx_ssl_pairs: []
+
+#
+# Diffie-Helman
+#
+nginx_dh: null
+nginx_dh_path: '{{ nginx_ssl_dir }}/dhparam.pem'
+nginx_dh_length: 2048

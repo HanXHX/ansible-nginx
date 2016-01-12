@@ -13,5 +13,6 @@ ssl_stapling on;
 ssl_stapling_verify on;
 resolver {{ nginx_resolver_hosts | join(' ') }} valid={{ nginx_resolver_valid }};
 resolver_timeout {{ nginx_resolver_timeout }};
+ssl_dhparam {{ nginx_dh_path }};
 
 # vim:filetype=nginx

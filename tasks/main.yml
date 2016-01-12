@@ -15,7 +15,7 @@
 - name: INCLUDE | htpasswd configuration
   include: htpasswd.yml
 
-- name: INCLUDE | Vhosts configuration
+- name: INCLUDE | SSL configuration
   include: ssl.yml
 
 - name: INCLUDE | Vhosts configuration
