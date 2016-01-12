@@ -1,5 +1,10 @@
 ---
 
+- name: FAIL | Check vhost and SSL/TLS support
+  fail: msg="Missmatch configuration for vhost {{ item.name if item.name is string else item.name[0] }}"
+  when: 'https' in item.proto and item.ssl_name is not defined
+  with_items: nginx_vhosts
+
 - name: FILE | Create root directory
   file: >
     path={{ nginx_root }}
