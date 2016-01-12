@@ -98,7 +98,7 @@ nginx_htpasswd: []
 nginx_ssl_pairs: []
 
 #
-# Diffie-Helman
+# Diffie-Hellman
 #
 nginx_dh: null
 nginx_dh_path: '{{ nginx_ssl_dir }}/dhparam.pem'
