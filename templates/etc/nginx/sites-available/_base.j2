@@ -40,7 +40,7 @@ server {
 {% if item.root is defined %}
 	root {{ item.root }};
 {% else %}
-	root {{ nginx_root }}/{{ item.name if item.name is string else item.name[0] }}/public;
+	root {{ nginx_root }}/{{ __main_name }}/public;
 {% endif %}
 {% endblock %}
 {% block template_index %}
@@ -103,12 +103,12 @@ server {
 {% endif %}
 
 {% if item.use_access_log is defined and item.use_access_log %}
-	access_log {{ nginx_log_dir }}/{{ item.name[0] }}_access.log combined;
+	access_log {{ nginx_log_dir }}/{{ __main_name }}_access.log combined;
 {% else %}
 	access_log off;
 {% endif %}
 {% if item.use_error_log is defined and item.use_error_log %}
-	error_log {{ nginx_log_dir }}/{{ item.name[0] }}_error.log {{ nginx_error_log_level }};
+	error_log {{ nginx_log_dir }}/{{ __main_name }}_error.log {{ nginx_error_log_level }};
 {% else %}
 	error_log off;
 {% endif %}
@@ -123,7 +123,7 @@ server {
 	listen {{ port }};
 {% endfor %}
 	server_name {{ item.redirect_from | join(' ') }};
-	return 301 $scheme://{{ item.name[0] }}$request_uri;
+	return 301 $scheme://{{ __main_name }}$request_uri;
 }
 {% endif %}
 
