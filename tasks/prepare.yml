@@ -5,6 +5,11 @@
   register: nginx_version
   changed_when: false
 
+- name: SHELL | Get module list
+  shell: nginx -V 2>&1 | tr -- - '\n' | grep -A 1 with | grep _module | sed -r 's/_module\s*$//g' |sort
+  register: nginx_modules
+  changed_when: false
+
 - name: FILE | Create folders
   file: dest={{ item }} owner=root mode=0755 state=directory
   with_items: "{{ nginx_dirs }}"

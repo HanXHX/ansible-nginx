@@ -12,6 +12,7 @@ Features:
 - Proxy + Upstream
 - Fast PHP configuration
 - Preconfigured vhost templates (should work on many app)
+- Auto-configure HTTP2 on SSL/TLS vhosts
 
 Requirements
 ------------
@@ -32,6 +33,7 @@ Role Variables
 - `nginx_log_dir`: log directory (if you change it, don't forget to change logrotate config)
 - `nginx_resolver`: list of DNS resolver (default: OpenDNS)
 - `nginx_error_log_level`: default log level
+- `nginx_auto_config_httpv2`: boolean, auto configure HTTP2 where possible
 
 ### Nginx Configuration
 
