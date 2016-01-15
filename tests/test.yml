@@ -143,6 +143,9 @@
       - name: 'backuppc.local'
         template: '_backuppc'
         htpasswd: 'hello'
+      - name: 'nagios3.local'
+        template: '_nagios3'
+        htpasswd: 'hello'
       - name: 'test-ssl.local'
         proto: ['http', 'https']
         template: '_base'
@@ -154,7 +157,10 @@
   roles:
     - ../../
   post_tasks:
-    - apt: pkg=backuppc state=present
+    - apt: pkg={{ item }} state=present
+      with_items:
+        - nagios3
+        - backuppc
     - service: name=backuppc state=started
     - name: -- Add PHP file --
       copy: dest="{{ nginx_root }}/{{ item }}/public/index.php" content="<?php phpinfo();"
@@ -209,6 +215,13 @@
       changed_when: false
       register: authbpc
       failed_when: authbpc.stdout.find('BackupPC Server Status') == -1
+    - name: -- VERIFY NAGIOS3 PHP --
+      command: "curl -u hanx:qwerty -H 'Host: nagios3.local' http://127.0.0.1/side.php"
+      changed_when: false
+      failed_when: authok.stdout.find('Nagios Core') != -1
+    - name: -- VERIFY NAGIOS3 CGI --
+      command: "curl -u hanx:qwerty -H 'Host: nagios3.local' http://127.0.0.1/side.php"
+      changed_when: false
     - name: -- VERIFY SSL --
       command: "curl --insecure -H 'Host: {{ item }}' https://127.0.0.1/"
       changed_when: false
