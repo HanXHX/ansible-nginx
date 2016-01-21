@@ -10,9 +10,12 @@
         - php5-fpm
         - curl
         - fcgiwrap
-    - name: SERVICE | Force start fcgiwrap
-      service: name=fcgiwrap state=started
+    - name: SERVICE | Force start services
+      service: name={{ item }} state=started
       register: sf
+      with_items:
+        - php5-fpm
+        - fcgiwrap
     - name: PAUSE | Prevent bugs (CGI not fully loaded)
       pause: seconds=5
       when: sf.changed
@@ -218,6 +221,16 @@
       changed_when: false
       register: r
       failed_when: r.stdout.find('301 Moved Permanently') == -1
+
+# --------------------------------
+# PHP
+# --------------------------------
+    - name: -- VERIFY PHP VHOSTS --
+      command: "curl -H 'Host: {{ item }}' http://127.0.0.1/"
+      register: p
+      changed_when: false
+      failed_when: p.stdout.find('PHP Version') == -1
+      with_items: ['test-php.local', 'test-php-index.local']
 
 # --------------------------------
 # Basic Auth
