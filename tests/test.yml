@@ -2,20 +2,30 @@
 
 - hosts: all
   pre_tasks:
-    - apt_repository: repo='deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main' state=present
-    - apt: pkg={{ item }} update_cache=yes cache_valid_time=3600 state=present
+    - name: APT_REPOSITORY | Install backports
+      apt_repository: repo='deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main' state=present
+    - name: APT | Install needed packages
+      apt: pkg={{ item }} update_cache=yes cache_valid_time=3600 state=present
       with_items:
         - php5-fpm
         - curl
         - fcgiwrap
-    - service: name=fcgiwrap state=started
+    - name: SERVICE | Force start fcgiwrap
+      service: name=fcgiwrap state=started
       register: sf
-    - pause: seconds=5
+    - name: PAUSE | Prevent bugs (CGI not fully loaded)
+      pause: seconds=5
       when: sf.changed
-    - file: path=/etc/ansible-ssl state=directory
-    - copy: src=file/test.crt dest=/etc/ansible-ssl/test.crt
-    - copy: src=file/test.key dest=/etc/ansible-ssl/test.key
+    - name: FILE | Create an internal SSL dir
+      file: path={{ int_ansible_ssl_dir }} state=directory
+    - name: COPY | Deploy test certificate
+      copy: src=file/test.crt dest={{ int_ansible_ssl_dir }}/test.crt
+    - name: COPY | Deploy test key
+      copy: src=file/test.key dest={{ int_ansible_ssl_dir }}/test.key
   vars:
+# Internal vars
+    int_ansible_ssl_dir: '/etc/ansible-ssl'
+# Role vars
     nginx_backports: true
     nginx_php: true
     nginx_upstreams:
@@ -45,8 +55,8 @@
         state: 'absent'
     nginx_ssl_pairs:
       - name: 'test-ssl-predeployed.local'
-        dest_key: /etc/ansible-ssl/test.key
-        dest_cert: /etc/ansible-ssl/test.crt
+        dest_key: "{{ int_ansible_ssl_dir }}/test.key"
+        dest_cert: "{{ int_ansible_ssl_dir }}/test.crt"
       - name: 'test-ssl.local'
         key: |
           -----BEGIN RSA PRIVATE KEY-----
@@ -162,17 +172,30 @@
   roles:
     - ../../
   post_tasks:
-    - apt: pkg={{ item }} state=present
+# --------------------------------
+# Apps
+# --------------------------------
+    - name: APT | Install web apps
+      apt: pkg={{ item }} state=present
       with_items:
         - nagios3
         - backuppc
-    - service: name=backuppc state=started
+    - name: SERVICE | Ensure backuppc is started
+      service: name=backuppc state=started
+
+# --------------------------------
+# Deploy index files
+# --------------------------------
     - name: -- Add PHP file --
       copy: dest="{{ nginx_root }}/{{ item }}/public/index.php" content="<?php phpinfo();"
       with_items: ['test-php.local', 'test-php-index.local']
     - name: -- Add HTML file --
       copy: dest="{{ item }}/index.html" content="Index HTML test OK\n"
       with_items: ['{{ nginx_root }}/test.local/public', '/var/tmp', '{{ nginx_root }}/test-htpasswd-all.local/public', '{{ nginx_root }}/test-ssl.local/public', '{{ nginx_root }}/test-ssl-predeployed.local/public']
+
+# --------------------------------
+# Simple vhosts tests
+# --------------------------------
     - name: -- VERIFY VHOSTS --
       command: "curl -H 'Host: {{ item.name if item.name is string else item.name[0] }}' http://127.0.0.1{% if item.listen is defined %}:{{ item.listen[0] }}{% endif %}/"
       with_items: nginx_vhosts
@@ -190,6 +213,10 @@
       changed_when: false
       register: r
       failed_when: r.stdout.find('301 Moved Permanently') == -1
+
+# --------------------------------
+# Basic Auth
+# --------------------------------
     - name: -- VERIFY AUTH BASIC NONE --
       command: "curl -H 'Host: test-htpasswd.local' http://127.0.0.1/hello"
       changed_when: false
@@ -215,6 +242,10 @@
       changed_when: false
       register: authgok
       failed_when: authgok.stdout.find('401 Authorization Required') != -1
+
+# --------------------------------
+# BackupPC
+# --------------------------------
     - name: -- VERIFY BACKUPPC --
       command: "curl -u hanx:qwerty -H 'Host: backuppc.local' http://127.0.0.1/"
       changed_when: false
@@ -237,7 +268,8 @@
     - name: -- VERIFY SSL --
       command: "curl --insecure -H 'Host: {{ item }}' https://127.0.0.1/"
       changed_when: false
-      failed_when: authok.stdout.find('Index HTML test OK') != -1
+      register: sslok
+      failed_when: sslok.stdout.find('Index HTML test OK') == -1
       with_items:
         - 'test-ssl-predeployed.local'
         - 'test-ssl.local'
