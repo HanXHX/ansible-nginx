@@ -34,6 +34,11 @@
             state: 'absent'
           - name: 'hanx'
             password: 'qwerty'
+      - name: 'nagios'
+        description: 'Please login to Nagios!'
+        users:
+          - name: 'nagiosadmin'
+            password: 'nagios'
       - name: 'deleteme'
         description: 'Please login!'
         users: []
@@ -145,7 +150,7 @@
         htpasswd: 'hello'
       - name: 'nagios3.local'
         template: '_nagios3'
-        htpasswd: 'hello'
+        htpasswd: 'nagios'
       - name: 'test-ssl.local'
         proto: ['http', 'https']
         template: '_base'
@@ -215,13 +220,20 @@
       changed_when: false
       register: authbpc
       failed_when: authbpc.stdout.find('BackupPC Server Status') == -1
+
+# --------------------------------
+# Nagios
+# --------------------------------
     - name: -- VERIFY NAGIOS3 PHP --
-      command: "curl -u hanx:qwerty -H 'Host: nagios3.local' http://127.0.0.1/side.php"
+      command: "curl -u nagiosadmin:nagios -H 'Host: nagios3.local' http://127.0.0.1/side.php"
       changed_when: false
-      failed_when: authok.stdout.find('Nagios Core') != -1
+      register: nagios_php
+      failed_when: nagios_php.stdout.find('Nagios Core') == -1
     - name: -- VERIFY NAGIOS3 CGI --
-      command: "curl -u hanx:qwerty -H 'Host: nagios3.local' http://127.0.0.1/side.php"
+      command: "curl -u nagiosadmin:nagios -H 'Host: nagios3.local' http://127.0.0.1/cgi-bin/nagios3/summary.cgi"
       changed_when: false
+      register: nagios_cgi
+      failed_when: nagios_cgi.stdout.find('Nagios Event Summary') == -1
     - name: -- VERIFY SSL --
       command: "curl --insecure -H 'Host: {{ item }}' https://127.0.0.1/"
       changed_when: false

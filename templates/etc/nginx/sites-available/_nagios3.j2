@@ -5,7 +5,6 @@
 {% endblock %}
 
 {% block template_try_files %}
-	try_files $uri $uri/;
 {% endblock %}
 
 {% block template_index %}
@@ -21,18 +20,18 @@
 		alias /etc/nagios3/stylesheets;
 		expires 60d;
 	}
-	location /nagios3 {
-		alias /usr/share/nagios3/htdocs;
-	}
 {% endblock %}
 
 {% block template_upstream_location %}
-	location ~ \.cgi$ {
-		alias /usr/lib/cgi-bin/nagios3;
-		gzip off;
-		include /etc/nginx/fastcgi_params;
+	location /cgi-bin/nagios3 {
+		root /usr/lib;
+		try_files $uri =404;
+{% if nginx_version.stdout | version_compare('1.6.1', 'lt') %}
+		include fastcgi_params;
+{% else %}
+		include fastcgi.conf;
+{% endif %}
 		fastcgi_pass unix:/var/run/fcgiwrap.socket;
-		fastcgi_param SCRIPT_FILENAME /usr/lib/cgi-bin/nagios3$fastcgi_script_name; 
 		fastcgi_param AUTH_USER $remote_user;
 		fastcgi_param REMOTE_USER $remote_user;
 	}
