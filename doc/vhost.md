@@ -56,3 +56,10 @@ You have many key added to vhost key:
 
 (O) : Optional
 
+Default vhosts
+--------------
+
+You can manage default vhost by setting domain name to these variables.
+
+- `nginx_default_vhost`
+- `nginx_default_vhost_ssl`

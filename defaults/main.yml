@@ -14,6 +14,8 @@ nginx_resolver_valid: '300s'
 nginx_resolver_timeout: '5s'
 nginx_error_log_level: 'warn' # http://nginx.org/en/docs/ngx_core_module.html#error_log
 nginx_auto_config_httpv2: true
+nginx_default_vhost: null
+nginx_default_vhost_ssl: null
 
 #
 # Nginx directories

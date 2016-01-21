@@ -108,6 +108,8 @@
           -----END CERTIFICATE-----
     nginx_custom_http:
       - 'add_header X-ansible 1;'
+    nginx_default_vhost: 'test.local'
+    nginx_default_vhost_ssl: 'test-ssl-predeployed.local'
     nginx_vhosts:
       - name:
           - 'test.local'
@@ -118,6 +120,7 @@
         manage_local_content: false
         more:
           - 'autoindex off;'
+          - 'add_header X-ansible-default 1;'
         location:
           '/test':
             - 'return 403;'
@@ -169,6 +172,8 @@
         proto: ['http', 'https']
         template: '_base'
         ssl_name: 'test-ssl-predeployed.local'
+        more:
+          - 'add_header X-ansible-default 1;'
   roles:
     - ../../
   post_tasks:
@@ -265,6 +270,10 @@
       changed_when: false
       register: nagios_cgi
       failed_when: nagios_cgi.stdout.find('Nagios Event Summary') == -1
+
+# --------------------------------
+# SSL
+# --------------------------------
     - name: -- VERIFY SSL --
       command: "curl --insecure -H 'Host: {{ item }}' https://127.0.0.1/"
       changed_when: false
@@ -274,3 +283,30 @@
         - 'test-ssl-predeployed.local'
         - 'test-ssl.local'
 
+# --------------------------------
+# Default vhosts
+# --------------------------------
+    - name: -- VERIFY DEFAULT VHOST --
+      command: "curl -v http://127.0.0.1/"
+      changed_when: false
+      register: vdefault
+      failed_when: >
+        vdefault.stdout.find('Index HTML test OK') == -1 or
+        vdefault.stderr.find('X-ansible-default') == -1
+    - name: -- VERIFY DEFAULT SSL VHOST --
+      command: "curl --insecure -v https://127.0.0.1/"
+      changed_when: false
+      register: defaultssl
+      failed_when: >
+        defaultssl.stdout.find('Index HTML test OK') == -1 or
+        defaultssl.stderr.find('X-ansible-default') == -1
+    - name: -- VERIFY NOT DEFAULT VHOST --
+      command: "curl -v -H 'Host: test-php.local' http://127.0.0.1/"
+      changed_when: false
+      register: vphp
+      failed_when: vphp.stderr.find('X-ansible-default') != -1
+    - name: -- VERIFY NOT DEFAULT SSL VHOST --
+      command: "curl --insecure -v -H 'Host: test-ssl.local' https://127.0.0.1/"
+      changed_when: false
+      register: notdefaultssl
+      failed_when: notdefaultssl.stderr.find('X-ansible-default') != -1
