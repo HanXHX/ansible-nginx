@@ -157,6 +157,8 @@
           - 8080
         template: '_proxy'
         upstream_name: 'test'
+        more:
+          - 'add_header X-proxyfied 1;'
       - name: 'deleted.local'
         delete: true
       - name: 'redirect-to.local'
