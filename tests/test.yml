@@ -179,6 +179,7 @@
         ssl_name: 'test-ssl-predeployed.local'
         more:
           - 'add_header X-ansible-default 1;'
+    nginx_dh_length: 1024
   roles:
     - ../../
   post_tasks:
