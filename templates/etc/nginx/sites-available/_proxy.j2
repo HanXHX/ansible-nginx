@@ -4,6 +4,7 @@
 {% if item.root is defined %}
 	root {{ item.root }};
 {% endif %}
+{% endblock %}
 
 {% block template_try_files %}
 		include /etc/nginx/proxy_params;

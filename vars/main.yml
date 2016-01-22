@@ -27,3 +27,7 @@ nginx_dirs:
   - "{{ nginx_ssl_dir }}"
   - "{{ nginx_helper_dir }}"
 
+nginx_templates_no_dir:
+  - '_proxy'
+  - '_nagios3'
+  - '_backuppc'

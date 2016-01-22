@@ -23,7 +23,7 @@
   with_items: nginx_vhosts
   when: >
     item.root is not defined and
-    (item.template is defined and item.template != '_proxy') and
+    (item.template is defined and item.template not in nginx_templates_no_dir) and
     (item.delete is not defined or not item.delete) and
     item.redirect_to is not defined
 
@@ -37,7 +37,7 @@
   with_items: nginx_vhosts
   when: >
     item.root is not defined and
-    (item.template is defined and item.template != '_proxy') and
+    (item.template is defined and item.template not in nginx_templates_no_dir) and
     (item.delete is not defined or not item.delete) and
     item.redirect_to is not defined
 
