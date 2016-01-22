@@ -12,9 +12,9 @@
 {% endblock %}
 
 {% block template_local_content %}
-    location ~ /\.ht {
+	location ~ /\.ht {
 		deny all;
-    }
+	}
 
 	location /backuppc/image {
 		alias /usr/share/backuppc/image;
