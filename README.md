@@ -53,8 +53,6 @@ Fine configuration
 
 [Upstream Configuration](doc/upstream.md)
 
-[Vhost configuration](doc/vhost.md)
-
 [SSL/TLS Configuration](doc/ssl.md)
 
 [Basic Auth](doc/auth.md)
