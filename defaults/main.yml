@@ -81,9 +81,9 @@ nginx_http_gzip_vary: 'on'
 nginx_http_gzip_disable: '"msie6"'
 
 #
-# nginx_http_custom
+# Custom global configuration
 #
-nginx_http_custom: []
+nginx_custom_http: []
 
 #
 # Vhosts
