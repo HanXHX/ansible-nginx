@@ -13,20 +13,6 @@
     path={{ nginx_root }}
     state=directory
 
-- name: FILE | Create root folders (foreach nginx_vhosts)
-  file: >
-    path={{ nginx_root }}/{{ item.name if item.name is string else item.name[0] }}
-    state=directory
-    owner={{ item.owner | default('www-data') }}
-    group={{ item.group | default('www-data') }}
-    mode={{ item.mode | default('0755') }}
-  with_items: nginx_vhosts
-  when: >
-    item.root is not defined and
-    (item.template is defined and item.template not in nginx_templates_no_dir) and
-    (item.delete is not defined or not item.delete) and
-    item.redirect_to is not defined
-
 - name: FILE | Create root public folders (foreach nginx_vhosts)
   file: >
     path={{ nginx_root }}/{{ item.name if item.name is string else item.name[0] }}/public
@@ -48,10 +34,6 @@
   with_items: nginx_vhosts
   notify: reload nginx
   when: item.delete is not defined or not item.delete
-
-#- name: COPY | Add index.html / index.php
-#  copy: src={{ item }} dest={{ nginx_root }}/{{ item.name }}/public/{{ item }} owner=www-data group=www-data mode=0666
-#  with_fileglob: "web/*"
 
 - name: FILE | Delete vhosts
   file: path=/etc/nginx/sites-available/{{ item.name if item.name is string else item.name[0] }} state=absent
