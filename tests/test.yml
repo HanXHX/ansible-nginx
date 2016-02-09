@@ -129,6 +129,11 @@
             - 'return 403;'
           '/gunther':
             - 'return 404;'
+          '/status':
+            - 'stub_status on;'
+            - 'access_log off;'
+            - 'allow 127.0.0.1;'
+            - 'deny all;'
       - name: 'test-htpasswd.local'
         template: '_base'
         location:
@@ -326,3 +331,10 @@
       changed_when: false
       register: notdefaultssl
       failed_when: notdefaultssl.stderr.find('X-ansible-default') != -1
+    - name: -- VERIFY DEFAULT VHOST + STUB_STATUS --
+      command: "curl -v http://127.0.0.1/status"
+      changed_when: false
+      register: vdefault_status
+      failed_when: >
+        vdefault_status.stderr.find('X-ansible-default') == -1 or
+        vdefault_status.stdout.find('Active connections') == -1
