@@ -10,6 +10,7 @@ Common
 
 - `name`: (M) Domain or list of domain used.
 - `template`: (D) template used to create vhost. Optional if you set `delete` to true or using `redirect_tor`.
+- `filename`: (O) Specify filename in /etc/nginx/sites-*. Do NOT specify default (reserved keyword).
 - `enable`: (O) Enable the vhost (default is true)
 - `delete`: (O) Delete the vhost (default is false)
 - `redirect_from`: (O) Domain list to redirect to the first `name`. You can use this key to redirect non-www to www

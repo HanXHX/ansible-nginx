@@ -1,5 +1,10 @@
 ---
 
+- name: FAIL | Check filenames
+  fail: msg="Forbidden keyword default on vhost {{ item.name if item.name is string else item.name[0] }}"
+  when: item.filename is defined and item.filename == 'default'
+  with_items: nginx_vhosts
+
 - name: FAIL | Check vhost and SSL/TLS support
   fail: msg="Missmatch configuration for vhost {{ item.name if item.name is string else item.name[0] }}"
   when: >
@@ -30,21 +35,21 @@
 - name: TEMPLATE | Create vhosts
   template: >
     src=etc/nginx/sites-available/{{ item.template if item.redirect_to is not defined else '_redirect' }}.j2
-    dest=/etc/nginx/sites-available/{{ item.name if item.name is string else item.name[0] }}
+    dest=/etc/nginx/sites-available/{{ item.filename | default(item.name if item.name is string else item.name[0]) }}
   with_items: nginx_vhosts
   notify: reload nginx
   when: item.delete is not defined or not item.delete
 
 - name: FILE | Delete vhosts
-  file: path=/etc/nginx/sites-available/{{ item.name if item.name is string else item.name[0] }} state=absent
+  file: path=/etc/nginx/sites-available/{{ item.filename | default(item.name if item.name is string else item.name[0]) }} state=absent
   with_items: nginx_vhosts
   notify: reload nginx
   when: item.delete is defined and item.delete
 
 - name: FILE | Enable vhosts
   file: >
-    src=/etc/nginx/sites-available/{{ item.name if item.name is string else item.name[0] }}
-    dest=/etc/nginx/sites-enabled/{{ item.name if item.name is string else item.name[0] }}
+    src=/etc/nginx/sites-available/{{ item.filename | default(item.name if item.name is string else item.name[0]) }}
+    dest=/etc/nginx/sites-enabled/{{ item.filename | default(item.name if item.name is string else item.name[0]) }}
     state=link
   with_items: nginx_vhosts
   notify: reload nginx
@@ -54,7 +59,7 @@
     (item.delete is not defined or not item.delete)
 
 - name: FILE | Disable vhosts
-  file: path=/etc/nginx/sites-enabled/{{ item.name if item.name is string else item.name[0] }} state=absent
+  file: path=/etc/nginx/sites-enabled/{{ item.filename | default(item.name if item.name is string else item.name[0]) }} state=absent
   with_items: nginx_vhosts
   notify: reload nginx
   when: (item.enable is defined and not item.enable) or (item.delete is defined and item.delete)
