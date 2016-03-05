@@ -1,0 +1,18 @@
+---
+
+- name: APT_REPOSITORY | Install backports
+  apt_repository: repo='deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main' state=present
+
+- name: APT | Install needed packages
+  apt: pkg={{ item }} update_cache=yes cache_valid_time=3600 state=present
+  with_items:
+    - php5-fpm
+    - curl
+    - fcgiwrap
+
+- name: SERVICE | Force start services
+  service: name={{ item }} state=started
+  register: sf
+  with_items:
+    - php5-fpm
+    - fcgiwrap

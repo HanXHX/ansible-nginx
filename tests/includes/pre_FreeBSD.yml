@@ -1,0 +1,5 @@
+---
+
+- name: SET_FACT | FreeBSD web user
+  set_fact:
+    nginx_user: 'www'
