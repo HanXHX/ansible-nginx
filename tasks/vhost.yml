@@ -6,7 +6,7 @@
     item.proto is defined and
     'https' in item.proto and
     item.ssl_name is not defined
-  with_items: nginx_vhosts
+  with_items: "{{ nginx_vhosts }}"
 
 - name: FILE | Create root directory
   file: >
@@ -20,7 +20,7 @@
     owner={{ item.owner | default('www-data') }}
     group={{ item.group | default('www-data') }}
     mode={{ item.mode | default('0755') }}
-  with_items: nginx_vhosts
+  with_items: "{{ nginx_vhosts }}"
   when: >
     item.root is not defined and
     (item.template is defined and item.template not in nginx_templates_no_dir) and
@@ -31,13 +31,13 @@
   template: >
     src=etc/nginx/sites-available/{{ item.template if item.redirect_to is not defined else '_redirect' }}.j2
     dest=/etc/nginx/sites-available/{{ item.name if item.name is string else item.name[0] }}
-  with_items: nginx_vhosts
+  with_items: "{{ nginx_vhosts }}"
   notify: reload nginx
   when: item.delete is not defined or not item.delete
 
 - name: FILE | Delete vhosts
   file: path=/etc/nginx/sites-available/{{ item.name if item.name is string else item.name[0] }} state=absent
-  with_items: nginx_vhosts
+  with_items: "{{ nginx_vhosts }}"
   notify: reload nginx
   when: item.delete is defined and item.delete
 
@@ -46,7 +46,7 @@
     src=/etc/nginx/sites-available/{{ item.name if item.name is string else item.name[0] }}
     dest=/etc/nginx/sites-enabled/{{ item.name if item.name is string else item.name[0] }}
     state=link
-  with_items: nginx_vhosts
+  with_items: "{{ nginx_vhosts }}"
   notify: reload nginx
   when: >
     ((item.enable is not defined) or
@@ -55,7 +55,7 @@
 
 - name: FILE | Disable vhosts
   file: path=/etc/nginx/sites-enabled/{{ item.name if item.name is string else item.name[0] }} state=absent
-  with_items: nginx_vhosts
+  with_items: "{{ nginx_vhosts }}"
   notify: reload nginx
   when: (item.enable is defined and not item.enable) or (item.delete is defined and item.delete)
 
