@@ -11,3 +11,6 @@ services:
 
 script:
   - docker build -f tests/$PLATFORM.Dockerfile -t test-$PLATFORM . && docker run --name $PLATFORM test-$PLATFORM
+
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
