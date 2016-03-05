@@ -25,5 +25,5 @@ All this params are optional. You should see [Nginx upstream doc](http://nginx.o
 - `backup`
 - `down`
 - `route`
-- `slow`start`
+- `slow_start`
 
