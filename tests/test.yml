@@ -338,3 +338,14 @@
       failed_when: >
         vdefault_status.stderr.find('X-ansible-default') == -1 or
         vdefault_status.stdout.find('Active connections') == -1
+
+# --------------------------------
+# Check HTTP2
+# --------------------------------
+    - block:
+      - name: APT | Install nghttp2
+        apt: pkg=nghttp2 state=present
+      - name: SHELL | Check HTTP2
+        shell: nghttp -nv https://localhost 2> /dev/null | grep -q h2
+        changed_when: false
+      when: nginx_auto_config_httpv2 and 'http_v2' in nginx_modules.stdout_lines
