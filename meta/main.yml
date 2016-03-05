@@ -12,5 +12,9 @@ galaxy_info:
     - jessie
   categories:
   - web
+  - proxy
+  - http
+  - http2
+  - debian
 dependencies: []
  
