@@ -122,6 +122,7 @@
         filename : 'first-test'
         override_try_files: '$uri $uri index.htm index.html'
         manage_local_content: false
+        use_error_log: false
         more:
           - 'autoindex off;'
           - 'add_header X-ansible-default 1;'

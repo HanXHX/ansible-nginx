@@ -102,15 +102,19 @@ server {
 {% endfor %}	# <-- Custom locations
 {% endif %}
 
-{% if item.use_access_log is defined and item.use_access_log %}
+{% if item.use_access_log is defined %}
+{% if item.use_access_log %}
 	access_log {{ nginx_log_dir }}/{{ __main_name }}_access.log combined;
 {% else %}
 	access_log off;
 {% endif %}
-{% if item.use_error_log is defined and item.use_error_log %}
+{% endif %}
+{% if item.use_error_log is defined %}
+{% if item.use_error_log %}
 	error_log {{ nginx_log_dir }}/{{ __main_name }}_error.log {{ nginx_error_log_level }};
 {% else %}
 	error_log off;
+{% endif %}
 {% endif %}
 }
 
