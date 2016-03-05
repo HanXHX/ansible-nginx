@@ -17,8 +17,8 @@
   file: >
     path={{ nginx_root }}/{{ item.name if item.name is string else item.name[0] }}/public
     state=directory
-    owner={{ item.owner | default('www-data') }}
-    group={{ item.group | default('www-data') }}
+    owner={{ item.owner | default(nginx_user) }}
+    group={{ item.group | default(nginx_user) }}
     mode={{ item.mode | default('0755') }}
   with_items: "{{ nginx_vhosts }}"
   when: >
@@ -30,21 +30,21 @@
 - name: TEMPLATE | Create vhosts
   template: >
     src=etc/nginx/sites-available/{{ item.template if item.redirect_to is not defined else '_redirect' }}.j2
-    dest=/etc/nginx/sites-available/{{ item.name if item.name is string else item.name[0] }}
+    dest={{ nginx_etc_dir }}/sites-available/{{ item.name if item.name is string else item.name[0] }}
   with_items: "{{ nginx_vhosts }}"
   notify: reload nginx
   when: item.delete is not defined or not item.delete
 
 - name: FILE | Delete vhosts
-  file: path=/etc/nginx/sites-available/{{ item.name if item.name is string else item.name[0] }} state=absent
+  file: path={{ nginx_etc_dir }}/sites-available/{{ item.name if item.name is string else item.name[0] }} state=absent
   with_items: "{{ nginx_vhosts }}"
   notify: reload nginx
   when: item.delete is defined and item.delete
 
 - name: FILE | Enable vhosts
   file: >
-    src=/etc/nginx/sites-available/{{ item.name if item.name is string else item.name[0] }}
-    dest=/etc/nginx/sites-enabled/{{ item.name if item.name is string else item.name[0] }}
+    src={{ nginx_etc_dir }}/sites-available/{{ item.name if item.name is string else item.name[0] }}
+    dest={{ nginx_etc_dir }}/sites-enabled/{{ item.name if item.name is string else item.name[0] }}
     state=link
   with_items: "{{ nginx_vhosts }}"
   notify: reload nginx
@@ -54,22 +54,22 @@
     (item.delete is not defined or not item.delete)
 
 - name: FILE | Disable vhosts
-  file: path=/etc/nginx/sites-enabled/{{ item.name if item.name is string else item.name[0] }} state=absent
+  file: path={{ nginx_etc_dir}}/sites-enabled/{{ item.name if item.name is string else item.name[0] }} state=absent
   with_items: "{{ nginx_vhosts }}"
   notify: reload nginx
   when: (item.enable is defined and not item.enable) or (item.delete is defined and item.delete)
 
 - name: FILE | Delete default vhost when explicitely defined
   file: >
-    path=/etc/nginx/sites-enabled/default
+    path={{ nginx_etc_dir }}/sites-enabled/default
     state=absent
   notify: reload nginx
   when: nginx_default_vhost is not none
 
 - name: FILE | Auto set default vhost
   file: >
-    src=/etc/nginx/sites-available/default
-    dest=/etc/nginx/sites-enabled/default
+    src={{ nginx_etc_dir }}/sites-available/default
+    dest={{ nginx_etc_dir }}/sites-enabled/default
     state=link
   notify: reload nginx
   when: nginx_default_vhost is none

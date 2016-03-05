@@ -1,0 +1,15 @@
+---
+
+- name: PKGNG | Install nginx and related tools
+  pkgng: name=nginx state=present
+  with_items:
+    - nginx
+    - py27-passlib
+    - curl
+
+- name: FILE | Create configuration dir (like Debian)
+  file: path="{{ nginx_etc_dir }}/{{ item }}" state=directory
+  with_items:
+    - conf.d
+    - sites-available
+    - sites-enabled

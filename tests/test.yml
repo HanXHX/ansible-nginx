@@ -2,20 +2,27 @@
 
 - hosts: all
   pre_tasks:
-    - name: APT_REPOSITORY | Install backports
-      apt_repository: repo='deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main' state=present
-    - name: APT | Install needed packages
-      apt: pkg={{ item }} update_cache=yes cache_valid_time=3600 state=present
-      with_items:
-        - php5-fpm
-        - curl
-        - fcgiwrap
-    - name: SERVICE | Force start services
-      service: name={{ item }} state=started
-      register: sf
-      with_items:
-        - php5-fpm
-        - fcgiwrap
+    - block:
+      - name: APT_REPOSITORY | Install backports
+        apt_repository: repo='deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main' state=present
+      - name: APT | Install needed packages
+        apt: pkg={{ item }} update_cache=yes cache_valid_time=3600 state=present
+        with_items:
+          - php5-fpm
+          - curl
+          - fcgiwrap
+      - name: SERVICE | Force start services
+        service: name={{ item }} state=started
+        register: sf
+        with_items:
+          - php5-fpm
+          - fcgiwrap
+      when: ansible_distribution == 'Debian'
+    - block:
+        - name: SET_FACT | FreeBSD web user
+          set_fact:
+            nginx_user: 'www'
+      when: ansible_distribution == 'FreeBSD'
     - name: PAUSE | Prevent bugs (CGI not fully loaded)
       pause: seconds=5
       when: sf.changed
@@ -29,6 +36,7 @@
 # Internal vars
     int_ansible_ssl_dir: '/etc/ansible-ssl'
 # Role vars
+    nginx_worker_processes: 1 # Ansible+FreeBSD can't detect CPU number
     nginx_backports: true
     nginx_php: true
     nginx_upstreams:

@@ -1,11 +1,15 @@
 ---
 
 - name: TEMPLATE | Deploy PHP upstream to Nginx
-  template: src=etc/nginx/upstream/php.conf.j2 dest=/etc/nginx/conf.d/php.conf
+  template: >
+    src=etc/nginx/upstream/php.conf.j2
+    dest="{{ nginx_etc_dir }}/conf.d/php.conf"
   when: nginx_php
   notify: reload nginx
 
 - name: TEMPLATE | Deploy other upstreams
-  template: src=etc/nginx/upstream/upstream.conf.j2 dest=/etc/nginx/conf.d/upstream-{{ item.name }}.conf
+  template: >
+    src=etc/nginx/upstream/upstream.conf.j2
+    dest={{ nginx_etc_dir }}/conf.d/upstream-{{ item.name }}.conf
   with_items: "{{ nginx_upstreams }}"
   notify: reload nginx

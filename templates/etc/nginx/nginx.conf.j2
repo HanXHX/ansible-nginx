@@ -14,7 +14,7 @@ events {
 
 http {
 	types_hash_max_size {{ nginx_http_types_hash_max_size }};
-	include /etc/nginx/mime.types;
+	include {{ nginx_etc_dir }}/mime.types;
 
 	default_type {{ nginx_http_default_type }};
 	access_log {{ nginx_http_access_log }};
