@@ -58,6 +58,13 @@ Fine configuration
 [Basic Auth](doc/auth.md)
 
 
+Note
+----
+
+- Active support for Debian.
+- FreeBSD support is experimental (no Travis). I only test (for the moment) 10.2 (but it can work on other versions).
+- I don't manage BackupPC for FreeBSD (PR welcome).
+
 Dependencies
 ------------
 
