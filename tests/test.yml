@@ -191,9 +191,9 @@
       copy: dest="{{ item }}/index.html" content="Index HTML test OK\n"
       with_items: ['{{ nginx_root }}/test.local/public', '/var/tmp', '{{ nginx_root }}/test-htpasswd-all.local/public', '{{ nginx_root }}/test-ssl.local/public', '{{ nginx_root }}/test-ssl-predeployed.local/public']
     - name: -- Create directory --
-      file: path={{ nginx_root }}/test-htpasswd-all.local/public/hello state=directory
+      file: path={{ nginx_root }}/test-htpasswd.local/public/hello state=directory
     - name: -- Add HTML file hello --
-      copy: dest="{{ nginx_root }}/test-htpasswd-all.local/public/hello/index.html" content="hello\n"
+      copy: dest="{{ nginx_root }}/test-htpasswd.local/public/hello/index.html" content="hello\n"
 # --------------------------------
 # Simple vhosts tests
 # --------------------------------
@@ -229,17 +229,17 @@
 # Basic Auth
 # --------------------------------
     - name: -- VERIFY AUTH BASIC NONE --
-      command: "curl -H 'Host: test-htpasswd.local' http://127.0.0.1/hello"
+      command: "curl -H 'Host: test-htpasswd.local' http://127.0.0.1/hello/"
       changed_when: false
       register: authnone
       failed_when: authnone.stdout.find('401 Authorization Required') == -1
     - name: -- VERIFY AUTH BASIC FAIL --
-      command: "curl -u fail:fail -H 'Host: test-htpasswd.local' http://127.0.0.1/hello"
+      command: "curl -u fail:fail -H 'Host: test-htpasswd.local' http://127.0.0.1/hello/"
       changed_when: false
       register: authfail
       failed_when: authfail.stdout.find('401 Authorization Required') == -1
     - name: -- VERIFY AUTH BASIC OK --
-      command: "curl -u hanx:qwerty -H 'Host: test-htpasswd.local' http://127.0.0.1/hello"
+      command: "curl -u hanx:qwerty -H 'Host: test-htpasswd.local' http://127.0.0.1/hello/"
       changed_when: false
       register: authok
       failed_when: authok.stdout.find('hello') == -1
