@@ -262,6 +262,7 @@
       changed_when: false
       register: authbpc
       failed_when: authbpc.stdout.find('BackupPC Server Status') == -1
+      when: ansible_distribution != 'FreeBSD'
 
 # --------------------------------
 # Nagios
@@ -272,7 +273,7 @@
       register: nagios_php
       failed_when: nagios_php.stdout.find('Nagios Core') == -1
     - name: -- VERIFY NAGIOS3 CGI --
-      command: "curl -u nagiosadmin:nagios -H 'Host: nagios3.local' http://127.0.0.1/cgi-bin/nagios3/summary.cgi"
+      command: "curl -u nagiosadmin:nagios -H 'Host: nagios3.local' http://127.0.0.1/cgi-bin{% if ansible_distribution == 'Debian' %}/nagios3{% endif %}/summary.cgi"
       changed_when: false
       register: nagios_cgi
       failed_when: nagios_cgi.stdout.find('Nagios Event Summary') == -1
