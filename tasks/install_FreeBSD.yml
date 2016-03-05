@@ -14,11 +14,20 @@
     - sites-available
     - sites-enabled
 
-- name: FILE | Follow Debian ;)
-  file: >
-    src="{{ nginx_etc_dir }}/fastcgi_params"
+- name: STAT | Check fastcgi.conf
+  stat: path={{ nginx_etc_dir }}/fastcgi.conf
+  register: conf
+
+- name: COPY | config
+  command: "cp {{ nginx_etc_dir }}/fastcgi_params {{ nginx_etc_dir }}/fastcgi.conf"
+  when: not conf.stat.exists
+  notify: reload nginx
+
+- name: LINEINFILE | Add fastcgi config
+  lineinfile: >
+    line="fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;"
     dest="{{ nginx_etc_dir }}/fastcgi.conf"
-    state=link
+  notify: reload nginx
 
 - name: COPY | Populate proxy_params
   copy: >

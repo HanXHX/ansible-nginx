@@ -141,6 +141,8 @@
         redirect_from:
           - 'www.test-php.local'
         template: '_php'
+        use_error_log: true
+        use_access_log: true
       - name: 'test-php-index.local'
         template: '_php_index'
       - name: 'test-proxy.local'

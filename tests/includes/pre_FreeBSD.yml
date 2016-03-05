@@ -3,3 +3,20 @@
 - name: SET_FACT | FreeBSD web user
   set_fact:
     nginx_user: 'www'
+    nginx_php_sockets:
+      - host: '127.0.0.1'
+        port: 9000
+
+- name: PKGNG | Install needed packages
+  pkgng: pkg={{ item }} state=present
+  with_items:
+    - php56
+    - curl
+    - fcgiwrap
+
+- name: SERVICE | Force start services
+  service: name={{ item }} state=started enabled=yes
+  register: sf
+  with_items:
+    - php-fpm
+    - fcgiwrap
