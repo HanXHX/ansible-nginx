@@ -149,8 +149,6 @@
         location:
           '/hello':
             - htpasswd: 'hello'
-            - 'default_type "text/html; charset=UTF-8";'
-            - 'echo hello;'
       - name: 'test-htpasswd-all.local'
         template: '_base'
         htpasswd: 'hello'
@@ -218,7 +216,10 @@
     - name: -- Add HTML file --
       copy: dest="{{ item }}/index.html" content="Index HTML test OK\n"
       with_items: ['{{ nginx_root }}/test.local/public', '/var/tmp', '{{ nginx_root }}/test-htpasswd-all.local/public', '{{ nginx_root }}/test-ssl.local/public', '{{ nginx_root }}/test-ssl-predeployed.local/public']
-
+    - name: -- Create directory --
+      file: path={{ nginx_root }}/test-htpasswd-all.local/public/hello state=directory
+    - name: -- Add HTML file hello --
+      copy: dest="{{ nginx_root }}/test-htpasswd-all.local/public/hello/index.html" content="hello\n"
 # --------------------------------
 # Simple vhosts tests
 # --------------------------------

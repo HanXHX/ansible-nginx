@@ -13,3 +13,14 @@
     - conf.d
     - sites-available
     - sites-enabled
+
+- name: FILE | Follow Debian ;)
+  file: >
+    src="{{ nginx_etc_dir }}/fastcgi_params"
+    dest="{{ nginx_etc_dir }}/fastcgi.conf"
+    state=link
+
+- name: COPY | Populate proxy_params
+  copy: >
+    content="proxy_set_header Host $http_host;\nproxy_set_header X-Real-IP $remote_addr;\nproxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;proxy_set_header X-Forwarded-Proto $scheme;"
+    dest="{{ nginx_etc_dir }}/proxy_params"

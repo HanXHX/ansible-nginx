@@ -45,8 +45,8 @@ http {
 	gzip_vary {{ nginx_http_gzip_vary }};
 	gzip_disable {{ nginx_http_gzip_disable }};
 
-	include /etc/nginx/conf.d/*.conf;
-	include /etc/nginx/sites-enabled/*;
+	include {{ nginx_etc_dir }}/conf.d/*.conf;
+	include {{ nginx_etc_dir }}/sites-enabled/*;
 }
 
 # vim:filetype=nginx
