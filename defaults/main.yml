@@ -1,7 +1,10 @@
 ---
 
+# Debian
 nginx_apt_package: nginx-full
 nginx_backports: false
+# FreeBSD
+nginx_pkgng_package: nginx
 
 #
 # Nginx shared variables

@@ -24,8 +24,14 @@ Role Variables
 
 ### Packaging
 
+Debian:
+
 - `nginx_apt_package`: APT nginx package (try: apt-cache search ^nginx)
 - `nginx_backports`: Install nginx from backport repository (bool)
+
+FreeBSD:
+
+- `nginx_pkgng_package`: PKGNG nginx package (should be "nginx" or "nginx-devel")
 
 ### Shared
 

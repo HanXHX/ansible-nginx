@@ -1,9 +1,9 @@
 ---
 
 - name: PKGNG | Install nginx and related tools
-  pkgng: name=nginx state=present
+  pkgng: name={{ item }} state=present
   with_items:
-    - nginx
+    - "{{ nginx_pkgng_package }}"
     - py27-passlib
     - curl
 
