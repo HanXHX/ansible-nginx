@@ -1,9 +1,9 @@
-Nginx for Debian Ansible role
-=============================
+Nginx for Debian/FreeBSD Ansible role
+=====================================
 
 [![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-HanXHX.nginx-blue.svg)](https://galaxy.ansible.com/list#/roles/4399) [![Build Status](https://travis-ci.org/HanXHX/ansible-nginx.svg?branch=master)](https://travis-ci.org/HanXHX/ansible-nginx)
 
-Install and configure Nginx on Debian.
+Install and configure Nginx on Debian/FreeBSD.
 
 Features:
 
@@ -56,6 +56,8 @@ Fine configuration
 [SSL/TLS Configuration](doc/ssl.md)
 
 [Basic Auth](doc/auth.md)
+
+[FreeBSD](doc/freebsd.md)
 
 
 Note
