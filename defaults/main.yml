@@ -19,8 +19,8 @@ nginx_default_vhost_ssl: null
 #
 # Nginx directories
 #
-nginx_htpasswd_dir: '{{ nginx_etc_dir}}/htpasswd'
-nginx_ssl_dir: '{{ nginx_etc_dir}}/ssl'
+nginx_htpasswd_dir: '{{ nginx_etc_dir }}/htpasswd'
+nginx_ssl_dir: '{{ nginx_etc_dir }}/ssl'
 nginx_helper_dir: '{{ nginx_etc_dir}}/helper'
 
 #
