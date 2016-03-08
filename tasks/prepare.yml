@@ -2,13 +2,21 @@
 
 - name: SHELL | Get Nginx version
   shell: nginx -v 2>&1 | sed -r 's#.*/##;' | cut -d ' ' -f 1
+  args:
+    executable: /bin/sh
   register: nginx_version
   changed_when: false
 
 - name: SHELL | Get module list
-  shell: nginx -V 2>&1 | tr -- - '\n' | grep -A 1 with | grep _module | sed -r 's/_module\s*$//g' |sort
-  register: nginx_modules
+  shell: nginx -V 2>&1 | tr -- - '\n' | grep -A 1 with | grep _module | sed 's/_module[[:space:]]*//g' | sort
+  args:
+    executable: /bin/sh
+  register: shell_modules
   changed_when: false
+
+- name: SET_FACT | Save modules
+  set_fact:
+    nginx_modules: "{{ shell_modules.stdout_lines }}"
 
 - name: FILE | Create folders
   file: dest={{ item }} owner=root mode=0755 state=directory

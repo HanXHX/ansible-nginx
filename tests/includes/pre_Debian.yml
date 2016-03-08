@@ -9,6 +9,7 @@
     - php5-fpm
     - curl
     - fcgiwrap
+    - nghttp2
 
 - name: SERVICE | Force start services
   service: name={{ item }} state=started
