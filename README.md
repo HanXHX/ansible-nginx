@@ -1,9 +1,9 @@
-Nginx for Debian Ansible role
-=============================
+Nginx for Debian/FreeBSD Ansible role
+=====================================
 
 [![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-HanXHX.nginx-blue.svg)](https://galaxy.ansible.com/list#/roles/4399) [![Build Status](https://travis-ci.org/HanXHX/ansible-nginx.svg?branch=master)](https://travis-ci.org/HanXHX/ansible-nginx)
 
-Install and configure Nginx on Debian.
+Install and configure Nginx on Debian/FreeBSD.
 
 Features:
 
@@ -24,8 +24,14 @@ Role Variables
 
 ### Packaging
 
+Debian:
+
 - `nginx_apt_package`: APT nginx package (try: apt-cache search ^nginx)
 - `nginx_backports`: Install nginx from backport repository (bool)
+
+FreeBSD:
+
+- `nginx_pkgng_package`: PKGNG nginx package (should be "nginx" or "nginx-devel")
 
 ### Shared
 
@@ -57,6 +63,15 @@ Fine configuration
 
 [Basic Auth](doc/auth.md)
 
+[FreeBSD](doc/freebsd.md)
+
+
+Note
+----
+
+- Active support for Debian.
+- FreeBSD support is experimental (no Travis). I only test (for the moment) 10.2 (but it can work on other versions).
+- I don't manage BackupPC for FreeBSD (PR welcome).
 
 Dependencies
 ------------

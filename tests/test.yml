@@ -2,23 +2,8 @@
 
 - hosts: all
   pre_tasks:
-    - name: APT_REPOSITORY | Install backports
-      apt_repository: repo='deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main' state=present
-    - name: APT | Install needed packages
-      apt: pkg={{ item }} update_cache=yes cache_valid_time=3600 state=present
-      with_items:
-        - php5-fpm
-        - curl
-        - fcgiwrap
-    - name: SERVICE | Force start services
-      service: name={{ item }} state=started
-      register: sf
-      with_items:
-        - php5-fpm
-        - fcgiwrap
-    - name: PAUSE | Prevent bugs (CGI not fully loaded)
-      pause: seconds=5
-      when: sf.changed
+    - name: INCLUDE | Pre_tasks related to OS version
+      include: "includes/pre_{{ ansible_distribution }}.yml"
     - name: FILE | Create an internal SSL dir
       file: path={{ int_ansible_ssl_dir }} state=directory
     - name: COPY | Deploy test certificate
@@ -29,6 +14,7 @@
 # Internal vars
     int_ansible_ssl_dir: '/etc/ansible-ssl'
 # Role vars
+    nginx_worker_processes: 1 # Ansible+FreeBSD can't detect CPU number
     nginx_backports: true
     nginx_php: true
     nginx_upstreams:
@@ -141,8 +127,6 @@
         location:
           '/hello':
             - htpasswd: 'hello'
-            - 'default_type "text/html; charset=UTF-8";'
-            - 'echo hello;'
       - name: 'test-htpasswd-all.local'
         template: '_base'
         htpasswd: 'hello'
@@ -157,6 +141,8 @@
         redirect_from:
           - 'www.test-php.local'
         template: '_php'
+        use_error_log: true
+        use_access_log: true
       - name: 'test-php-index.local'
         template: '_php_index'
       - name: 'test-proxy.local'
@@ -193,14 +179,8 @@
 # --------------------------------
 # Apps
 # --------------------------------
-    - name: APT | Install web apps
-      apt: pkg={{ item }} state=present
-      with_items:
-        - nagios3
-        - backuppc
-    - name: SERVICE | Ensure backuppc is started
-      service: name=backuppc state=started
-
+    - name: INCLUDE | Post_tasks related to OS version
+      include: "includes/post_{{ ansible_distribution }}.yml"
 # --------------------------------
 # Deploy index files
 # --------------------------------
@@ -210,7 +190,10 @@
     - name: -- Add HTML file --
       copy: dest="{{ item }}/index.html" content="Index HTML test OK\n"
       with_items: ['{{ nginx_root }}/test.local/public', '/var/tmp', '{{ nginx_root }}/test-htpasswd-all.local/public', '{{ nginx_root }}/test-ssl.local/public', '{{ nginx_root }}/test-ssl-predeployed.local/public']
-
+    - name: -- Create directory --
+      file: path={{ nginx_root }}/test-htpasswd.local/public/hello state=directory
+    - name: -- Add HTML file hello --
+      copy: dest="{{ nginx_root }}/test-htpasswd.local/public/hello/index.html" content="hello\n"
 # --------------------------------
 # Simple vhosts tests
 # --------------------------------
@@ -246,17 +229,17 @@
 # Basic Auth
 # --------------------------------
     - name: -- VERIFY AUTH BASIC NONE --
-      command: "curl -H 'Host: test-htpasswd.local' http://127.0.0.1/hello"
+      command: "curl -H 'Host: test-htpasswd.local' http://127.0.0.1/hello/"
       changed_when: false
       register: authnone
       failed_when: authnone.stdout.find('401 Authorization Required') == -1
     - name: -- VERIFY AUTH BASIC FAIL --
-      command: "curl -u fail:fail -H 'Host: test-htpasswd.local' http://127.0.0.1/hello"
+      command: "curl -u fail:fail -H 'Host: test-htpasswd.local' http://127.0.0.1/hello/"
       changed_when: false
       register: authfail
       failed_when: authfail.stdout.find('401 Authorization Required') == -1
     - name: -- VERIFY AUTH BASIC OK --
-      command: "curl -u hanx:qwerty -H 'Host: test-htpasswd.local' http://127.0.0.1/hello"
+      command: "curl -u hanx:qwerty -H 'Host: test-htpasswd.local' http://127.0.0.1/hello/"
       changed_when: false
       register: authok
       failed_when: authok.stdout.find('hello') == -1
@@ -279,6 +262,7 @@
       changed_when: false
       register: authbpc
       failed_when: authbpc.stdout.find('BackupPC Server Status') == -1
+      when: ansible_distribution != 'FreeBSD'
 
 # --------------------------------
 # Nagios
@@ -289,7 +273,7 @@
       register: nagios_php
       failed_when: nagios_php.stdout.find('Nagios Core') == -1
     - name: -- VERIFY NAGIOS3 CGI --
-      command: "curl -u nagiosadmin:nagios -H 'Host: nagios3.local' http://127.0.0.1/cgi-bin/nagios3/summary.cgi"
+      command: "curl -u nagiosadmin:nagios -H 'Host: nagios3.local' http://127.0.0.1/cgi-bin{% if ansible_distribution == 'Debian' %}/nagios3{% endif %}/summary.cgi"
       changed_when: false
       register: nagios_cgi
       failed_when: nagios_cgi.stdout.find('Nagios Event Summary') == -1

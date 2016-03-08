@@ -1,0 +1,7 @@
+nginx_events_use: 'kqueue'
+nginx_pid: '/var/run/nginx.pid'
+nginx_etc_dir: '/usr/local/etc/nginx'
+
+# Specific vhosts
+nginx_nagios_root: '/usr/local/www/nagios'
+nginx_fcgiwrap_sock: '/var/run/fcgiwrap/fcgiwrap.sock'

@@ -1,0 +1,10 @@
+---
+
+- name: APT | Install web apps
+  apt: pkg={{ item }} state=present
+  with_items:
+    - nagios3
+    - backuppc
+
+- name: SERVICE | Ensure backuppc is started
+  service: name=backuppc state=started

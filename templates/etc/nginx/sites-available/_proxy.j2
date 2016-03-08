@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block template_try_files %}
-		include /etc/nginx/proxy_params;
+		include {{ nginx_etc_dir }}/proxy_params;
 		proxy_pass http://{{ item.upstream_name }};
 {% if item.proxy_params is defined and item.proxy_params is iterable %}
 {% for param in item.proxy_params %}

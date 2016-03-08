@@ -1,0 +1,8 @@
+nginx_events_use: 'epoll'
+nginx_pid: '/run/nginx.pid'
+nginx_etc_dir: '/etc/nginx'
+
+# Specific vhosts
+nginx_nagios_root: '/usr/share/nagios3/htdocs'
+nginx_nagios_stylesheets: '/etc/nagios3/stylesheets'
+nginx_fcgiwrap_sock: '/var/run/fcgiwrap.socket'

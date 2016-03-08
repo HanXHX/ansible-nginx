@@ -1,14 +1,16 @@
 ---
 
+# Debian
 nginx_apt_package: nginx-full
 nginx_backports: false
+# FreeBSD
+nginx_pkgng_package: nginx
 
 #
 # Nginx shared variables
 #
 nginx_root: "/srv/www"
 nginx_log_dir: '/var/log/nginx'
-nginx_pid: '/run/nginx.pid'
 nginx_resolver_hosts: ['8.8.8.8', '8.8.4.4']
 nginx_resolver_valid: '300s'
 nginx_resolver_timeout: '5s'
@@ -20,9 +22,9 @@ nginx_default_vhost_ssl: null
 #
 # Nginx directories
 #
-nginx_htpasswd_dir: '/etc/nginx/htpasswd'
-nginx_ssl_dir: '/etc/nginx/ssl'
-nginx_helper_dir: '/etc/nginx/helper'
+nginx_htpasswd_dir: '{{ nginx_etc_dir }}/htpasswd'
+nginx_ssl_dir: '{{ nginx_etc_dir }}/ssl'
+nginx_helper_dir: '{{ nginx_etc_dir}}/helper'
 
 #
 # Load upstream
@@ -45,7 +47,6 @@ nginx_worker_processes: '{{ ansible_processor_vcpus }}'
 #
 nginx_events_worker_connections: '512'
 nginx_events_multi_accept: 'on'
-nginx_events_use: 'epoll'
 
 #
 # Nginx HTTP

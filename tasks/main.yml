@@ -1,7 +1,11 @@
 ---
 
+
+- name: INCLUDE_VARS | Related to OS
+  include_vars: "{{ ansible_distribution }}.yml"
+
 - name: INCLUDE | Install
-  include: install.yml
+  include: install_{{ ansible_distribution }}.yml
 
 - name: INCLUDE | Prepare
   include: prepare.yml
