@@ -22,7 +22,7 @@ Example
 nginx_vhosts:
 # htpasswd on all vhost
   - name: test.local
-    htpasswd: 'hello'    
+    htpasswd: 'hello'
     template: '_base'
 
 # htpasswd only in /hello
@@ -30,7 +30,7 @@ nginx_vhosts:
     template: '_base'
     location:
       '/hello':
-        - htpasswd: 'hello'    
+        - htpasswd: 'hello'
 
 nginx_htpasswd:
   - name: 'hello'

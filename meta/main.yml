@@ -1,9 +1,9 @@
 ---
 galaxy_info:
   author: Emilien Mantel
-  description: Nginx for Debian 
+  description: Nginx for Debian
   company:
-  license: GPLv2 
+  license: GPLv2
   min_ansible_version: 2.0
   platforms:
   - name: Debian
@@ -20,4 +20,4 @@ galaxy_info:
   - http2
   - debian
 dependencies: []
- 
+

@@ -17,7 +17,7 @@ Cert/Key pairs
 
 This list have 3 mandatory keys:
 
-- `name`: MUST be unique 
+- `name`: MUST be unique
 
 - `key`: content of the private key
 - `cert`: content of the public key
