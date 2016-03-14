@@ -27,16 +27,12 @@ OR
 - `dest_cert`: remote path where certificate is located
 - `dest_key`: remote path where key is located
 
-
 Note: `name` is used to deploy key/cert. With defaults values dans `name` = "foo", key is -> /etc/nginx/ssl/foo/foo.key
 
 Tips
 ----
 
 Deploying key/cert is not mandatory with this role. You can manage it in other place ([letsencrypt](https://letsencrypt.org/)? :)). You just need to set `dest_cert` and `dest_key`!
-
-If you set all, you can deploy your key everywhere with wanted data!
-
 
 Diffie-Hellman
 --------------
@@ -46,7 +42,7 @@ If you do not specify any dh param, this role auto generates it.
 Example
 -------
 
-```
+```yaml
 nginx_vhosts;
   - name: 'test-ssl.local'
     proto: ['http', 'https']

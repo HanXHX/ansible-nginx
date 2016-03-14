@@ -10,15 +10,15 @@ Each htpasswd has few keys:
 
 - `name`: (M) used to create file and as pointee
 - `description`: (M) Used for the message box :)
-- `users`: each users is composed with 3 keys: `name` (M), `password` (M) and `state` present/absent (default: present)
+- `users`: each users is composed with 3 keys: `name` (M), `password` (M) and `state` (O) present/absent (default: present)
 - `state`: (O) present or absent. Default: present
 
-`nginx_htpasswd` should be placed in a vaut file.
+`nginx_htpasswd` should be placed in a vault file.
 
 Example
 -------
 
-```
+```yaml
 nginx_vhosts:
 # htpasswd on all vhost
   - name: test.local

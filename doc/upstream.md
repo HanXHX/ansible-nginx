@@ -27,3 +27,15 @@ All this params are optional. You should see [Nginx upstream doc](http://nginx.o
 - `route`
 - `slow_start`
 
+Example
+-------
+
+```yaml
+nginx_upstreams:
+  - name: 'proxy_apache'
+    servers:
+      - path: '127.0.0.1:80'
+        max_conns: 150
+        weight: 10
+        down: false
+```
