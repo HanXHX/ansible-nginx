@@ -172,6 +172,11 @@
         ssl_name: 'test-ssl-predeployed.local'
         more:
           - 'add_header X-ansible-default 1;'
+      - name: 'test-ssl-redirect.local'
+        proto: ['https']
+        template: '_base'
+        ssl_name: 'test-ssl.local'
+        redirect_https: true
     nginx_dh_length: 1024
   roles:
     - ../../
@@ -289,6 +294,15 @@
       with_items:
         - 'test-ssl-predeployed.local'
         - 'test-ssl.local'
+    - name: -- VERIFY SSL REDIRECT --
+      command: "curl -v --insecure -H 'Host: {{ item }}' http://127.0.0.1/"
+      changed_when: false
+      register: sslredirok
+      failed_when: >
+        sslredirok.stderr.find('< Location') == -1 and
+        sslredirok.stderr.find('https://{{ item }}/') == -1
+      with_items:
+        - 'test-ssl-redirect.local'
 
 # --------------------------------
 # Default vhosts

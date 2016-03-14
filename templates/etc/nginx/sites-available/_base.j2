@@ -118,6 +118,20 @@ server {
 {% endif %}
 }
 
+{% if item.redirect_https is defined and item.redirect_https %}
+#
+# Redirect HTTP to HTTPS
+#
+server {
+{% for port in __listen %}
+	listen {{ port }};
+{% endfor %}
+	server_name {% if item.name is string %}{{ item.name }}{% else %}{{ item.name | join(' ') }}{% endif %};
+	return 301 https://{{ __main_name }}{% if '443' not in __listen_ssl %}:__listen_ssl[0]{% endif %}/$request_uri;
+}
+{% endif %}
+
+
 {% if item.redirect_from is defined and item.redirect_from is iterable %}
 #
 # Redirect from
