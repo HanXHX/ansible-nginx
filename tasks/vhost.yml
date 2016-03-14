@@ -3,7 +3,7 @@
 - name: FAIL | Check filenames
   fail: msg="Forbidden keyword default on vhost {{ item.name if item.name is string else item.name[0] }}"
   when: item.filename is defined and item.filename == 'default'
-  with_items: nginx_vhosts
+  with_items: "{{ nginx_vhosts }}"
 
 - name: FAIL | Check vhost and SSL/TLS support
   fail: msg="Missmatch configuration for vhost {{ item.name if item.name is string else item.name[0] }}"
