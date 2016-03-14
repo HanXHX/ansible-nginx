@@ -13,11 +13,15 @@ galaxy_info:
   - name: FreeBSD
     versions:
     - 10.2
-  categories:
+  galaxy_tags:
   - web
   - proxy
   - http
   - http2
-  - debian
+  - https
+  - ssl
+  - tls
+  - nginx
+  - cdn
 dependencies: []
 
