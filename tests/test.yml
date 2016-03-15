@@ -152,8 +152,8 @@
           - 8080
         template: '_proxy'
         upstream_name: 'test'
-        more:
-          - 'add_header X-proxyfied 1;'
+        headers:
+          'X-proxyfied': '1'
       - name: 'deleted.local'
         delete: true
       - name: 'redirect-to.local'
@@ -172,8 +172,8 @@
         proto: ['http', 'https']
         template: '_base'
         ssl_name: 'test-ssl-predeployed.local'
-        more:
-          - 'add_header X-ansible-default 1;'
+        headers:
+          'X-ansible-default': '1'
         ssl_template: false
       - name: 'test-ssl-redirect.local'
         proto: ['https']
