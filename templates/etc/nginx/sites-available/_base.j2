@@ -127,7 +127,7 @@ server {
 	listen {{ port }};
 {% endfor %}
 	server_name {% if item.name is string %}{{ item.name }}{% else %}{{ item.name | join(' ') }}{% endif %};
-	return 301 https://{{ __main_name }}{% if '443' not in __listen_ssl %}:__listen_ssl[0]{% endif %}/$request_uri;
+	return 301 https://{{ __main_name }}{% if '443' not in __listen_ssl %}:__listen_ssl[0]{% endif %}$request_uri;
 }
 {% endif %}
 
