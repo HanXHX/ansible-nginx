@@ -7,3 +7,7 @@
 
 - name: real-reload nginx
   service: name=nginx state=reloaded
+
+- name: restart nginx freebsd
+  service: name=nginx state=restarted
+  when: ansible_distribution == "FreeBSD"

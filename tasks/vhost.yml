@@ -44,13 +44,13 @@
     src=etc/nginx/sites-available/{{ item.template if item.redirect_to is not defined else '_redirect' }}.j2
     dest={{ nginx_etc_dir }}/sites-available/{{ item.filename | default(item.name if item.name is string else item.name[0]) }}
   with_items: "{{ nginx_vhosts }}"
-  notify: reload nginx
+  notify: ['reload nginx', 'restart nginx freebsd']
   when: item.delete is not defined or not item.delete
 
 - name: FILE | Delete vhosts
   file: path={{ nginx_etc_dir }}/sites-available/{{ item.filename | default(item.name if item.name is string else item.name[0]) }} state=absent
   with_items: "{{ nginx_vhosts }}"
-  notify: reload nginx
+  notify: ['reload nginx', 'restart nginx freebsd']
   when: item.delete is defined and item.delete
 
 - name: FILE | Enable vhosts
@@ -59,7 +59,7 @@
     dest={{ nginx_etc_dir }}/sites-enabled/{{ item.filename | default(item.name if item.name is string else item.name[0]) }}
     state=link
   with_items: "{{ nginx_vhosts }}"
-  notify: reload nginx
+  notify: ['reload nginx', 'restart nginx freebsd']
   when: >
     ((item.enable is not defined) or
     (item.enable is defined and item.enable)) and
@@ -68,14 +68,14 @@
 - name: FILE | Disable vhosts
   file: path={{ nginx_etc_dir}}/sites-enabled/{{ item.filename | default(item.name if item.name is string else item.name[0]) }} state=absent
   with_items: "{{ nginx_vhosts }}"
-  notify: reload nginx
+  notify: ['reload nginx', 'restart nginx freebsd']
   when: (item.enable is defined and not item.enable) or (item.delete is defined and item.delete)
 
 - name: FILE | Delete default vhost when explicitely defined
   file: >
     path={{ nginx_etc_dir }}/sites-enabled/default
     state=absent
-  notify: reload nginx
+  notify: ['reload nginx', 'restart nginx freebsd']
   when: nginx_default_vhost is not none
 
 - name: FILE | Auto set default vhost
@@ -83,5 +83,5 @@
     src={{ nginx_etc_dir }}/sites-available/default
     dest={{ nginx_etc_dir }}/sites-enabled/default
     state=link
-  notify: reload nginx
+  notify: ['reload nginx', 'restart nginx freebsd']
   when: nginx_default_vhost is none
