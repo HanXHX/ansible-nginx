@@ -1,4 +1,10 @@
 ---
 
+# Reload wrapper
 - name: reload nginx
-  action: service name=nginx state=reloaded enabled=yes
+  command: nginx -t
+  changed_when: false
+  notify: real-reload nginx
+
+- name: real-reload nginx
+  service: name=nginx state=reloaded
