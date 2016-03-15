@@ -13,6 +13,13 @@
     item.ssl_name is not defined
   with_items: "{{ nginx_vhosts }}"
 
+- name: FAIL | Check HTTPS redir and proto
+  fail: msg="You can't have HTTP proto and HTTPS redirection at the same time"
+  when: >
+    ((item.proto is defined and 'http' in item.proto) or (item.proto is not defined)) and
+    (item.redirect_http is defined and item.redirect_http)
+  with_items: "{{ nginx_vhosts }}"
+
 - name: FILE | Create root directory
   file: >
     path={{ nginx_root }}

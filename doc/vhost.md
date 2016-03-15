@@ -16,7 +16,7 @@ Common
 - `redirect_from`: (O) Domain list to redirect to the first `name`. You can use this key to redirect non-www to www
 - `redirect_to`: (O) Redirect all requests to this domain. Please set scheme (http:// or https:// or $sheme).
 - `redirect_to_code`: Redirect code (default: 302)
-- `redirect_https`: (O) Boolean. Redirect HTTP to HTTPS.
+- `redirect_https`: (O) Boolean. Redirect HTTP to HTTPS. If "true", you _MUST_ set `proto` to ```['https']```.
 - `location`: (O) Add new custom locations (it does not overwrite!)
 - `more`: (O) Add more custom infos.
 - `upstream_params`: (O) Add upstream params (useful when you want to pass variables to PHP)
