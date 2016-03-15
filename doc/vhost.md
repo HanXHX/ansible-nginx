@@ -26,6 +26,7 @@ Common
 - `htpasswd`: (O) References name key in `nginx_htpasswd`. Enable auth basic on all vhost.
 - `proto`: (O) list of protocol used. Default is a list with "http". If you need http and https, you must set a list with "http" and "https". You can only set "https" without http support.
 - `ssl_name`: (D) name of the key used when using TLS/SSL. Mandatory when `proto` contains "https"
+- `ssl_template` (O) "strong" (default) or "legacy". You can disable SSL helpers and add your own directives by setting "false". 
 
 (O): Optional
 (M): Mandatory

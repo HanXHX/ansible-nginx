@@ -34,7 +34,9 @@ server {
 	listen {{ port }}{% if nginx_default_vhost_ssl == __main_name %} default_server{% endif %} ssl{% if nginx_auto_config_httpv2 and 'http_v2' in nginx_modules %} http2{% endif %};
 {% endfor %}
 {{ ssl(item.ssl_name) }}
+{% if item.ssl_template is not defined or item.ssl_template != false %}
 	include {{ nginx_helper_dir + '/ssl-' + item.ssl_template | default('strong') }};
+{% endif %}
 {% endif %}
 	server_name {% if item.name is string %}{{ item.name }}{% else %}{{ item.name | join(' ') }}{% endif %};
 {% block root %}
