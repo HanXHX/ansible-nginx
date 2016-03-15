@@ -107,11 +107,13 @@
         template: '_base'
         filename : 'first-test'
         override_try_files: '$uri $uri index.htm index.html'
+        headers:
+          'X-Frame-Options': 'deny'
+          'X-ansible-default': '1'
         manage_local_content: false
         use_error_log: false
         more:
           - 'autoindex off;'
-          - 'add_header X-ansible-default 1;'
         location:
           '/test':
             - 'return 403;'

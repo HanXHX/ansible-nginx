@@ -3,6 +3,7 @@
 {% set __listen = item.listen | default(['80']) %}
 {% set __listen_ssl = item.listen_ssl | default(['443']) %}
 {% set __location = item.location | default({}) %}
+{% set __headers = item.headers | default({'X-Frame-Options': 'DENY', 'X-Content-Type-Options': 'nosniff' }) %}
 {% macro htpasswd(htpasswd_name, indent=1) -%}
 {% for ht in nginx_htpasswd if ht.name == htpasswd_name %}
 {{ "\t" * indent }}auth_basic "{{ ht.description }}";
@@ -56,6 +57,12 @@ server {
 {% if item.htpasswd is defined %}
 {{ htpasswd(item.htpasswd, 1) }}
 {% endif %}
+
+	# --> Custom headers
+{% for key, value in __headers.iteritems() %}
+	add_header {{ key }} {{ value }};
+{% endfor %}
+	# <-- Custom headers
 
 {% if not __location.has_key('/') %}
 	location / {
