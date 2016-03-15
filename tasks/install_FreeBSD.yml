@@ -41,3 +41,6 @@
     group=wheel
     mode=0755
     state=directory
+
+- name: SERVICE | Enable nginx
+  service: name=nginx enabled=yes
