@@ -3,7 +3,7 @@
 {% set __listen = item.listen | default(['80']) %}
 {% set __listen_ssl = item.listen_ssl | default(['443']) %}
 {% set __location = item.location | default({}) %}
-{% set __headers = item.headers | default({'X-Frame-Options': 'DENY', 'X-Content-Type-Options': 'nosniff' }) %}
+{% set __headers = item.headers | default({'X-Frame-Options': 'DENY always', 'X-Content-Type-Options': 'nosniff always' }) %}
 {% macro htpasswd(htpasswd_name, indent=1) -%}
 {% for ht in nginx_htpasswd if ht.name == htpasswd_name %}
 {{ "\t" * indent }}auth_basic "{{ ht.description }}";
