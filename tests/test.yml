@@ -24,6 +24,13 @@
             max_conns: 150
             weight: 10
             down: false
+      - name: 'test-absent'
+        servers:
+          - path: '127.0.0.1:80'
+            max_conns: 150
+            weight: 10
+            down: false
+        state: 'absent'
     nginx_htpasswd:
       - name: 'hello'
         description: 'Please login!'

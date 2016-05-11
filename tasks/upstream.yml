@@ -12,4 +12,13 @@
     src=etc/nginx/upstream/upstream.conf.j2
     dest={{ nginx_etc_dir }}/conf.d/upstream-{{ item.name }}.conf
   with_items: "{{ nginx_upstreams }}"
+  when: item.state is not defined or item.state == 'present'
+  notify: reload nginx
+
+- name: FILE | Delete other upstreams
+  file: >
+    path={{ nginx_etc_dir }}/conf.d/upstream-{{ item.name }}.conf
+    state=absent
+  with_items: "{{ nginx_upstreams }}"
+  when: item.state is defined and item.state == 'absent'
   notify: reload nginx

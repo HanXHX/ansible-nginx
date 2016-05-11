@@ -11,6 +11,7 @@ Upstream params
 - `name`: upstream name. Can be use in vhost with *proxy_pass http://upstream_name*
 - `params`: list of param (hash, zone...)
 - `servers`: each upstream MUST have at least 1 server
+- `state`: Optional. Can be 'absent' or 'present'
 
 Server params
 -------------
@@ -38,4 +39,5 @@ nginx_upstreams:
         max_conns: 150
         weight: 10
         down: false
+    state: 'present'
 ```
