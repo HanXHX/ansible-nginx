@@ -1,5 +1,4 @@
 env:
-  - PLATFORM=debian-wheezy
   - PLATFORM=debian-jessie
 
 sudo: required
