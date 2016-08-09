@@ -6,9 +6,8 @@
 Vagrant.configure("2") do |config|
 
   vms_debian = [
-    [ "debian-wheezy", "debian/wheezy64" ],
     [ "debian-jessie", "debian/jessie64" ],
-    [ "debian-stretch", "sharlak/debian_stretch_64" ],
+    [ "debian-stretch", "sharlak/debian_stretch_64" ]
   ]
 
   vms_freebsd = [

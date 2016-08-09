@@ -31,3 +31,6 @@ nginx_templates_no_dir:
   - '_proxy'
   - '_nagios3'
   - '_backuppc'
+
+nginx_upstream_php5: 'php5'
+nginx_upstream_php7: 'php7'

@@ -4,7 +4,7 @@
   template: >
     src=etc/nginx/upstream/php.conf.j2
     dest="{{ nginx_etc_dir }}/conf.d/php.conf"
-  when: nginx_php
+  when: nginx_php5 or nginx_php7
   notify: reload nginx
 
 - name: TEMPLATE | Deploy other upstreams

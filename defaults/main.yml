@@ -31,9 +31,12 @@ nginx_helper_dir: '{{ nginx_etc_dir}}/helper'
 #
 
 # PHP
-nginx_php: false
-nginx_php_sockets:
-  - unix_socket: "/var/run/php5-fpm.sock"
+nginx_php5: false
+nginx_php7: false
+nginx_php5_sockets:
+  - unix_socket: "/run/php5-fpm.sock"
+nginx_php7_sockets:
+  - unix_socket: "/run/php/php7.0-fpm.sock"
 nginx_upstreams: []
 
 #

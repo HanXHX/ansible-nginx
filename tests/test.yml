@@ -16,7 +16,8 @@
 # Role vars
     nginx_worker_processes: 1 # Ansible+FreeBSD can't detect CPU number
     nginx_backports: true
-    nginx_php: true
+    nginx_php5: true
+    nginx_php7: true
     nginx_upstreams:
       - name: 'test'
         servers:
@@ -145,6 +146,7 @@
           '/':
             - 'alias /var/tmp;'
       - name: 'test-php.local'
+        php_version: 7
         upstream_params:
           - 'fastcgi_param FOO bar;'
         redirect_from:
@@ -239,6 +241,20 @@
       changed_when: false
       failed_when: p.stdout.find('PHP Version') == -1
       with_items: ['test-php.local', 'test-php-index.local']
+
+    - name: -- VERIFY PHP5 VHOSTS (implicit default) --
+      command: "curl -H 'Host: {{ item }}' http://127.0.0.1/"
+      register: p
+      changed_when: false
+      failed_when: p.stdout.find('PHP Version 5') == -1
+      with_items: ['test-php-index.local']
+
+    - name: -- VERIFY PHP7 VHOSTS --
+      command: "curl -H 'Host: {{ item }}' http://127.0.0.1/"
+      register: p
+      changed_when: false
+      failed_when: p.stdout.find('PHP Version 7') == -1
+      with_items: ['test-php.local']
 
 # --------------------------------
 # Basic Auth

@@ -1,4 +1,24 @@
 {% extends "_base.j2" %}
+
+{% macro phpv(version) %}
+{% if version == 5 %}
+{{ nginx_upstream_php5 -}}
+{% elif version == 7 %}
+{{ nginx_upstream_php7 -}}
+{% else %}
+{# Hack... define another upstream #}
+{{ version -}}
+{% endif %}
+{%- endmacro -%}
+
+{% if item.php_version is defined %}
+{% set php_upstream = phpv(item.php_version) %}
+{% elif nginx_php5 %}
+{% set php_upstream = phpv(5) %}
+{% elif nginx_php7 %}
+{% set php_upstream = phpv(7) %}
+{% endif %}
+
 {% block template_index %}
 	index {{ item.index | default('index.html index.htm index.php') }};
 {% endblock %}
@@ -9,7 +29,7 @@
 
 {% block template_upstream_location %}
 	location ~ \.php$ {
-		fastcgi_pass php;
+		fastcgi_pass {{ php_upstream }};
 		fastcgi_index index.php;
 {% if item.upstream_params is defined and item.upstream_params is iterable %}
 {% for param in item.upstream_params %}

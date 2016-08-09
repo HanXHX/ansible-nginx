@@ -1,6 +1,5 @@
 ---
 
-
 - name: INCLUDE_VARS | Related to OS
   include_vars: "{{ ansible_distribution }}.yml"
 

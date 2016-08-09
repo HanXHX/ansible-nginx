@@ -2,8 +2,9 @@
 # {{ ansible_managed }}
 #
 
-upstream php {
-{% for item in nginx_php_sockets %}
+{% if nginx_php5 %}
+upstream {{ nginx_upstream_php5 }} {
+{% for item in nginx_php5_sockets %}
 {% if item.unix_socket is defined %}
 	server unix:{{ item.unix_socket }} weight={{ item.weight | default('1') }};
 {% else %}
@@ -11,5 +12,19 @@ upstream php {
 {% endif %}
 {% endfor %}
 }
+
+{% endif %}
+{% if nginx_php7 %}
+upstream {{ nginx_upstream_php7 }} {
+{% for item in nginx_php7_sockets %}
+{% if item.unix_socket is defined %}
+	server unix:{{ item.unix_socket }} weight={{ item.weight | default('1') }};
+{% else %}
+	server {{ item.host }}:{{ item.port }} weight={{ item.weight | default('1') }} max_fails={{ item.max_fails | default('5') }} fail_timeout={{ item.fail_timeout | default('10s') }};
+{% endif %}
+{% endfor %}
+}
+
+{% endif %}
 
 # vim:filetype=nginx

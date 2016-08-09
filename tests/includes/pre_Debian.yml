@@ -3,10 +3,18 @@
 - name: APT_REPOSITORY | Install backports
   apt_repository: repo='deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main' state=present
 
+- block:
+  - name: APT | Install DotDeb key
+    apt_key: url='http://www.dotdeb.org/dotdeb.gpg' state=present
+  - name: APT_REPOSITORY | Install dotdeb (PHP 7) 
+    apt_repository: repo='deb http://packages.dotdeb.org {{ ansible_distribution_release }} all' state=present
+  when: ansible_distribution_release == 'jessie'
+
 - name: APT | Install needed packages
   apt: pkg={{ item }} update_cache=yes cache_valid_time=3600 state=present
   with_items:
     - php5-fpm
+    - php7.0-fpm
     - curl
     - fcgiwrap
 
@@ -19,4 +27,5 @@
   register: sf
   with_items:
     - php5-fpm
+    - php7.0-fpm
     - fcgiwrap

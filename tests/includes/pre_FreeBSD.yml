@@ -4,7 +4,8 @@
   set_fact:
     nginx_pkgng_package: 'nginx-devel'
     nginx_user: 'www'
-    nginx_php_sockets:
+    nginx_php7: false
+    nginx_php5_sockets:
       - host: '127.0.0.1'
         port: 9000
 
