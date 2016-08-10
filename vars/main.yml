@@ -28,9 +28,10 @@ nginx_dirs:
   - "{{ nginx_helper_dir }}"
 
 nginx_templates_no_dir:
-  - '_proxy'
-  - '_nagios3'
   - '_backuppc'
+  - '_nagios3'
+  - '_owncloud'
+  - '_proxy'
 
 nginx_upstream_php5: 'php5'
 nginx_upstream_php7: 'php7'

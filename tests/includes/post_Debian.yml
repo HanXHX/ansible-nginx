@@ -1,10 +1,11 @@
 ---
 
 - name: APT | Install web apps
-  apt: pkg={{ item }} state=present
+  apt: pkg={{ item }} state=present install_recommends=no
   with_items:
-    - nagios3
     - backuppc
+    - nagios3
+    - owncloud
 
 - name: SERVICE | Ensure backuppc is started
   service: name=backuppc state=started

@@ -110,3 +110,10 @@ nginx_ssl_pairs: []
 nginx_dh: null
 nginx_dh_path: '{{ nginx_ssl_dir }}/dhparam.pem'
 nginx_dh_length: 2048
+
+# Extra
+
+# Note:
+#   - On Debian, if you use Owncloud from Upstream repository, you must set this var to "/var/www/owncloud"
+#   - TODO: force this var in vars/FreeBSD.yml
+nginx_owncloud_root: '/usr/share/owncloud'

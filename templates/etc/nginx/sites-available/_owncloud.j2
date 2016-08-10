@@ -1,0 +1,69 @@
+{% extends "_php.j2" %}
+
+{% block root %}
+	root {{ nginx_owncloud_root }};
+{% endblock %}
+
+{% block template_index %}
+	index index.php;
+{% endblock %}
+
+{% block more %}
+	error_page 403 /core/templates/403.php;
+	error_page 404 /core/templates/404.php;
+	gzip off;
+	client_max_body_size 10G;
+	fastcgi_buffers 64 4K;
+	rewrite ^/caldav(.*)$ /remote.php/caldav$1 redirect;
+	rewrite ^/carddav(.*)$ /remote.php/carddav$1 redirect;
+	rewrite ^/webdav(.*)$ /remote.php/webdav$1 redirect;
+{% endblock %}
+
+{% block template_headers %}
+	add_header X-XSS-Protection "1; mode=block";
+	add_header X-Robots-Tag none;
+	add_header X-Content-Type-Options nosniff;
+	add_header X-Download-Options noopen;
+	add_header X-Permitted-Cross-Domain-Policies none;
+	add_header X-Frame-Options SAMEORIGIN;
+{% endblock %}
+
+{% block template_upstream_location %}
+	location ~ /remote.php {
+		dav_methods PUT DELETE MKCOL COPY MOVE;
+		dav_ext_methods PROPFIND OPTIONS;
+		fastcgi_pass {{ php_upstream }};
+		fastcgi_param HOME /var/www/owncloud;
+		fastcgi_param HTTP_HOME /var/www/owncloud;
+		fastcgi_param PATH /usr/local/bin:/usr/bin:/bin;
+		fastcgi_param modHeadersAvailable true;
+		fastcgi_split_path_info ^(.+\.php)(/.+)$;
+{% if nginx_version.stdout | version_compare('1.6.1', 'lt') %}
+		include fastcgi_params;
+{% else %}
+		include fastcgi.conf;
+{% endif %}
+		}
+
+	location ~ \.php$ {
+		fastcgi_pass {{ php_upstream }};
+		fastcgi_index index.php;
+		fastcgi_param HOME /var/www/owncloud;
+		fastcgi_param HTTP_HOME /var/www/owncloud;
+		fastcgi_param PATH /usr/local/bin:/usr/bin:/bin;
+		fastcgi_param modHeadersAvailable true;
+		fastcgi_split_path_info ^(.+\.php)(/.+)$;
+{% if nginx_version.stdout | version_compare('1.6.1', 'lt') %}
+		include fastcgi_params;
+{% else %}
+		include fastcgi.conf;
+{% endif %}
+	}
+
+	location ~* \.(?:css|js)$ {
+		try_files $uri /index.php$uri$is_args$args;
+		add_header Cache-Control "public, max-age=7200";
+		expires 2h;
+		access_log off;
+	}
+{% endblock %}

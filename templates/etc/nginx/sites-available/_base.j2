@@ -50,11 +50,13 @@ server {
 	index {{ item.index | default('index.html index.htm') }};
 {% endblock %}
 
+{% block template_more %}
 {% if item.more is defined and item.more is iterable %}
 {% for line in item.more %}
 	{{ line }}
 {% endfor %}
 {% endif %}
+{% endblock %}
 
 {% if item.htpasswd is defined %}
 {{ htpasswd(item.htpasswd, 1) }}
@@ -81,6 +83,19 @@ server {
 {% block template_custom_location %}
 {% endblock %}
 
+{% if __location is iterable and __location | length > 0 %}
+	# --> Custom locations
+{% for location, opts in __location.iteritems() %}
+	location {{ location }} {
+{% for opt in opts %}
+{% if opt.htpasswd is defined %}{{ htpasswd(opt.htpasswd, 2) }}{% else %}
+		{{ opt }}
+{% endif %}
+{% endfor  %}
+	}
+{% endfor %}	# <-- Custom locations
+{% endif %}
+
 {% block template_local_content %}
 {% if item.manage_local_content is not defined or item.manage_local_content %}
 	location ~ /\.ht {
@@ -99,19 +114,6 @@ server {
 	}
 {% endif %}
 {% endblock %}
-
-{% if __location is iterable and __location | length > 0 %}
-	# --> Custom locations
-{% for location, opts in __location.iteritems() %}
-	location {{ location }} {
-{% for opt in opts %}
-{% if opt.htpasswd is defined %}{{ htpasswd(opt.htpasswd, 2) }}{% else %}
-		{{ opt }}
-{% endif %}
-{% endfor  %}
-	}
-{% endfor %}	# <-- Custom locations
-{% endif %}
 
 {% if item.use_access_log is defined %}
 {% if item.use_access_log %}

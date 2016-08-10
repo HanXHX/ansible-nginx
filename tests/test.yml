@@ -15,6 +15,7 @@
     int_ansible_ssl_dir: '/etc/ansible-ssl'
 # Role vars
     nginx_worker_processes: 1 # Ansible+FreeBSD can't detect CPU number
+    nginx_apt_package: 'nginx-extras'
     nginx_backports: true
     nginx_php5: true
     nginx_php7: true
@@ -189,6 +190,8 @@
         template: '_base'
         ssl_name: 'test-ssl.local'
         redirect_https: true
+      - name: 'owncloud.local'
+        template: '_owncloud'
     nginx_dh_length: 1024
   roles:
     - ../../
