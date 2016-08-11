@@ -5,6 +5,13 @@
     update_cache=yes
     cache_valid_time=3600
 
+- name: APT | Force OpenSSL from backports (fix dependency break)
+  apt: >
+    pkg=openssl
+    state=present
+    default_release={{ ansible_distribution_release + '-backports' }}
+  when: nginx_backports
+
 - name: APT | Install nginx and dependencies
   apt: >
     pkg={{ nginx_apt_package }}
