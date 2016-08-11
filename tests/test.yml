@@ -313,6 +313,27 @@
       failed_when: nagios_cgi.stdout.find('Nagios Event Summary') == -1
 
 # --------------------------------
+# Owncloud
+# --------------------------------
+    - block:
+      - name: -- VERIFY OWNCLOUD --
+        command: "curl -H 'Host: owncloud.local' http://127.0.0.1/"
+        changed_when: false
+        register: ownsimple
+        failed_when: ownsimple.stdout.find('ownCloud') == -1
+      - name: -- VERIFY OWNCLOUD JS (FROM PHP)--
+        command: "curl -H 'Host: owncloud.local' http://127.0.0.1/index.php/core/js/oc.js"
+        changed_when: false
+        register: ownjsphp
+        failed_when: ownjsphp.stdout.find('var oc_debug=false') == -1
+      - name: -- VERIFY OWNCLOUD JS --
+        command: "curl -H 'Host: owncloud.local' http://127.0.0.1/core/js/js.js"
+        changed_when: false
+        register: ownjs
+        failed_when: ownjs.stdout.find('var oc_debug') == -1
+      when: ansible_distribution != 'FreeBSD'
+
+# --------------------------------
 # SSL
 # --------------------------------
     - name: -- VERIFY SSL --

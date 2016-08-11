@@ -43,7 +43,7 @@
 {% else %}
 		include fastcgi.conf;
 {% endif %}
-		}
+	}
 
 	location ~ \.php$ {
 		fastcgi_pass {{ php_upstream }};
@@ -61,7 +61,7 @@
 	}
 
 	location ~* \.(?:css|js)$ {
-		try_files $uri /index.php$uri$is_args$args;
+		try_files $uri /index.php$is_args$args;
 		add_header Cache-Control "public, max-age=7200";
 		expires 2h;
 		access_log off;
