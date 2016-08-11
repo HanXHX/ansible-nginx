@@ -33,5 +33,5 @@ nginx_templates_no_dir:
   - '_owncloud'
   - '_proxy'
 
-nginx_upstream_php5: 'php5'
-nginx_upstream_php7: 'php7'
+nginx_upstream_php56: 'php56'
+nginx_upstream_php70: 'php70'

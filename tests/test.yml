@@ -17,8 +17,8 @@
     nginx_worker_processes: 1 # Ansible+FreeBSD can't detect CPU number
     nginx_apt_package: 'nginx-extras'
     nginx_backports: true
-    nginx_php5: true
-    nginx_php7: true
+    nginx_php56: true
+    nginx_php70: true
     nginx_upstreams:
       - name: 'test'
         servers:
@@ -147,7 +147,7 @@
           '/':
             - 'alias /var/tmp;'
       - name: 'test-php.local'
-        php_version: 7
+        php_version: 70
         upstream_params:
           - 'fastcgi_param FOO bar;'
         redirect_from:

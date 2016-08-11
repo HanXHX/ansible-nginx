@@ -21,7 +21,9 @@
     - fcgiwrap
     - nghttp2
     - php5-fpm
+    - php5-sqlite
     - php7.0-fpm
+    - php7.0-sqlite3
     - strace
     - vim
 
