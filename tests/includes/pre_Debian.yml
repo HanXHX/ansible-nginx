@@ -17,14 +17,13 @@
 - name: APT | Install needed packages
   apt: pkg={{ item }} update_cache=yes cache_valid_time=3600 state=present
   with_items:
-    - php5-fpm
-    - php7.0-fpm
     - curl
     - fcgiwrap
-
-- name: APT | Install nghttp2
-  apt: pkg=nghttp2 state=present
-  when: ansible_distribution_major_version | version_compare(8, 'ge')
+    - nghttp2
+    - php5-fpm
+    - php7.0-fpm
+    - strace
+    - vim
 
 - name: SERVICE | Force start services
   service: name={{ item }} state=started
