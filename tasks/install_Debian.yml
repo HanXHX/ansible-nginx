@@ -8,7 +8,7 @@
 - name: APT | Force OpenSSL from backports (fix dependency break)
   apt: >
     pkg=openssl
-    state=present
+    state=latest
     default_release={{ ansible_distribution_release + '-backports' }}
   when: nginx_backports
 
