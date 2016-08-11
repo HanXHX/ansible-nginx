@@ -28,6 +28,10 @@
 	add_header X-Frame-Options SAMEORIGIN;
 {% endblock %}
 
+{% block template_try_files %}
+		try_files $uri $uri/ =404;
+{% endblock %}
+
 {% block template_upstream_location %}
 	location ~ /remote.php {
 		dav_methods PUT DELETE MKCOL COPY MOVE;
@@ -45,7 +49,7 @@
 {% endif %}
 	}
 
-	location ~ \.php$ {
+	location ~ \.php(?:$|/) {
 		fastcgi_pass {{ php_upstream }};
 		fastcgi_index index.php;
 		fastcgi_param HOME {{ nginx_owncloud_root }};
@@ -59,11 +63,25 @@
 		include fastcgi.conf;
 {% endif %}
 	}
+{% endblock %}
 
+{% block template_local_content %}
 	location ~* \.(?:css|js)$ {
 		try_files $uri /index.php$is_args$args;
-		add_header Cache-Control "public, max-age=7200";
 		expires 2h;
+	}
+
+	location ~* \.(?:jpg|jpeg|gif|bmp|ico|png|swf)$ {
+		expires 2d;
+	}
+
+	location = /robots.txt {
+		allow all;
+		log_not_found off;
 		access_log off;
+	}
+
+	location ~ ^/(?:\.ht|data|config|db_structure\.xml|README){
+		deny all;
 	}
 {% endblock %}
