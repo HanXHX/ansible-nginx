@@ -5,7 +5,7 @@
   with_items:
     - backuppc
     - nagios3
-    - owncloud
+#    - owncloud
 
 - name: SERVICE | Ensure backuppc is started
   service: name=backuppc state=started
