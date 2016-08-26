@@ -1,9 +1,9 @@
 {% extends "_base.j2" %}
 
 {% macro phpv(version) %}
-{% if version == 56 %}
+{% if version == 56 or version == "5.6" %}
 {{ nginx_upstream_php56 -}}
-{% elif version == 70 %}
+{% elif version == 70 or version == "7.0" %}
 {{ nginx_upstream_php70 -}}
 {% else %}
 {# Hack... define another upstream #}
