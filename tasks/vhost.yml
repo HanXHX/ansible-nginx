@@ -36,7 +36,7 @@
   when: >
     item.root is not defined and
     (item.template is defined and item.template not in nginx_templates_no_dir) and
-    (item.delete is not defined or not item.delete) and
+    (item.state is not defined or not item.state != 'absent') and
     item.redirect_to is not defined
 
 - name: TEMPLATE | Create vhosts
@@ -45,13 +45,13 @@
     dest={{ nginx_etc_dir }}/sites-available/{{ item.filename | default(item.name if item.name is string else item.name[0]) }}
   with_items: "{{ nginx_vhosts }}"
   notify: ['reload nginx', 'restart nginx freebsd']
-  when: item.delete is not defined or not item.delete
+  when: item.state is not defined or item.state != 'absent'
 
 - name: FILE | Delete vhosts
   file: path={{ nginx_etc_dir }}/sites-available/{{ item.filename | default(item.name if item.name is string else item.name[0]) }} state=absent
   with_items: "{{ nginx_vhosts }}"
   notify: ['reload nginx', 'restart nginx freebsd']
-  when: item.delete is defined and item.delete
+  when: item.state is defined and item.state == 'absent'
 
 - name: FILE | Enable vhosts
   file: >
@@ -61,15 +61,13 @@
   with_items: "{{ nginx_vhosts }}"
   notify: ['reload nginx', 'restart nginx freebsd']
   when: >
-    ((item.enable is not defined) or
-    (item.enable is defined and item.enable)) and
-    (item.delete is not defined or not item.delete)
+    item.state is not defined or item.state == 'present'
 
 - name: FILE | Disable vhosts
   file: path={{ nginx_etc_dir}}/sites-enabled/{{ item.filename | default(item.name if item.name is string else item.name[0]) }} state=absent
   with_items: "{{ nginx_vhosts }}"
   notify: ['reload nginx', 'restart nginx freebsd']
-  when: (item.enable is defined and not item.enable) or (item.delete is defined and item.delete)
+  when: item.state is defined and item.state == 'disabled' 
 
 - name: FILE | Delete default vhost when explicitely defined
   file: >
