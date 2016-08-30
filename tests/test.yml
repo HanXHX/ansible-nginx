@@ -165,7 +165,7 @@
         headers:
           'X-proxyfied': '1'
       - name: 'deleted.local'
-        delete: true
+        state: 'absent' 
       - name: 'redirect-to.local'
         redirect_to: 'http://test.local'
       - name: 'backuppc.local'
@@ -220,7 +220,7 @@
     - name: -- VERIFY VHOSTS --
       command: "curl -H 'Host: {{ item.name if item.name is string else item.name[0] }}' http://127.0.0.1{% if item.listen is defined %}:{{ item.listen[0] }}{% endif %}/"
       with_items: "{{ nginx_vhosts }}"
-      when: item.delete is undefined or not item.delete
+      when: item.state is undefined or item.state != "absent"
       changed_when: false
     - name: -- VERIFY FORBIDDEN --
       command: "curl -H 'Host: test-php-index.local' http://127.0.0.1/phpinfo.php"
@@ -230,7 +230,7 @@
     - name: -- VERIFY REDIRECT VHOSTS --
       command: "curl -H 'Host: {{ item.redirect_from[0] }}' http://127.0.0.1/"
       with_items: "{{ nginx_vhosts }}"
-      when: item.redirect_from is defined and (item.delete is undefined or not item.delete)
+      when: item.redirect_from is defined and (item.state is undefined or item.state != "absent")
       changed_when: false
       register: r
       failed_when: r.stdout.find('301 Moved Permanently') == -1

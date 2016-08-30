@@ -11,8 +11,7 @@ Common
 - `name`: (M) Domain or list of domain used.
 - `template`: (D) template used to create vhost. Optional if you set `delete` to true or using `redirect_tor`.
 - `filename`: (O) Specify filename in /etc/nginx/sites-*. Do NOT specify default (reserved keyword).
-- `enable`: (O) Enable the vhost (default is true)
-- `delete`: (O) Delete the vhost (default is false)
+- `state`: (O) Vhost status. Can be "present" (default), "absent" and "disabled".
 - `redirect_from`: (O) Domain list to redirect to the first `name`. You can use this key to redirect non-www to www
 - `redirect_to`: (O) Redirect all requests to this domain. Please set scheme (http:// or https:// or $sheme).
 - `headers`: (O) Set additionals header as key/value list. You can append "always" to the value. Show [nginx doc](http://nginx.org/en/docs/http/ngx_http_headers_module.html).
