@@ -40,6 +40,7 @@ FreeBSD:
 - `nginx_resolver`: list of DNS resolver (default: OpenDNS)
 - `nginx_error_log_level`: default log level
 - `nginx_auto_config_httpv2`: boolean, auto configure HTTP2 where possible
+- `nginx_fastcgi_fix_realpath`: boolean, use realpath for fastcgi (fix problems with symlinks and PHP opcache)
 
 ### Nginx Configuration
 
