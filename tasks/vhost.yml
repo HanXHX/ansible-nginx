@@ -45,7 +45,7 @@
     dest={{ nginx_etc_dir }}/sites-available/{{ item.filename | default(item.name if item.name is string else item.name[0]) }}
   with_items: "{{ nginx_vhosts }}"
   notify: ['reload nginx', 'restart nginx freebsd']
-  when: item.state is not defined or not item.state != 'absent'
+  when: item.state is not defined or item.state != 'absent'
 
 - name: FILE | Delete vhosts
   file: path={{ nginx_etc_dir }}/sites-available/{{ item.filename | default(item.name if item.name is string else item.name[0]) }} state=absent
