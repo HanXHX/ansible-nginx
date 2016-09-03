@@ -3,3 +3,9 @@
 {% block template_try_files %}
 	try_files $uri $uri/ /index.php?$args;
 {% endblock %}
+
+{% block template_custom_location %}
+	location ~* /(?:uploads|files)/.*\.php$ {
+		deny all;
+	}
+{% endblock %}
