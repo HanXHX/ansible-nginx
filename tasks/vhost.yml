@@ -27,7 +27,7 @@
 
 - name: FILE | Create root public folders (foreach nginx_vhosts)
   file: >
-    path={{ nginx_root }}/{{ item.name if item.name is string else item.name[0] }}/public
+    path={{ nginx_root }}/{{ item.filename | default(item.name if item.name is string else item.name[0]) }}/public
     state=directory
     owner={{ item.owner | default(nginx_user) }}
     group={{ item.group | default(nginx_user) }}
