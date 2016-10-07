@@ -38,7 +38,7 @@ server {
 	include {{ nginx_helper_dir + '/ssl-' + item.ssl_template | default('strong') }};
 {% endif %}
 {% endif %}
-	server_name {% if item.name is string %}{{ item.name }}{% else %}{{ item.name | join(' ') }}{% endif %};
+	server_name {% if item.name is string %}{{ item.name }}{% else %}{{ "\n\t\t"  }}{{ item.name | join("\n\t\t") }}{% endif %};
 {% block root %}
 {% if item.root is defined %}
 	root {{ item.root }};
