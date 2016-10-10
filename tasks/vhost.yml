@@ -48,8 +48,10 @@
   when: item.state is not defined or item.state != 'absent'
 
 - name: FILE | Delete vhosts
-  file: path={{ nginx_etc_dir }}/sites-available/{{ item.filename | default(item.name if item.name is string else item.name[0]) }} state=absent
-  with_items: "{{ nginx_vhosts }}"
+  file: path={{ nginx_etc_dir }}/{{ item.1 }}/{{ item.0.filename | default(item.0.name if item.0.name is string else item.0.name[0]) }} state=absent
+  with_nested:
+    - "{{ nginx_vhosts }}"
+    - ['sites-available', 'sites-enabled']
   notify: ['reload nginx', 'restart nginx freebsd']
   when: item.state is defined and item.state == 'absent'
 
