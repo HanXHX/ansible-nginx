@@ -5,6 +5,11 @@
 user {{ nginx_user }};
 worker_processes {{ nginx_worker_processes }};
 pid {{ nginx_pid }};
+{% if nginx_version.stdout | version_compare('1.9.1', 'ge') %}
+{% for module in nginx_dyn_modules -%}
+load_module "modules/ngx_{{ module }}_module.so";
+{% endfor %}
+{% endif %}
 
 events {
 	worker_connections {{ nginx_events_worker_connections }};

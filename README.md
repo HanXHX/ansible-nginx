@@ -13,6 +13,7 @@ Features:
 - Fast PHP configuration
 - Preconfigured vhost templates (should work on many app)
 - Auto-configure HTTP2 on SSL/TLS vhosts
+- Manage dynamic modules (install and loading) 
 
 Requirements
 ------------
@@ -50,6 +51,7 @@ FreeBSD:
 - `nginx_events_*`: all variables in events block
 - `nginx_http_*`: all variables in http block
 - `nginx_custom_http`: instructions list (will put data in `/etc/nginx/conf.d/custom.conf`)
+- `nginx_dyn_modules`: dynamic module list to load
 
 Fine configuration
 ------------------
