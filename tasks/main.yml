@@ -11,7 +11,7 @@
 
 - name: INCLUDE | Manage dynamic modules
   include: dyn_modules.yml
-  when: nginx_version.stdout | version_compare('1.9.1', 'ge')
+  when: nginx_version.stdout | version_compare('1.9.11', 'ge')
 
 - name: INCLUDE | Install
   include: config.yml
