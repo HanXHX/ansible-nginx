@@ -6,13 +6,13 @@
 - block:
   - name: APT | Install DotDeb key
     apt_key: url='http://www.dotdeb.org/dotdeb.gpg' state=present
-  - name: APT_REPOSITORY | Install dotdeb (PHP 7) 
+  - name: APT_REPOSITORY | Install dotdeb (PHP 7)
     apt_repository: repo='deb http://packages.dotdeb.org {{ ansible_distribution_release }} all' state=present
   - name: LINEFILEFILE | Dotdeb priority (prevent install nginx from dotdeb)
     copy: >
       content="Package: *\nPin: release o=packages.dotdeb.org\nPin-Priority: 100"
       dest=/etc/apt/preferences
-  when: ansible_distribution_release == 'jessie'
+  when: ansible_distribution_release == 'jessie' and dotdeb
 
 - name: APT | Install needed packages
   apt: pkg={{ item }} update_cache=yes cache_valid_time=3600 state=present
@@ -20,17 +20,28 @@
     - curl
     - fcgiwrap
     - nghttp2
-    - php5-fpm
-    - php5-sqlite
-    - php7.0-fpm
-    - php7.0-sqlite3
     - strace
     - vim
 
-- name: SERVICE | Force start services
-  service: name={{ item }} state=started
-  register: sf
+- name: APT | Install PHP5.6
+  apt: pkg={{ item }} update_cache=yes cache_valid_time=3600 state=present
   with_items:
     - php5-fpm
+    - php5-sqlite
+  when: nginx_php56
+
+- name: APT | Install PHP7
+  apt: pkg={{ item }} update_cache=yes cache_valid_time=3600 state=present
+  with_items:
     - php7.0-fpm
-    - fcgiwrap
+    - php7.0-sqlite3
+  when: nginx_php70
+
+- name: SERVICE | Force start services
+  service: name={{ item.name }} state=started
+  register: sf
+  with_items:
+    - { name: 'php5-fpm', cond: "{{ nginx_php56 }}" }
+    - { name: 'php7.0-fpm', cond: "{{ nginx_php70 }}" }
+    - { name: 'fcgiwrap', cond: true }
+  when: "{{ item.cond }}"

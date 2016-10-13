@@ -2,6 +2,10 @@
 
 - hosts: all
   pre_tasks:
+    - debug: var=dotdeb
+    - debug: var=nginx_php56
+    - debug: var=nginx_php70
+    - debug: var=nginx_backports
     - name: INCLUDE | Pre_tasks related to OS version
       include: "includes/pre_{{ ansible_distribution }}.yml"
     - name: FILE | Create an internal SSL dir
@@ -16,9 +20,6 @@
 # Role vars
     nginx_worker_processes: 1 # Ansible+FreeBSD can't detect CPU number
     nginx_apt_package: 'nginx-extras'
-    nginx_backports: true
-    nginx_php56: true
-    nginx_php70: true
     nginx_dyn_modules: ['http_geoip']
     nginx_upstreams:
       - name: 'test'
@@ -155,7 +156,7 @@
           '/':
             - 'alias /var/tmp;'
       - name: 'test-php.local'
-        php_version: 70
+        php_version: "{{ '7.0' if nginx_php70 else '5.6' }}"
         upstream_params:
           - 'fastcgi_param FOO bar;'
         redirect_from:
@@ -246,19 +247,13 @@
 # --------------------------------
 # PHP
 # --------------------------------
-    - name: -- VERIFY PHP VHOSTS --
-      command: "curl -H 'Host: {{ item }}' http://127.0.0.1/"
-      register: p
-      changed_when: false
-      failed_when: p.stdout.find('PHP Version') == -1
-      with_items: ['test-php.local', 'test-php-index.local']
-
     - name: -- VERIFY PHP5 VHOSTS (implicit default) --
       command: "curl -H 'Host: {{ item }}' http://127.0.0.1/"
       register: p
       changed_when: false
       failed_when: p.stdout.find('PHP Version 5') == -1
       with_items: ['test-php-index.local']
+      when: nginx_php56
 
     - name: -- VERIFY PHP7 VHOSTS --
       command: "curl -H 'Host: {{ item }}' http://127.0.0.1/"
@@ -266,6 +261,7 @@
       changed_when: false
       failed_when: p.stdout.find('PHP Version 7') == -1
       with_items: ['test-php.local']
+      when: nginx_php70
 
 # --------------------------------
 # Basic Auth

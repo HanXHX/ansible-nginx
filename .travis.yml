@@ -1,7 +1,12 @@
-env:
-  - PLATFORM=debian-jessie
+matrix:
+  include:
+    - env: PLATFORM=debian-jessie ORIGIN=debian    NGINX_PHP56=true NGINX_PHP70=false NGINX_BACKPORTS=false DOTDEB=false
+    - env: PLATFORM=debian-jessie ORIGIN=backports NGINX_PHP56=true NGINX_PHP70=false NGINX_BACKPORTS=true  DOTDEB=false
+    - env: PLATFORM=debian-jessie ORIGIN=dotdeb    NGINX_PHP56=true NGINX_PHP70=true  NGINX_BACKPORTS=false DOTDEB=true
 
 sudo: required
+
+dist: trusty
 
 language: python
 
@@ -9,7 +14,7 @@ services:
   - docker
 
 script:
-  - docker build -f tests/$PLATFORM.Dockerfile -t test-$PLATFORM . && docker run --name $PLATFORM test-$PLATFORM
+  - docker build -f tests/$PLATFORM.Dockerfile -t test-$PLATFORM . && docker run -e "DOTDEB=$DOTDEB" -e "NGINX_PHP56=$NGINX_PHP56" -e "NGINX_PHP70=$NGINX_PHP70" -e "NGINX_BACKPORTS=$NGINX_BACKPORTS" --name $PLATFORM test-$PLATFORM
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
