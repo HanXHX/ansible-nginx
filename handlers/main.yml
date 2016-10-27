@@ -4,6 +4,7 @@
 - name: reload nginx
   command: nginx -t
   notify: real-reload nginx
+  changed_when: false
 
 - name: real-reload nginx
   service: name=nginx state=reloaded
