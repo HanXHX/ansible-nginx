@@ -153,7 +153,7 @@ server {
 {% for port in __listen %}
 	listen {{ port }};
 {% endfor %}
-	server_name {{ item.redirect_from | join(' ') }};
+	server_name {% if item.redirect_from is string %}{{ item.redirect_from }}{% else %}{{ item.redirect_from | join(' ') }}{% endif %};
 	return 301 $scheme://{{ __main_name }}$request_uri;
 }
 {% endif %}
