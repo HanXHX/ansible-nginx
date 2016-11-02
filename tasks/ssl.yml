@@ -28,6 +28,7 @@
   with_items: "{{ nginx_ssl_pairs }}"
   when: item.key is defined
   notify: reload nginx
+  no_log: true
 
 - name: COPY | Deploy SSL certs
   copy: >
