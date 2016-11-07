@@ -32,7 +32,8 @@ Note: `name` is used to deploy key/cert. With defaults values dans `name` = "foo
 Tips
 ----
 
-Deploying key/cert is not mandatory with this role. You can manage it in other place ([letsencrypt](https://letsencrypt.org/)? :)). You just need to set `dest_cert` and `dest_key`!
+- Deploying key/cert is not mandatory with this role. You can manage it in other place ([letsencrypt](https://letsencrypt.org/)? :)). You just need to set `dest_cert` and `dest_key`!
+- In `nginx_vhosts`, `ssl_name` is mandatory. This role will search in `nginx_ssl_pairs` with vhost `name` (first in list if it's a list).
 
 Diffie-Hellman
 --------------
@@ -48,6 +49,9 @@ nginx_vhosts;
     proto: ['http', 'https']
     template: '_base'
     ssl_name: 'mysuperkey'
+  - name: 'test-ssl2.local'
+    proto: ['http', 'https']
+    template: '_base'
 
 nginx_ssl_pairs:
   - name: mysuperkey
@@ -59,5 +63,15 @@ nginx_ssl_pairs:
       -----BEGIN CERTIFICATE-----
       ....(snip)....
       -----END CERTIFICATE-----
+  - name: test-ssl2.local
+    key: |
+      -----BEGIN RSA PRIVATE KEY-----
+      ....(snip)....
+      -----END RSA PRIVATE KEY-----
+    cert: |
+      -----BEGIN CERTIFICATE-----
+      ....(snip)....
+      -----END CERTIFICATE-----
+
 ```
 

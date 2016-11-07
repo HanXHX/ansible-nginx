@@ -186,7 +186,6 @@
       - name: 'test-ssl.local'
         proto: ['http', 'https']
         template: '_base'
-        ssl_name: 'test-ssl.local'
       - name: 'test-ssl-predeployed.local'
         proto: ['http', 'https']
         template: '_base'

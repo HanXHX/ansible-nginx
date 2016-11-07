@@ -4,6 +4,7 @@
 {% set __listen_ssl = item.listen_ssl | default(['443']) %}
 {% set __location = item.location | default({}) %}
 {% set __headers = item.headers | default({'X-Frame-Options': 'DENY always', 'X-Content-Type-Options': 'nosniff always' }) %}
+{% set __ssl_name = item.ssl_name | default(item.name if item.name is string else item.name[0]) %}
 {% macro htpasswd(htpasswd_name, indent=1) -%}
 {% for ht in nginx_htpasswd if ht.name == htpasswd_name %}
 {{ "\t" * indent }}auth_basic "{{ ht.description }}";
@@ -33,7 +34,7 @@ server {
 {% for port in __listen_ssl %}
 	listen {{ port }}{% if nginx_default_vhost_ssl == __main_name %} default_server{% endif %} ssl{% if nginx_auto_config_httpv2 and 'http_v2' in nginx_modules %} http2{% endif %};
 {% endfor %}
-{{ ssl(item.ssl_name) }}
+{{ ssl(__ssl_name) }}
 {% if item.ssl_template is not defined or item.ssl_template != false %}
 	include {{ nginx_helper_dir + '/ssl-' + item.ssl_template | default('strong') }};
 {% endif %}
