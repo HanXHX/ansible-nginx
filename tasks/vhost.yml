@@ -5,14 +5,6 @@
   when: item.filename is defined and item.filename == 'default'
   with_items: "{{ nginx_vhosts }}"
 
-- name: FAIL | Check vhost and SSL/TLS support
-  fail: msg="Missmatch configuration for vhost {{ item.name if item.name is string else item.name[0] }}"
-  when: >
-    item.proto is defined and
-    'https' in item.proto and
-    item.ssl_name is not defined
-  with_items: "{{ nginx_vhosts }}"
-
 - name: FAIL | Check HTTPS redir and proto
   fail: msg="You can't have HTTP proto and HTTPS redirection at the same time"
   when: >
