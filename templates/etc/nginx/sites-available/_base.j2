@@ -140,7 +140,7 @@ server {
 {% for port in __listen %}
 	listen {{ port }}{% if nginx_default_vhost == __main_name %} default_server{% endif %};
 {% endfor %}
-	server_name {% if item.name is string %}{{ item.name }}{% else %}{{ item.name | join(' ') }}{% endif %};
+	server_name {% if item.name is string %}{{ item.name }}{% else %}{{ "\n\t\t" }}{{ item.name | join("\n\t\t") }}{% endif %};
 	return 301 https://{{ __main_name }}{% if '443' not in __listen_ssl %}:{{ __listen_ssl[0] }}{% endif %}$request_uri;
 }
 {% endif %}
@@ -154,7 +154,7 @@ server {
 {% for port in __listen %}
 	listen {{ port }};
 {% endfor %}
-	server_name {% if item.redirect_from is string %}{{ item.redirect_from }}{% else %}{{ item.redirect_from | join(' ') }}{% endif %};
+	server_name {% if item.redirect_from is string %}{{ item.redirect_from }}{% else %}{{ "\n\t\t" }}{{ item.redirect_from | join("\n\t\t") }}{% endif %};
 	return 301 $scheme://{{ __main_name }}$request_uri;
 }
 {% endif %}
