@@ -13,7 +13,7 @@ Features:
 - Fast PHP configuration
 - Preconfigured vhost templates (should work on many app)
 - Auto-configure HTTP2 on SSL/TLS vhosts
-- Manage dynamic modules (install and loading) 
+- Manage dynamic modules (install and loading)
 
 Requirements
 ------------

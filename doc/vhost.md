@@ -18,6 +18,7 @@ Common
 - `redirect_to_code`: Redirect code (default: 302)
 - `redirect_https`: (O) Boolean. Redirect HTTP to HTTPS. If "true", you _MUST_ set `proto` to ```['https']```.
 - `location`: (O) Add new custom locations (it does not overwrite!)
+- `location_order`: (O) Due to non preditive `location` order, you can provide the good order (see test-location.local in [tests/test.yml](../tests/test.yml)).
 - `more`: (O) Add more custom infos.
 - `upstream_params`: (O) Add upstream params (useful when you want to pass variables to PHP)
 - `override_try_files`: (O) overrides default try\_files defined in template
@@ -25,7 +26,7 @@ Common
 - `htpasswd`: (O) References name key in `nginx_htpasswd`. Enable auth basic on all vhost.
 - `proto`: (O) list of protocol used. Default is a list with "http". If you need http and https, you must set a list with "http" and "https". You can only set "https" without http support.
 - `ssl_name`: (D) name of the key used when using TLS/SSL. Optional when `proto` contains "https". If you don't set this value, it will search by `name`.
-- `ssl_template` (O) "strong" (default) or "legacy". You can disable SSL helpers and add your own directives by setting "false". 
+- `ssl_template` (O) "strong" (default) or "legacy". You can disable SSL helpers and add your own directives by setting "false".
 - `php_version` (O) Sepecify PHP version (5 or 7)
 
 (O): Optional

@@ -5,6 +5,7 @@
 {% set __location = item.location | default({}) %}
 {% set __headers = item.headers | default({'X-Frame-Options': 'DENY always', 'X-Content-Type-Options': 'nosniff always' }) %}
 {% set __ssl_name = item.ssl_name | default(item.name if item.name is string else item.name[0]) %}
+{% set __location_order = item.location_order | default(__location.keys()) %}
 {% macro htpasswd(htpasswd_name, indent=1) -%}
 {% for ht in nginx_htpasswd if ht.name == htpasswd_name %}
 {{ "\t" * indent }}auth_basic "{{ ht.description }}";
@@ -84,10 +85,11 @@ server {
 {% block template_custom_location %}
 {% endblock %}
 
-{% if __location is iterable and __location | length > 0 %}
+{% if __location_order | length > 0 %}
 	# --> Custom locations
-{% for location, opts in __location.iteritems() %}
+{% for location in __location_order %}
 	location {{ location }} {
+{% set opts = __location[location] %}
 {% for opt in opts %}
 {% if opt.htpasswd is defined %}{{ htpasswd(opt.htpasswd, 2) }}{% else %}
 		{{ opt }}
