@@ -25,6 +25,7 @@
   copy: >
     content="{{ item.key }}"
     dest="{{ nginx_ssl_dir + '/' + item.name + '/' + item.name + '.key' if item.dest_key is not defined else item.dest_key }}"
+    mode=0640
   with_items: "{{ nginx_ssl_pairs }}"
   when: item.key is defined
   notify: reload nginx
@@ -34,6 +35,7 @@
   copy: >
     content="{{ item.cert }}"
     dest="{{ nginx_ssl_dir + '/' + item.name + '/' + item.name + '.crt' if item.dest_cert is not defined else item.dest_cert }}"
+    mode=0644
   with_items: "{{ nginx_ssl_pairs }}"
   when: item.cert is defined
   notify: reload nginx
