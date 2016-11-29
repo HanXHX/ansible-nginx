@@ -39,4 +39,5 @@
   with_items: "{{ nginx_ssl_pairs }}"
   when: item.cert is defined
   notify: reload nginx
+  no_log: true
 
