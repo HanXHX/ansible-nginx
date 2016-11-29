@@ -235,6 +235,12 @@
     - name: -- Add HTML file hello --
       copy: dest="{{ nginx_root }}/test-htpasswd.local/public/hello/index.html" content="hello\n"
 # --------------------------------
+# Test custom facts
+# --------------------------------
+    - name: -- CHECK FACTS --
+      assert:
+        that: "'{{ ansible_local.nginx.fact_nginx_vhosts[0].name[0] }}' == 'test.local'"
+# --------------------------------
 # Simple vhosts tests
 # --------------------------------
     - name: -- VERIFY VHOSTS --

@@ -14,6 +14,7 @@ Features:
 - Preconfigured vhost templates (should work on many app)
 - Auto-configure HTTP2 on SSL/TLS vhosts
 - Manage dynamic modules (install and loading)
+- Deploy custom facts.d with sites config
 
 Requirements
 ------------

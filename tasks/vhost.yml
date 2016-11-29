@@ -61,7 +61,7 @@
   file: path={{ nginx_etc_dir}}/sites-enabled/{{ item.filename | default(item.name if item.name is string else item.name[0]) }} state=absent
   with_items: "{{ nginx_vhosts }}"
   notify: ['reload nginx', 'restart nginx freebsd']
-  when: item.state is defined and item.state == 'disabled' 
+  when: item.state is defined and item.state == 'disabled'
 
 - name: FILE | Delete default vhost when explicitely defined
   file: >
@@ -77,3 +77,14 @@
     state=link
   notify: ['reload nginx', 'restart nginx freebsd']
   when: nginx_default_vhost is none
+
+- name: TEMPLATE | Deploy facts
+  template:
+    src=etc/ansible/facts.d/nginx.fact.j2
+    dest=/etc/ansible/facts.d/nginx.fact
+    mode=0644
+  register: fact
+
+- name: SETUP
+  action: setup
+  when: fact.changed
