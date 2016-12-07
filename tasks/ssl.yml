@@ -6,6 +6,8 @@
     creates: "{{ nginx_dh_path }}"
   when: nginx_dh is not string
   notify: reload nginx
+  async: 1000
+  register: dh
 
 - name: COPY | Deploy DH file from vars
   copy: >
@@ -41,3 +43,9 @@
   notify: reload nginx
   no_log: true
 
+- name: Check DH command status
+  async_status: jid={{ dh.ansible_job_id }}
+  register: job_result
+  until: job_result.finished
+  retries: 30
+  when: nginx_dh is not string
