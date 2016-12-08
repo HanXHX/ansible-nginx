@@ -22,6 +22,7 @@
     state=directory
   with_items: "{{ nginx_ssl_pairs }}"
   when: item.dest_key is not defined or item.dest_cert is not defined
+  no_log: true
 
 - name: COPY | Deploy SSL keys
   copy: >
