@@ -210,8 +210,12 @@
         template: '_base'
         ssl_name: 'test-ssl.local'
         redirect_https: true
-#      - name: 'owncloud.local'
-#        template: '_owncloud'
+      - name: 'test-ssl-proxy-protocol.local'
+        proto: ['http', 'https']
+        http_proxy_protocol: true
+        https_proxy_protocol: true
+        template: '_base'
+        ssl_name: 'test-ssl.local'
     nginx_dh_length: 2048
   roles:
     - ../../
