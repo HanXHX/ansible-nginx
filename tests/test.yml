@@ -212,8 +212,10 @@
         redirect_https: true
       - name: 'test-ssl-proxy-protocol.local'
         proto: ['http', 'https']
-        http_proxy_protocol: true
-        https_proxy_protocol: true
+        listen: [80, 20080]
+        listen_ssl: [443, 20443]
+        http_proxy_protocol_port: [20080]
+        https_proxy_protocol_port: [20443]
         template: '_base'
         ssl_name: 'test-ssl.local'
     nginx_dh_length: 2048

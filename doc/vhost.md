@@ -28,8 +28,8 @@ Common
 - `ssl_name`: (D) name of the key used when using TLS/SSL. Optional when `proto` contains "https". If you don't set this value, it will search by `name`.
 - `ssl_template` (O) "strong" (default) or "legacy". You can disable SSL helpers and add your own directives by setting "false".
 - `php_version` (O) Sepecify PHP version (5 or 7)
-- `http_proxy_protocol` (O) Enable proxy protocol on http listen (default: false)
-- `https_proxy_protocol` (O) Enable proxy protocol on https listen (default: false)
+- `http_proxy_protocol_port` (O) Enable proxy protocol on http port.
+- `https_proxy_protocol_port` (O) Enable proxy protocol on https port.
 
 (O): Optional
 (M): Mandatory
