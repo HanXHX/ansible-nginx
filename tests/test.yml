@@ -233,7 +233,7 @@
       with_items: ['test-php.local', 'test-php-index.local']
     - name: -- Add HTML file --
       copy: dest="{{ item }}/index.html" content="Index HTML test OK\n"
-      with_items: ['{{ nginx_root }}/first-test/public', '/var/tmp', '{{ nginx_root }}/test-htpasswd-all.local/public', '{{ nginx_root }}/test-ssl.local/public', '{{ nginx_root }}/test-ssl-predeployed.local/public']
+      with_items: ['{{ nginx_root }}/first-test/public', '/var/tmp', '{{ nginx_root }}/test-htpasswd-all.local/public', '{{ nginx_root }}/test-ssl.local/public', '{{ nginx_root }}/test-ssl-predeployed.local/public', '{{ nginx_root }}/test-ssl-proxy-protocol.local/public']
     - name: -- Create directory --
       file: path={{ nginx_root }}/test-htpasswd.local/public/hello state=directory
     - name: -- Add HTML file hello --
