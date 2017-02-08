@@ -39,5 +39,10 @@ nginx_templates_no_dir:
   - '_owncloud'
   - '_proxy'
 
+nginx_servers_default_headers:
+  'X-Frame-Options': 'DENY always'
+  'X-Content-Type-Options': 'nosniff always'
+  'X-XSS-Protection': '1; mode=block'
+
 nginx_upstream_php56: 'php56'
 nginx_upstream_php70: 'php70'

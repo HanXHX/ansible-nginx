@@ -5,7 +5,7 @@
 {% set __http_proxy_protocol_port = item.http_proxy_protocol_port | default([]) %}
 {% set __https_proxy_protocol_port = item.https_proxy_protocol_port | default([]) %}
 {% set __location = item.location | default({}) %}
-{% set __headers = item.headers | default({'X-Frame-Options': 'DENY always', 'X-Content-Type-Options': 'nosniff always', 'X-XSS-Protection': '1; mode=block' }) %}
+{% set __headers = item.headers | default(nginx_servers_default_headers) %}
 {% set __ssl_name = item.ssl_name | default(item.name if item.name is string else item.name[0]) %}
 {% set __location_order = item.location_order | default(__location.keys()) %}
 {% macro htpasswd(htpasswd_name, indent=1) -%}
