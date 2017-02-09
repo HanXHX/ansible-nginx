@@ -16,9 +16,9 @@
 {% for key, value in __headers.iteritems() %}
 {% if key == "X-Frame-Options" %}
 	# X-Frame-Options forced by Ansible
-	add_header {{ key }} SAMEORIGIN{% if nginx_version.stdout | version_compare('1.7.5', 'ge') %} always{% endif %};
+	add_header {{ key }} "SAMEORIGIN"{% if nginx_version.stdout | version_compare('1.7.5', 'ge') %} always{% endif %};
 {% else %}
-	add_header {{ key }} {{ value | replace(' always', '') }}{% if nginx_version.stdout | version_compare('1.7.5', 'ge') and ' always' in value %} always{% endif %};
+	add_header {{ key }} "{{ value | replace(' always', '') }}"{% if nginx_version.stdout | version_compare('1.7.5', 'ge') and ' always' in value %} always{% endif %};
 {% endif %}
 {% endfor %}
 	# <-- Custom headers
