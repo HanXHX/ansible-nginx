@@ -147,6 +147,8 @@
         location:
           '/hello':
             - htpasswd: 'hello'
+          '/public':
+            - htpasswd: false
         use_error_log: true
       - name: 'test-htpasswd-all.local'
         template: '_base'

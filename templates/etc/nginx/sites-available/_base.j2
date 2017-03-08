@@ -9,10 +9,12 @@
 {% set __ssl_name = item.ssl_name | default(item.name if item.name is string else item.name[0]) %}
 {% set __location_order = item.location_order | default(__location.keys()) %}
 {% macro htpasswd(htpasswd_name, indent=1) -%}
-{% for ht in nginx_htpasswd if ht.name == htpasswd_name %}
+{%- if htpasswd_name != false %}
+{%- for ht in nginx_htpasswd if ht.name == htpasswd_name %}
 {{ "\t" * indent }}auth_basic "{{ ht.description }}";
 {{ "\t" * indent }}auth_basic_user_file {{ nginx_htpasswd_dir }}/{{ ht.name }};
-{% endfor%}
+{%- endfor %}
+{%- endif %}
 {%- endmacro %}
 {% macro ssl(ssl_name) %}
 {% for sn in nginx_ssl_pairs if sn.name == ssl_name %}
