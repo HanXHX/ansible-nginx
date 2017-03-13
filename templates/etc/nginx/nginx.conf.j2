@@ -6,9 +6,7 @@ user {{ nginx_user }};
 worker_processes {{ nginx_worker_processes }};
 pid {{ nginx_pid }};
 {% if nginx_version.stdout | version_compare('1.9.11', 'ge') %}
-{% for module in nginx_dyn_modules -%}
-load_module "modules/ngx_{{ module }}_module.so";
-{% endfor %}
+include {{ nginx_etc_dir }}/modules-enabled/*;
 {% endif %}
 
 events {

@@ -13,4 +13,13 @@
   with_items: "{{ nginx_dyn_modules }}"
   when:  ansible_distribution == 'Debian'
 
+- name: FILE | Creates modules directories
+  file: >
+    path="{{ nginx_etc_dir}}/{{ item }}"
+    state=directory
+    mode=0755
+    owner=root
+    group=root
+  with_items: ['modules-available', 'modules-enabled']
+
 # TODO: manage freebsd

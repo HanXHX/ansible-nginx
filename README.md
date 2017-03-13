@@ -55,6 +55,11 @@ FreeBSD:
 - `nginx_custom_http`: instructions list (will put data in `/etc/nginx/conf.d/custom.conf`)
 - `nginx_dyn_modules`: dynamic module list to load
 
+About modules
+-------------
+
+Last updates from Debian backports loads modules from /etc/nginx/modules-enabled directory. Disabling/Enabling is not supported anymore. Please wait further update.
+
 Fine configuration
 ------------------
 
