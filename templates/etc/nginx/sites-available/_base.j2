@@ -28,7 +28,7 @@ server {
 	listen {{ port }}{% if port | int in __http_proxy_protocol_port %} proxy_protocol{% endif %};
 {% endfor %}
 	server_name {{ name }};
-	return 301 https://{{ name }}{% if '443' not in __listen_ssl %}:{{ __listen_ssl[0] }}{% endif %}$request_uri;
+	return 301 https://{{ name }}{% if '443' not in __listen_ssl and 443 not in __listen_ssl %}:{{ __listen_ssl[0] }}{% endif %}$request_uri;
 }
 {% endmacro %}
 
