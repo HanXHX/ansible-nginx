@@ -212,6 +212,13 @@
         template: '_base'
         ssl_name: 'test-ssl.local'
         redirect_https: true
+      - name:
+          - 'test-ssl-redirect-many.local'
+          - 'test-ssl-redirect-many2.local'
+        proto: ['https']
+        template: '_base'
+        ssl_name: 'test-ssl.local'
+        redirect_https: true
       - name: 'test-ssl-proxy-protocol.local'
         proto: ['http', 'https']
         listen: [80, 20080]
@@ -382,6 +389,8 @@
         sslredirok.stderr.find('https://{{ item }}/') == -1
       with_items:
         - 'test-ssl-redirect.local'
+        - 'test-ssl-redirect-many.local'
+        - 'test-ssl-redirect-many2.local'
 
 # --------------------------------
 # Default vhosts

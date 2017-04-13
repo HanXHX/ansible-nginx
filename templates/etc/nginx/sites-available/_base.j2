@@ -22,6 +22,16 @@
 	ssl_certificate_key {{ nginx_ssl_dir + '/' + ssl_name + '/' + ssl_name + '.key' if sn.dest_key is not defined else sn.dest_key }};
 {% endfor %}
 {%- endmacro %}
+{% macro httpsredirect(name) %}
+server {
+{% for port in __listen %}
+	listen {{ port }}{% if port | int in __http_proxy_protocol_port %} proxy_protocol{% endif %};
+{% endfor %}
+	server_name {{ name }};
+	return 301 https://{{ name }}{% if '443' not in __listen_ssl %}:{{ __listen_ssl[0] }}{% endif %}$request_uri;
+}
+{% endmacro %}
+
 #
 # {{ ansible_managed }}
 #
@@ -142,15 +152,14 @@ server {
 #
 # Redirect HTTP to HTTPS
 #
-server {
-{% for port in __listen %}
-	listen {{ port }}{% if nginx_default_vhost == __main_name %} default_server{% endif %}{% if port | int in __http_proxy_protocol_port %} proxy_protocol{% endif %};
+{% if item.name is string %}
+{{ httpsredirect(item.name) }}
+{% else %}
+{% for i in item.name %}
+{{ httpsredirect(i) }}
 {% endfor %}
-	server_name {% if item.name is string %}{{ item.name }}{% else %}{{ "\n\t\t" }}{{ item.name | join("\n\t\t") }}{% endif %};
-	return 301 https://{{ __main_name }}{% if '443' not in __listen_ssl %}:{{ __listen_ssl[0] }}{% endif %}$request_uri;
-}
 {% endif %}
-
+{% endif %}
 
 {% if item.redirect_from is defined and item.redirect_from is iterable %}
 #
