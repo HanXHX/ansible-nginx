@@ -36,6 +36,19 @@ server {
 # {{ ansible_managed }}
 #
 
+{% if item.upstreams is defined and item.upstreams is iterable %}
+{% for upstream in item.upstreams %}
+upstream {{ upstream.name }} {
+	server {{ upstream.server }};
+{% if upstream.params is defined and upstream.params is iterable %}
+{% for param in upstream.params %}
+	{{ param }}
+{% endfor %}
+{% endif %}
+}
+{% endfor %}
+{% endif %}
+
 #
 # HTTP
 #
