@@ -8,11 +8,11 @@ Install and configure Nginx on Debian/FreeBSD.
 Features:
 
 - SSL/TLS "hardened" support
-- Manage basic auth on vhost / location
+- Manage basic auth on site / location
 - Proxy + Upstream
 - Fast PHP configuration
-- Preconfigured vhost templates (should work on many app)
-- Auto-configure HTTP2 on SSL/TLS vhosts
+- Preconfigured site templates (should work on many app)
+- Auto-configure HTTP2 on SSL/TLS sites
 - Manage dynamic modules (install and loading)
 - Deploy custom facts.d with sites config
 - Can listen with proxy protocol
@@ -63,7 +63,7 @@ Last updates from Debian backports loads modules from /etc/nginx/modules-enabled
 Fine configuration
 ------------------
 
-[Vhost configuration](doc/vhost.md)
+[Site configuration](doc/site.md)
 
 [PHP configuration](doc/php.md)
 

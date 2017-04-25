@@ -1,5 +1,20 @@
 ---
 
+- name: SET_FACT | Backward compatibility (nginx_vhosts)
+  set_fact:
+    nginx_sites: "{{ nginx_vhosts }}"
+  when: nginx_vhosts is defined
+
+- name: SET_FACT | Backward compatibility (nginx_default_vhost_ssl)
+  set_fact:
+    nginx_default_site_ssl: "{{ nginx_default_vhost_ssl }}"
+  when: nginx_default_vhost_ssl is defined
+
+- name: SET_FACT | Backward compatibility (nginx_default_vhost)
+  set_fact:
+    nginx_default_site: "{{ nginx_default_vhost }}"
+  when: nginx_default_vhost is defined
+
 - name: SHELL | Get Nginx version
   shell: nginx -v 2>&1 | sed -r 's#.*/##;' | cut -d ' ' -f 1
   args:

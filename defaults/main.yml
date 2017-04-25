@@ -16,8 +16,8 @@ nginx_resolver_valid: '300s'
 nginx_resolver_timeout: '5s'
 nginx_error_log_level: 'warn' # http://nginx.org/en/docs/ngx_core_module.html#error_log
 nginx_auto_config_httpv2: true
-nginx_default_vhost: null
-nginx_default_vhost_ssl: null
+nginx_default_site: null
+nginx_default_site_ssl: null
 nginx_fastcgi_fix_realpath: true
 
 #
@@ -91,9 +91,9 @@ nginx_http_gzip_disable: '"msie6"'
 nginx_custom_http: []
 
 #
-# Vhosts
+# Sites
 #
-nginx_vhosts: []
+nginx_sites: []
 
 #
 # htpasswd

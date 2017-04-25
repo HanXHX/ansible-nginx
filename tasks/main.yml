@@ -25,6 +25,5 @@
 - name: INCLUDE | SSL configuration
   include: ssl.yml
 
-- name: INCLUDE | Vhosts configuration
-  include: vhost.yml
-
+- name: INCLUDE | Sites configuration
+  include: site.yml

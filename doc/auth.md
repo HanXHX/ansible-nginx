@@ -4,7 +4,7 @@ Auth Basic management
 Description
 -----------
 
-Auth basic is managed in a separate list. Each auth file can be shared between locations or vhosts.
+Auth basic is managed in a separate list. Each auth file can be shared between locations or sites.
 
 Each htpasswd has few keys:
 
@@ -19,8 +19,8 @@ Example
 -------
 
 ```yaml
-nginx_vhosts:
-# htpasswd on all vhost
+nginx_sites:
+# htpasswd on all site
   - name: test.local
     htpasswd: 'hello'
     template: '_base'

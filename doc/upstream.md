@@ -8,7 +8,7 @@ Note: Few params are unavailable on old Nginx version. But this role do _not_ pu
 Upstream params
 ---------------
 
-- `name`: upstream name. Can be use in vhost with *proxy_pass http://upstream_name*
+- `name`: upstream name. Can be use in site with *proxy_pass http://upstream_name*
 - `params`: list of param (hash, zone...)
 - `servers`: each upstream MUST have at least 1 server
 - `state`: Optional. Can be 'absent' or 'present'
