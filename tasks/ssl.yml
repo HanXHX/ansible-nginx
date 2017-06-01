@@ -49,4 +49,4 @@
   register: job_result
   until: job_result.finished
   retries: 30
-  when: nginx_dh is not string
+  when: not ansible_check_mode and nginx_dh is not string
