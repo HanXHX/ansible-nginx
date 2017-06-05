@@ -229,7 +229,7 @@
         https_proxy_protocol_port: [20443]
         template: '_base'
         ssl_name: 'test-ssl.local'
-    nginx_dh_length: 2048
+    nginx_dh_length: 1024
   roles:
     - ../../
   post_tasks:
