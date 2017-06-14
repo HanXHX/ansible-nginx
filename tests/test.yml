@@ -386,7 +386,7 @@
       command: "curl -v -H 'Host: {{ item.name }}' http://127.0.0.1/"
       changed_when: false
       register: sslredirok
-      failed_when: "'< Location: https://{{ item.name }}{{ ':' + item.port if item.port is defined else '' }}/' not in sslredirok.stderr"
+      failed_when: '"< Location:" + " https://%s%s" % (item.name, ":" + item.port if item.port is defined else "") not in sslredirok.stderr'
       with_items:
         - name: 'test-ssl-redirect.local'
         - name: 'test-ssl-redirect-many.local'
