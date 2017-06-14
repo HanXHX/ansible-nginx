@@ -4,14 +4,18 @@
   apt_repository: repo='deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main' state=present
 
 - block:
+
   - name: APT | Install DotDeb key
     apt_key: url='http://www.dotdeb.org/dotdeb.gpg' state=present
+
   - name: APT_REPOSITORY | Install dotdeb (PHP 7)
     apt_repository: repo='deb http://packages.dotdeb.org {{ ansible_distribution_release }} all' state=present
+
   - name: LINEFILEFILE | Dotdeb priority (prevent install nginx from dotdeb)
     copy: >
       content="Package: *\nPin: release o=packages.dotdeb.org\nPin-Priority: 100"
       dest=/etc/apt/preferences
+
   when: ansible_distribution_release == 'jessie' and dotdeb
 
 - name: APT | Install needed packages

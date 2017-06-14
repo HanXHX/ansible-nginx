@@ -14,6 +14,7 @@
       copy: src=file/test.crt dest={{ int_ansible_ssl_dir }}/test.crt
     - name: COPY | Deploy test key
       copy: src=file/test.key dest={{ int_ansible_ssl_dir }}/test.key
+
   vars:
 # Internal vars
     int_ansible_ssl_dir: '/etc/ansible-ssl'
@@ -238,19 +239,32 @@
 # --------------------------------
     - name: INCLUDE | Post_tasks related to OS version
       include: "includes/post_{{ ansible_distribution }}.yml"
+
 # --------------------------------
 # Deploy index files
 # --------------------------------
     - name: -- Add PHP file --
       copy: dest="{{ nginx_root }}/{{ item }}/public/index.php" content="<?php phpinfo();"
-      with_items: ['test-php.local', 'test-php-index.local']
+      with_items:
+        - 'test-php.local'
+        - 'test-php-index.local'
+
     - name: -- Add HTML file --
       copy: dest="{{ item }}/index.html" content="Index HTML test OK\n"
-      with_items: ['{{ nginx_root }}/first-test/public', '/var/tmp', '{{ nginx_root }}/test-htpasswd-all.local/public', '{{ nginx_root }}/test-ssl.local/public', '{{ nginx_root }}/test-ssl-predeployed.local/public', '{{ nginx_root }}/test-ssl-proxy-protocol.local/public']
+      with_items:
+        - '{{ nginx_root }}/first-test/public'
+        - '/var/tmp'
+        - '{{ nginx_root }}/test-htpasswd-all.local/public'
+        - '{{ nginx_root }}/test-ssl.local/public'
+        - '{{ nginx_root }}/test-ssl-predeployed.local/public'
+        - '{{ nginx_root }}/test-ssl-proxy-protocol.local/public'
+
     - name: -- Create directory --
       file: path={{ nginx_root }}/test-htpasswd.local/public/hello state=directory
+
     - name: -- Add HTML file hello --
       copy: dest="{{ nginx_root }}/test-htpasswd.local/public/hello/index.html" content="hello\n"
+
 # --------------------------------
 # Test custom facts
 # --------------------------------
@@ -265,11 +279,13 @@
       with_items: "{{ nginx_sites }}"
       when: item.state is undefined or item.state != "absent"
       changed_when: false
+
     - name: -- VERIFY FORBIDDEN --
       command: "curl -H 'Host: test-php-index.local' http://127.0.0.1/phpinfo.php"
       register: f
       failed_when: f.stdout.find('403 Forbidden') == -1
       changed_when: false
+
     - name: -- VERIFY REDIRECT SITES --
       command: "curl -H 'Host: {{ item.redirect_from[0] }}' http://127.0.0.1/"
       with_items: "{{ nginx_sites }}"
@@ -305,21 +321,25 @@
       changed_when: false
       register: authnone
       failed_when: authnone.stdout.find('401 Authorization Required') == -1
+
     - name: -- VERIFY AUTH BASIC FAIL --
       command: "curl -u fail:fail -H 'Host: test-htpasswd.local' http://127.0.0.1/hello/"
       changed_when: false
       register: authfail
       failed_when: authfail.stdout.find('401 Authorization Required') == -1
+
     - name: -- VERIFY AUTH BASIC OK --
       command: "curl -u hanx:qwerty -H 'Host: test-htpasswd.local' http://127.0.0.1/hello/"
       changed_when: false
       register: authok
       failed_when: authok.stdout.find('hello') == -1
+
     - name: -- VERIFY AUTH BASIC FAIL GLOBAL --
       command: "curl -u fail:fail -H 'Host: test-htpasswd-all.local' http://127.0.0.1/"
       changed_when: false
       register: authgfail
       failed_when: authgfail.stdout.find('401 Authorization Required') == -1
+
     - name: -- VERIFY AUTH BASIC OK --
       command: "curl -u hanx:qwerty -H 'Host: test-htpasswd-all.local' http://127.0.0.1/"
       changed_when: false
@@ -344,6 +364,7 @@
       changed_when: false
       register: nagios_php
       failed_when: nagios_php.stdout.find('Nagios Core') == -1
+
     - name: -- VERIFY NAGIOS3 CGI --
       command: "curl -u nagiosadmin:nagios -H 'Host: nagios3.local' http://127.0.0.1/cgi-bin{% if ansible_distribution == 'Debian' %}/nagios3{% endif %}/summary.cgi"
       changed_when: false
@@ -382,6 +403,7 @@
       with_items:
         - 'test-ssl-predeployed.local'
         - 'test-ssl.local'
+
     - name: -- VERIFY SSL REDIRECT --
       command: "curl -v -H 'Host: {{ item.name }}' http://127.0.0.1/"
       changed_when: false
@@ -404,6 +426,7 @@
       failed_when: >
         vdefault.stdout.find('Index HTML test OK') == -1 or
         vdefault.stderr.find('X-ansible-default') == -1
+
     - name: -- VERIFY DEFAULT SSL SITE --
       command: "curl --insecure -v https://127.0.0.1/"
       changed_when: false
@@ -411,16 +434,19 @@
       failed_when: >
         defaultssl.stdout.find('Index HTML test OK') == -1 or
         defaultssl.stderr.find('X-ansible-default') == -1
+
     - name: -- VERIFY NOT DEFAULT SITE --
       command: "curl -v -H 'Host: test-php.local' http://127.0.0.1/"
       changed_when: false
       register: vphp
       failed_when: vphp.stderr.find('X-ansible-default') != -1
+
     - name: -- VERIFY NOT DEFAULT SSL SITE --
       command: "curl --insecure -v -H 'Host: test-ssl.local' https://127.0.0.1/"
       changed_when: false
       register: notdefaultssl
       failed_when: notdefaultssl.stderr.find('X-ansible-default') != -1
+
     - name: -- VERIFY DEFAULT SITE + STUB_STATUS --
       command: "curl -v http://127.0.0.1/status"
       changed_when: false
