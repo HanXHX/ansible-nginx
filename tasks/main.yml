@@ -2,12 +2,15 @@
 
 - name: INCLUDE_VARS | Related to OS
   include_vars: "{{ ansible_distribution }}.yml"
+  tags: ['nginx::site', 'nginx::ssl']
 
 - name: INCLUDE | Install
   include: install_{{ ansible_distribution }}.yml
+  tags: ['nginx::site', 'nginx::ssl']
 
 - name: INCLUDE | Prepare
   include: prepare.yml
+  tags: ['nginx::site', 'nginx::ssl']
 
 - name: INCLUDE | Manage dynamic modules
   include: dyn_modules.yml
@@ -24,6 +27,8 @@
 
 - name: INCLUDE | SSL configuration
   include: ssl.yml
+  tags: ['nginx::ssl']
 
 - name: INCLUDE | Sites configuration
   include: site.yml
+  tags: ['nginx::site']
