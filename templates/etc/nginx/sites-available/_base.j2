@@ -170,7 +170,7 @@ server {
 	listen {{ port }}{% if port | int in __http_proxy_protocol_port %} proxy_protocol{% endif %};
 {% endfor %}
 	server_name {% if item.redirect_from is string %}{{ item.redirect_from }}{% else %}{{ "\n\t\t" }}{{ item.redirect_from | join("\n\t\t") }}{% endif %};
-	return 301 $scheme://{{ __main_name }}$request_uri;
+	return 301 $scheme://{{ item.name if item.name is string else item.name[0] }}$request_uri;
 }
 {% endif %}
 
