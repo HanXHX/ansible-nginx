@@ -1,9 +1,10 @@
 ---
 
 - name: FAIL | If Dynamic module is not available
-  fail: msg="{{ item }} dynamic module is not available"
+  fail:
+    msg: "{{ item }} dynamic module is not available"
   with_items: "{{ nginx_dyn_modules }}"
-  when: "'{{ item }}=dynamic' not in nginx_modules"
+  when: item + '=dynamic' not in nginx_modules
 
 - name: APT | Install nginx modules
   apt: >
