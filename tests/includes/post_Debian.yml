@@ -1,11 +1,19 @@
 ---
 
-- name: APT | Install web apps
-  apt: pkg={{ item }} state=present install_recommends=no
+- name: APT | Install webapps
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    install_recommends: no
   with_items:
     - backuppc
-    - nagios3
 #    - owncloud
+
+- name: APT | Install nagios3 (only on old Debian releases)
+  apt:
+    pkg: nagios3
+    state: present
+  when: ansible_distribution_major_version < 9
 
 - name: SERVICE | Ensure backuppc is started
   service: name=backuppc state=started

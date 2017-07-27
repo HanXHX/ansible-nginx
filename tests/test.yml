@@ -316,35 +316,40 @@
 # --------------------------------
 # Basic Auth
 # --------------------------------
-    - name: -- VERIFY AUTH BASIC NONE --
-      command: "curl -H 'Host: test-htpasswd.local' http://127.0.0.1/hello/"
-      changed_when: false
-      register: authnone
-      failed_when: authnone.stdout.find('401 Authorization Required') == -1
 
-    - name: -- VERIFY AUTH BASIC FAIL --
-      command: "curl -u fail:fail -H 'Host: test-htpasswd.local' http://127.0.0.1/hello/"
-      changed_when: false
-      register: authfail
-      failed_when: authfail.stdout.find('401 Authorization Required') == -1
+    - block:
 
-    - name: -- VERIFY AUTH BASIC OK --
-      command: "curl -u hanx:qwerty -H 'Host: test-htpasswd.local' http://127.0.0.1/hello/"
-      changed_when: false
-      register: authok
-      failed_when: authok.stdout.find('hello') == -1
+      - name: -- VERIFY AUTH BASIC NONE --
+        command: "curl -H 'Host: test-htpasswd.local' http://127.0.0.1/hello/"
+        changed_when: false
+        register: authnone
+        failed_when: authnone.stdout.find('401 Authorization Required') == -1
 
-    - name: -- VERIFY AUTH BASIC FAIL GLOBAL --
-      command: "curl -u fail:fail -H 'Host: test-htpasswd-all.local' http://127.0.0.1/"
-      changed_when: false
-      register: authgfail
-      failed_when: authgfail.stdout.find('401 Authorization Required') == -1
+      - name: -- VERIFY AUTH BASIC FAIL --
+        command: "curl -u fail:fail -H 'Host: test-htpasswd.local' http://127.0.0.1/hello/"
+        changed_when: false
+        register: authfail
+        failed_when: authfail.stdout.find('401 Authorization Required') == -1
 
-    - name: -- VERIFY AUTH BASIC OK --
-      command: "curl -u hanx:qwerty -H 'Host: test-htpasswd-all.local' http://127.0.0.1/"
-      changed_when: false
-      register: authgok
-      failed_when: authgok.stdout.find('401 Authorization Required') != -1
+      - name: -- VERIFY AUTH BASIC OK --
+        command: "curl -u hanx:qwerty -H 'Host: test-htpasswd.local' http://127.0.0.1/hello/"
+        changed_when: false
+        register: authok
+        failed_when: authok.stdout.find('hello') == -1
+
+      - name: -- VERIFY AUTH BASIC FAIL GLOBAL --
+        command: "curl -u fail:fail -H 'Host: test-htpasswd-all.local' http://127.0.0.1/"
+        changed_when: false
+        register: authgfail
+        failed_when: authgfail.stdout.find('401 Authorization Required') == -1
+
+      - name: -- VERIFY AUTH BASIC OK --
+        command: "curl -u hanx:qwerty -H 'Host: test-htpasswd-all.local' http://127.0.0.1/"
+        changed_when: false
+        register: authgok
+        failed_when: authgok.stdout.find('401 Authorization Required') != -1
+
+      when: nginx_htpasswd | length > 0
 
 # --------------------------------
 # BackupPC
@@ -357,19 +362,23 @@
       when: ansible_distribution != 'FreeBSD'
 
 # --------------------------------
-# Nagios
+# Nagios (not avaiblable on Debian >= 9)
 # --------------------------------
-    - name: -- VERIFY NAGIOS3 PHP --
-      command: "curl -u nagiosadmin:nagios -H 'Host: nagios3.local' http://127.0.0.1/side.php"
-      changed_when: false
-      register: nagios_php
-      failed_when: nagios_php.stdout.find('Nagios Core') == -1
+    - block:
 
-    - name: -- VERIFY NAGIOS3 CGI --
-      command: "curl -u nagiosadmin:nagios -H 'Host: nagios3.local' http://127.0.0.1/cgi-bin{% if ansible_distribution == 'Debian' %}/nagios3{% endif %}/summary.cgi"
-      changed_when: false
-      register: nagios_cgi
-      failed_when: nagios_cgi.stdout.find('Nagios Event Summary') == -1
+      - name: -- VERIFY NAGIOS3 PHP --
+        command: "curl -u nagiosadmin:nagios -H 'Host: nagios3.local' http://127.0.0.1/side.php"
+        changed_when: false
+        register: nagios_php
+        failed_when: nagios_php.stdout.find('Nagios Core') == -1
+
+      - name: -- VERIFY NAGIOS3 CGI --
+        command: "curl -u nagiosadmin:nagios -H 'Host: nagios3.local' http://127.0.0.1/cgi-bin{% if ansible_distribution == 'Debian' %}/nagios3{% endif %}/summary.cgi"
+        changed_when: false
+        register: nagios_cgi
+        failed_when: nagios_cgi.stdout.find('Nagios Event Summary') == -1
+
+      when: ansible_distribution_major_version < 9
 
 # --------------------------------
 # Owncloud
@@ -425,7 +434,7 @@
       register: vdefault
       failed_when: >
         vdefault.stdout.find('Index HTML test OK') == -1 or
-        vdefault.stderr.find('X-ansible-default') == -1
+        vdefault.stderr.lower().find('x-ansible-default') == -1
 
     - name: -- VERIFY DEFAULT SSL SITE --
       command: "curl --insecure -v https://127.0.0.1/"
@@ -433,26 +442,26 @@
       register: defaultssl
       failed_when: >
         defaultssl.stdout.find('Index HTML test OK') == -1 or
-        defaultssl.stderr.find('X-ansible-default') == -1
+        defaultssl.stderr.lower().find('x-ansible-default') == -1
 
     - name: -- VERIFY NOT DEFAULT SITE --
       command: "curl -v -H 'Host: test-php.local' http://127.0.0.1/"
       changed_when: false
       register: vphp
-      failed_when: vphp.stderr.find('X-ansible-default') != -1
+      failed_when: vphp.stderr.lower().find('x-ansible-default') != -1
 
     - name: -- VERIFY NOT DEFAULT SSL SITE --
       command: "curl --insecure -v -H 'Host: test-ssl.local' https://127.0.0.1/"
       changed_when: false
       register: notdefaultssl
-      failed_when: notdefaultssl.stderr.find('X-ansible-default') != -1
+      failed_when: notdefaultssl.stderr.lower().find('x-ansible-default') != -1
 
     - name: -- VERIFY DEFAULT SITE + STUB_STATUS --
       command: "curl -v http://127.0.0.1/status"
       changed_when: false
       register: vdefault_status
       failed_when: >
-        vdefault_status.stderr.find('X-ansible-default') == -1 or
+        vdefault_status.stderr.lower().find('x-ansible-default') == -1 or
         vdefault_status.stdout.find('Active connections') == -1
 
 # --------------------------------
