@@ -9,7 +9,8 @@ Vagrant.configure("2") do |config|
     { :name => "debian-jessie", :box => "debian/jessie64", :vars => { "nginx_php56": true,  "nginx_php70": false, "dotdeb": false, "nginx_backports": false }},
     { :name => "debian-jessie-backports", :box => "debian/jessie64", :vars => { "nginx_php56": true,  "nginx_php70": false, "dotdeb": false, "nginx_backports": true  }},
     { :name => "debian-jessie-dotdeb", :box => "debian/jessie64", :vars => { "nginx_php56": true,  "nginx_php70": true,  "dotdeb": true,  "nginx_backports": false }},
-    { :name => "debian-stretch", :box => "debian/stretch64", :vars => { "nginx_php56": false, "nginx_php70": true,  "dotdeb": false, "nginx_backports": false }}
+    { :name => "debian-stretch", :box => "debian/stretch64", :vars => { "nginx_php56": false, "nginx_php70": true,  "dotdeb": false, "nginx_backports": false }},
+    { :name => "debian-stretch-noht", :box => "debian/stretch64", :vars => { "nginx_php56": false, "nginx_php70": true,  "dotdeb": false, "nginx_backports": false, nginx_htpasswd: [] }}
   ]
 
   vms_freebsd = [

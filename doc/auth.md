@@ -1,6 +1,11 @@
 Auth Basic management
 =====================
 
+IMPORTANT
+---------
+
+If you use this feature with Debian Stretch, you *MUST* use ansible >= 2.3.2! See: [https://github.com/HanXHX/ansible-nginx/issues/28](#28).
+
 Description
 -----------
 
