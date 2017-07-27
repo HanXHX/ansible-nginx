@@ -21,7 +21,8 @@ Vagrant.configure("2") do |config|
     { :name => "docker-debian-jessie", :docker => "hanxhx/vagrant-ansible:debian8", :vars => { "nginx_php56": true,  "nginx_php70": false, "dotdeb": false, "nginx_backports": false }},
     { :name => "docker-debian-jessie-backports", :docker => "hanxhx/vagrant-ansible:debian8", :vars => { "nginx_php56": true,  "nginx_php70": false, "dotdeb": false, "nginx_backports": true  }},
     { :name => "docker-debian-jessie-dotdeb", :docker => "hanxhx/vagrant-ansible:debian8", :vars => { "nginx_php56": true,  "nginx_php70": true,  "dotdeb": true,  "nginx_backports": false }},
-    { :name => "docker-debian-stretch", :docker => "hanxhx/vagrant-ansible:debian9", :vars => { "nginx_php56": false, "nginx_php70": true,  "dotdeb": false, "nginx_backports": false }}
+    { :name => "docker-debian-stretch", :docker => "hanxhx/vagrant-ansible:debian9", :vars => { "nginx_php56": false, "nginx_php70": true,  "dotdeb": false, "nginx_backports": false }},
+    { :name => "docker-debian-stretch-noht", :box => "debian/stretch64", :vars => { "nginx_php56": false, "nginx_php70": true,  "dotdeb": false, "nginx_backports": false, nginx_htpasswd: [] }}
   ]
 
   config.vm.network "private_network", type: "dhcp"
