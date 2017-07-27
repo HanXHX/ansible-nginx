@@ -10,42 +10,43 @@
   register: dh
 
 - name: COPY | Deploy DH file from vars
-  copy: >
-    content="{{ nginx_dh }}"
-    dest="{{ nginx_dh_path }}"
+  copy:
+    content: "{{ nginx_dh }}"
+    dest: "{{ nginx_dh_path }}"
   when: nginx_dh is string
   notify: reload nginx
 
 - name: FILE | Create SSL directories
-  file: >
-    path="{{ nginx_ssl_dir + '/' + item.name }}"
-    state=directory
+  file:
+    path: "{{ nginx_ssl_dir + '/' + item.name }}"
+    state: directory
   with_items: "{{ nginx_ssl_pairs }}"
   when: item.dest_key is not defined or item.dest_cert is not defined
   no_log: true
 
 - name: COPY | Deploy SSL keys
-  copy: >
-    content="{{ item.key }}"
-    dest="{{ nginx_ssl_dir + '/' + item.name + '/' + item.name + '.key' if item.dest_key is not defined else item.dest_key }}"
-    mode=0640
+  copy:
+    content: "{{ item.key }}"
+    dest: "{{ nginx_ssl_dir + '/' + item.name + '/' + item.name + '.key' if item.dest_key is not defined else item.dest_key }}"
+    mode: 0640
   with_items: "{{ nginx_ssl_pairs }}"
   when: item.key is defined
   notify: reload nginx
   no_log: true
 
 - name: COPY | Deploy SSL certs
-  copy: >
-    content="{{ item.cert }}"
-    dest="{{ nginx_ssl_dir + '/' + item.name + '/' + item.name + '.crt' if item.dest_cert is not defined else item.dest_cert }}"
-    mode=0644
+  copy:
+    content: "{{ item.cert }}"
+    dest: "{{ nginx_ssl_dir + '/' + item.name + '/' + item.name + '.crt' if item.dest_cert is not defined else item.dest_cert }}"
+    mode: 0644
   with_items: "{{ nginx_ssl_pairs }}"
   when: item.cert is defined
   notify: reload nginx
   no_log: true
 
 - name: Check DH command status
-  async_status: jid={{ dh.ansible_job_id }}
+  async_status:
+    jid: "{{ dh.ansible_job_id }}"
   register: job_result
   until: job_result.finished
   retries: 30

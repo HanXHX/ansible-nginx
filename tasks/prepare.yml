@@ -36,8 +36,14 @@
     nginx_modules: "{{ shell_modules.stdout_lines }}"
 
 - name: FILE | Create folders
-  file: dest="{{ item.dir }}" owner="{{ item.owner }}" mode="{{ item.mode }}" state=directory
+  file:
+    dest: "{{ item.dir }}"
+    owner: "{{ item.owner }}"
+    mode: "{{ item.mode }}"
+    state: directory
   with_items: "{{ nginx_dirs }}"
 
 - name: FILE | Create ansible facts dir
-  file: path=/etc/ansible/facts.d state=directory
+  file:
+    path: /etc/ansible/facts.d
+    state: directory

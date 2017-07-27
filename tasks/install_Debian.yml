@@ -9,23 +9,25 @@
     nginx_htpasswd | length > 0
 
 - name: APT | Update cache
-  apt: >
-    update_cache=yes
-    cache_valid_time=3600
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
   changed_when: false
 
 - name: APT | Force OpenSSL from backports (fix dependency break)
-  apt: >
-    pkg=openssl
-    state=latest
-    default_release={{ ansible_distribution_release + '-backports' }}
+  apt:
+    pkg: openssl
+    state: latest
+    default_release: "{{ ansible_distribution_release + '-backports' }}"
   when: nginx_backports
 
 - name: APT | Install nginx and dependencies
-  apt: >
-    pkg={{ nginx_apt_package }}
-    state=present
-    default_release={{ ansible_distribution_release + '-backports' if nginx_backports else ansible_distribution_release }}
+  apt:
+    pkg: "{{ nginx_apt_package }}"
+    state: present
+    default_release: "{{ ansible_distribution_release + '-backports' if nginx_backports else ansible_distribution_release }}"
 
 - name: APT | Install python-passlib
-  apt: pkg=python-passlib state=present
+  apt:
+    pkg: python-passlib
+    state: present

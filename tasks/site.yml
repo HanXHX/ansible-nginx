@@ -1,29 +1,31 @@
 ---
 
 - name: FAIL | Check filenames
-  fail: msg="Forbidden keyword default on site {{ item.name if item.name is string else item.name[0] }}"
+  fail:
+    msg: "Forbidden keyword default on site {{ item.name if item.name is string else item.name[0] }}"
   when: item.filename is defined and item.filename == 'default'
   with_items: "{{ nginx_sites }}"
 
 - name: FAIL | Check HTTPS redir and proto
-  fail: msg="You can't have HTTP proto and HTTPS redirection at the same time"
-  when: >
+  fail:
+    msg: "You can't have HTTP proto and HTTPS redirection at the same time"
+  when:
     ((item.proto is defined and 'http' in item.proto) or (item.proto is not defined)) and
     (item.redirect_http is defined and item.redirect_http)
   with_items: "{{ nginx_sites }}"
 
 - name: FILE | Create root directory
-  file: >
-    path={{ nginx_root }}
-    state=directory
+  file:
+    path: "{{ nginx_root }}"
+    state: directory
 
 - name: FILE | Create root public folders (foreach nginx_sites)
-  file: >
-    path={{ nginx_root }}/{{ item.filename | default(item.name if item.name is string else item.name[0]) }}/public
-    state=directory
-    owner={{ item.owner | default(nginx_user) }}
-    group={{ item.group | default(nginx_user) }}
-    mode={{ item.mode | default('0755') }}
+  file:
+    path: "{{ nginx_root }}/{{ item.filename | default(item.name if item.name is string else item.name[0]) }}/public"
+    state: directory
+    owner: "{{ item.owner | default(nginx_user) }}"
+    group: "{{ item.group | default(nginx_user) }}"
+    mode: "{{ item.mode | default('0755') }}"
   with_items: "{{ nginx_sites }}"
   when: >
     item.root is not defined and
@@ -32,15 +34,17 @@
     item.redirect_to is not defined
 
 - name: TEMPLATE | Create sites
-  template: >
-    src=etc/nginx/sites-available/{{ item.template if item.redirect_to is not defined else '_redirect' }}.j2
-    dest={{ nginx_etc_dir }}/sites-available/{{ item.filename | default(item.name if item.name is string else item.name[0]) }}
+  template:
+    src: "etc/nginx/sites-available/{{ item.template if item.redirect_to is not defined else '_redirect' }}.j2"
+    dest: "{{ nginx_etc_dir }}/sites-available/{{ item.filename | default(item.name if item.name is string else item.name[0]) }}"
   with_items: "{{ nginx_sites }}"
   notify: ['reload nginx', 'restart nginx freebsd']
   when: item.state is not defined or item.state != 'absent'
 
 - name: FILE | Delete sites
-  file: path={{ nginx_etc_dir }}/{{ item.1 }}/{{ item.0.filename | default(item.0.name if item.0.name is string else item.0.name[0]) }} state=absent
+  file:
+    path: "{{ nginx_etc_dir }}/{{ item.1 }}/{{ item.0.filename | default(item.0.name if item.0.name is string else item.0.name[0]) }}"
+    state: absent
   with_nested:
     - "{{ nginx_sites }}"
     - ['sites-available', 'sites-enabled']
@@ -48,41 +52,43 @@
   when: item.state is defined and item.state == 'absent'
 
 - name: FILE | Enable sites
-  file: >
-    src={{ nginx_etc_dir }}/sites-available/{{ item.filename | default(item.name if item.name is string else item.name[0]) }}
-    dest={{ nginx_etc_dir }}/sites-enabled/{{ item.filename | default(item.name if item.name is string else item.name[0]) }}
-    state=link
+  file:
+    src: "{{ nginx_etc_dir }}/sites-available/{{ item.filename | default(item.name if item.name is string else item.name[0]) }}"
+    dest: "{{ nginx_etc_dir }}/sites-enabled/{{ item.filename | default(item.name if item.name is string else item.name[0]) }}"
+    state: link
   with_items: "{{ nginx_sites }}"
   notify: ['reload nginx', 'restart nginx freebsd']
   when: >
     item.state is not defined or item.state == 'present'
 
 - name: FILE | Disable sites
-  file: path={{ nginx_etc_dir}}/sites-enabled/{{ item.filename | default(item.name if item.name is string else item.name[0]) }} state=absent
+  file:
+    path: "{{ nginx_etc_dir}}/sites-enabled/{{ item.filename | default(item.name if item.name is string else item.name[0]) }}"
+    state: absent
   with_items: "{{ nginx_sites }}"
   notify: ['reload nginx', 'restart nginx freebsd']
   when: item.state is defined and item.state == 'disabled'
 
 - name: FILE | Delete default site when explicitely defined
-  file: >
-    path={{ nginx_etc_dir }}/sites-enabled/default
-    state=absent
+  file:
+    path: "{{ nginx_etc_dir }}/sites-enabled/default"
+    state: absent
   notify: ['reload nginx', 'restart nginx freebsd']
   when: nginx_default_site is not none
 
 - name: FILE | Auto set default site
-  file: >
-    src={{ nginx_etc_dir }}/sites-available/default
-    dest={{ nginx_etc_dir }}/sites-enabled/default
-    state=link
+  file:
+    src: "{{ nginx_etc_dir }}/sites-available/default"
+    dest: "{{ nginx_etc_dir }}/sites-enabled/default"
+    state: link
   notify: ['reload nginx', 'restart nginx freebsd']
   when: nginx_default_site is none
 
 - name: TEMPLATE | Deploy facts
   template:
-    src=etc/ansible/facts.d/nginx.fact.j2
-    dest=/etc/ansible/facts.d/nginx.fact
-    mode=0644
+    src: etc/ansible/facts.d/nginx.fact.j2
+    dest: /etc/ansible/facts.d/nginx.fact
+    mode: 0644
   register: fact
 
 - name: SETUP
