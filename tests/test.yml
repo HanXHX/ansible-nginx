@@ -118,8 +118,7 @@
       - '}'
     nginx_default_site: 'first-test'
     nginx_default_site_ssl: 'test-ssl-predeployed.local'
-# TODO: nginx_vhosts -> nginx_sites (for now check backward compatibility)
-    nginx_vhosts:
+    nginx_sites:
       - name:
           - 'test.local'
           - 'test-alias.local'
