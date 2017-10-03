@@ -1,21 +1,26 @@
 ---
 
 - name: PKGNG | Install nginx and related tools
-  pkgng: name={{ item }} state=present
+  pkgng:
+    name: "{{ item }}"
+    state: present
   with_items:
     - "{{ nginx_pkgng_package }}"
     - py27-passlib
     - curl
 
 - name: FILE | Create configuration dir (like Debian)
-  file: path="{{ nginx_etc_dir }}/{{ item }}" state=directory
+  file:
+    path: "{{ nginx_etc_dir }}/{{ item }}"
+    state: directory
   with_items:
     - conf.d
     - sites-available
     - sites-enabled
 
 - name: STAT | Check fastcgi.conf
-  stat: path={{ nginx_etc_dir }}/fastcgi.conf
+  stat:
+    path: "{{ nginx_etc_dir }}/fastcgi.conf"
   register: conf
 
 - name: COPY | config
@@ -24,23 +29,25 @@
   notify: reload nginx
 
 - name: LINEINFILE | Add fastcgi config
-  lineinfile: >
-    line="fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;"
-    dest="{{ nginx_etc_dir }}/fastcgi.conf"
+  lineinfile:
+    line: "fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;"
+    dest: "{{ nginx_etc_dir }}/fastcgi.conf"
   notify: reload nginx
 
 - name: COPY | Populate proxy_params
-  copy: >
-    content="proxy_set_header Host $http_host;\nproxy_set_header X-Real-IP $remote_addr;\nproxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;proxy_set_header X-Forwarded-Proto $scheme;"
-    dest="{{ nginx_etc_dir }}/proxy_params"
+  copy:
+    content: "proxy_set_header Host $http_host;\nproxy_set_header X-Real-IP $remote_addr;\nproxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;proxy_set_header X-Forwarded-Proto $scheme;"
+    dest: "{{ nginx_etc_dir }}/proxy_params"
 
 - name: FILE | Create log directory
-  file: >
-    path={{ nginx_log_dir }}
-    owner={{ nginx_user }}
-    group=wheel
-    mode=0755
-    state=directory
+  file:
+    path: "{{ nginx_log_dir }}"
+    owner: "{{ nginx_user }}"
+    group: wheel
+    mode: 0755
+    state: directory
 
 - name: SERVICE | Enable nginx
-  service: name=nginx enabled=yes
+  service:
+    name: nginx
+    enabled: yes

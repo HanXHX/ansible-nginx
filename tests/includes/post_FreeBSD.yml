@@ -1,7 +1,9 @@
 ---
 
 - name: APT | Install web apps
-  pkgng: pkg={{ item }} state=present
+  pkgng:
+    pkg: "{{ item }}"
+    state: present
   with_items:
     - nagios
     - backuppc
@@ -12,17 +14,17 @@
     creates=/usr/local/etc/backuppc/config.pl
 
 - name: FILE | Fix backuppc permissions
-  file: >
-    path=/usr/local/etc/backuppc/config.pl
-    owner=backuppc
-    group=backuppc
+  file:
+    path: /usr/local/etc/backuppc/config.pl
+    owner: backuppc
+    group: backuppc
 
 - name: FILE | Fix fcgiwrap permission
-  file: >
-    path={{ nginx_fcgiwrap_sock }}
-    mode=0640
-    owner={{ nginx_user }}
-    group={{ nginx_user }}
+  file:
+    path: "{{ nginx_fcgiwrap_sock }}"
+    mode: 0640
+    owner: "{{ nginx_user }}"
+    group: "{{ nginx_user }}"
 
 #
 # We don't manage BackupPC on FreeBSD... too dirty. :/

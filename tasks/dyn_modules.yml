@@ -7,20 +7,20 @@
   when: item + '=dynamic' not in nginx_modules
 
 - name: APT | Install nginx modules
-  apt: >
-    pkg="libnginx-mod-{{ item | replace('_', '-') }}"
-    state=present
-    default_release={{ ansible_distribution_release + '-backports' if nginx_backports else ansible_distribution_release }}
+  apt:
+    pkg: "libnginx-mod-{{ item | replace('_', '-') }}"
+    state: present
+    default_release: "{{ ansible_distribution_release + '-backports' if nginx_backports else ansible_distribution_release }}"
   with_items: "{{ nginx_dyn_modules }}"
   when:  ansible_distribution == 'Debian'
 
 - name: FILE | Creates modules directories
-  file: >
-    path="{{ nginx_etc_dir}}/{{ item }}"
-    state=directory
-    mode=0755
-    owner=root
-    group=root
+  file:
+    path: "{{ nginx_etc_dir}}/{{ item }}"
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
   with_items: ['modules-available', 'modules-enabled']
 
 # TODO: manage freebsd

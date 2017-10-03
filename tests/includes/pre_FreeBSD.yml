@@ -10,7 +10,9 @@
         port: 9000
 
 - name: PKGNG | Install needed packages
-  pkgng: pkg={{ item }} state=present
+  pkgng:
+    pkg: "{{ item }}"
+    state: present
   with_items:
     - php56
     - curl
@@ -18,7 +20,10 @@
     - nghttp2
 
 - name: SERVICE | Force start services
-  service: name={{ item }} state=started enabled=yes
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
   register: sf
   with_items:
     - php-fpm
