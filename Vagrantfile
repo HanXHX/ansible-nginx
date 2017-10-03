@@ -9,8 +9,7 @@ Vagrant.configure("2") do |config|
     { :name => "debian-jessie", :box => "debian/jessie64", :vars => { "nginx_php56": true,  "nginx_php70": false, "dotdeb": false, "nginx_backports": false }},
     { :name => "debian-jessie-backports", :box => "debian/jessie64", :vars => { "nginx_php56": true,  "nginx_php70": false, "dotdeb": false, "nginx_backports": true  }},
     { :name => "debian-jessie-dotdeb", :box => "debian/jessie64", :vars => { "nginx_php56": true,  "nginx_php70": true,  "dotdeb": true,  "nginx_backports": false }},
-    { :name => "debian-stretch", :box => "debian/stretch64", :vars => { "nginx_php56": false, "nginx_php70": true,  "dotdeb": false, "nginx_backports": false }},
-    { :name => "debian-stretch-noht", :box => "debian/stretch64", :vars => { "nginx_php56": false, "nginx_php70": true,  "dotdeb": false, "nginx_backports": false, nginx_htpasswd: [] }}
+    { :name => "debian-stretch", :box => "debian/stretch64", :vars => { "nginx_php56": false, "nginx_php70": true,  "dotdeb": false, "nginx_backports": false }}
   ]
 
   vms_freebsd = [
@@ -21,8 +20,7 @@ Vagrant.configure("2") do |config|
     { :name => "docker-debian-jessie", :docker => "hanxhx/vagrant-ansible:debian8", :vars => { "nginx_php56": true,  "nginx_php70": false, "dotdeb": false, "nginx_backports": false }},
     { :name => "docker-debian-jessie-backports", :docker => "hanxhx/vagrant-ansible:debian8", :vars => { "nginx_php56": true,  "nginx_php70": false, "dotdeb": false, "nginx_backports": true  }},
     { :name => "docker-debian-jessie-dotdeb", :docker => "hanxhx/vagrant-ansible:debian8", :vars => { "nginx_php56": true,  "nginx_php70": true,  "dotdeb": true,  "nginx_backports": false }},
-    { :name => "docker-debian-stretch", :docker => "hanxhx/vagrant-ansible:debian9", :vars => { "nginx_php56": false, "nginx_php70": true,  "dotdeb": false, "nginx_backports": false }},
-    { :name => "docker-debian-stretch-noht", :docker => "hanxhx/vagrant-ansible:debian9", :vars => { "nginx_php56": false, "nginx_php70": true,  "dotdeb": false, "nginx_backports": false, nginx_htpasswd: [] }}
+    { :name => "docker-debian-stretch", :docker => "hanxhx/vagrant-ansible:debian9", :vars => { "nginx_php56": false, "nginx_php70": true,  "dotdeb": false, "nginx_backports": false }}
   ]
 
   config.vm.network "private_network", type: "dhcp"
