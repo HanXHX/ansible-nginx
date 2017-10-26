@@ -6,8 +6,12 @@
   notify: real-reload nginx
 
 - name: real-reload nginx
-  service: name=nginx state=reloaded
+  service:
+    name: nginx
+    state: reloaded
 
 - name: restart nginx freebsd
-  service: name=nginx state=restarted
+  service:
+    name: nginx
+    state: restarted
   when: ansible_distribution == "FreeBSD"

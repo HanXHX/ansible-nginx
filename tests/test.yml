@@ -5,11 +5,17 @@
     - name: INCLUDE | Pre_tasks related to OS version
       include: "includes/pre_{{ ansible_distribution }}.yml"
     - name: FILE | Create an internal SSL dir
-      file: path={{ int_ansible_ssl_dir }} state=directory
+      file:
+        path: "{{ int_ansible_ssl_dir }}"
+        state: directory
     - name: COPY | Deploy test certificate
-      copy: src=file/test.crt dest={{ int_ansible_ssl_dir }}/test.crt
+      copy:
+        src: "file/test.crt"
+        dest: "{{ int_ansible_ssl_dir }}/test.crt"
     - name: COPY | Deploy test key
-      copy: src=file/test.key dest={{ int_ansible_ssl_dir }}/test.key
+      copy:
+        src: "file/test.key"
+        dest: "{{ int_ansible_ssl_dir }}/test.key"
 
   vars:
 # Internal vars
@@ -239,13 +245,17 @@
 # Deploy index files
 # --------------------------------
     - name: -- Add PHP file --
-      copy: dest="{{ nginx_root }}/{{ item }}/public/index.php" content="<?php phpinfo();"
+      copy:
+        dest: "{{ nginx_root }}/{{ item }}/public/index.php"
+        content: "<?php phpinfo();"
       with_items:
         - 'test-php.local'
         - 'test-php-index.local'
 
     - name: -- Add HTML file --
-      copy: dest="{{ item }}/index.html" content="Index HTML test OK\n"
+      copy:
+        dest: "{{ item }}/index.html"
+        content: "Index HTML test OK\n"
       with_items:
         - '{{ nginx_root }}/first-test/public'
         - '/var/tmp'
@@ -255,10 +265,14 @@
         - '{{ nginx_root }}/test-ssl-proxy-protocol.local/public'
 
     - name: -- Create directory --
-      file: path={{ nginx_root }}/test-htpasswd.local/public/hello state=directory
+      file:
+        path: "{{ nginx_root }}/test-htpasswd.local/public/hello"
+        state: directory
 
     - name: -- Add HTML file hello --
-      copy: dest="{{ nginx_root }}/test-htpasswd.local/public/hello/index.html" content="hello\n"
+      copy:
+        dest: "{{ nginx_root }}/test-htpasswd.local/public/hello/index.html"
+        content: "hello\n"
 
 # --------------------------------
 # Test custom facts
