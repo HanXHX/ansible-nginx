@@ -89,8 +89,4 @@
     src: etc/ansible/facts.d/nginx.fact.j2
     dest: /etc/ansible/facts.d/nginx.fact
     mode: 0644
-  register: fact
-
-- name: SETUP
-  action: setup
-  when: fact.changed
+  notify: ['setup']

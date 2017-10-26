@@ -15,3 +15,6 @@
     name: nginx
     state: restarted
   when: ansible_distribution == "FreeBSD"
+
+- name: setup
+  action: setup
