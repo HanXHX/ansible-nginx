@@ -11,7 +11,7 @@ env:
   - PLATFORM='docker-debian-jessie-backports' ANSIBLE_VERSION='ansible>=2.4,<2.5'
   - PLATFORM='docker-debian-jessie-dotdeb'    ANSIBLE_VERSION='ansible>=2.4,<2.5'
   - PLATFORM='docker-debian-stretch'          ANSIBLE_VERSION='ansible>=2.4,<2.5'
-  - PLATFORM='docker-debian-stretch-stretch'  ANSIBLE_VERSION='ansible>=2.4,<2.5'
+  - PLATFORM='docker-debian-stretch-sury'     ANSIBLE_VERSION='ansible>=2.4,<2.5'
 
 matrix:
   allow_failures:
