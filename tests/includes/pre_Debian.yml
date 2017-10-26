@@ -4,6 +4,7 @@
   apt_repository:
     repo: 'deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main'
     state: present
+  when: nginx_backports
 
 - block:
 
@@ -22,7 +23,25 @@
       content: "Package: *\nPin: release o=packages.dotdeb.org\nPin-Priority: 100"
       dest: /etc/apt/preferences
 
-  when: ansible_distribution_release == 'jessie' and dotdeb
+  when: ansible_distribution_release == 'jessie' and dotdeb | default(false)
+
+- block:
+
+  - name: APT | Install apt-transport-https
+    apt:
+      pkg: apt-transport-https
+      update_cache: yes
+      cache_valid_time: 3600
+
+  - name: APT_KEY | Install GPG key
+    apt_key:
+      url: 'https://packages.sury.org/php/apt.gpg'
+
+  - name: APT_REPOSITORY | Add APT repository
+    apt_repository:
+      repo: 'deb https://packages.sury.org/php {{ ansible_distribution_release }} main'
+
+  when: sury | default(false)
 
 - name: APT | Install needed packages
   apt:
@@ -37,35 +56,21 @@
     - strace
     - vim
 
-- name: APT | Install PHP5.6
+- name: APT | Install PHP
   apt:
-    pkg: "{{ item }}"
+    pkg: "{{ item.version | php_fpm_package }}"
     update_cache: yes
     cache_valid_time: 3600
     state: present
-  with_items:
-    - php5-fpm
-    - php5-sqlite
-  when: nginx_php56
+  with_items: "{{ nginx_php }}"
 
-- name: APT | Install PHP7
-  apt:
-    pkg: "{{ item }}"
-    update_cache: yes
-    cache_valid_time: 3600
-    state: present
-  with_items:
-    - php7.0-fpm
-    - php7.0-sqlite3
-  when: nginx_php70
-
-- name: SERVICE | Force start services
+- name: SERVICE | Force start fcgiwrap
   service:
-    name: "{{ item.name }}"
+    name: "fcgiwrap"
     state: started
-  register: sf
-  with_items:
-    - { name: 'php5-fpm', cond: "{{ nginx_php56 }}" }
-    - { name: 'php7.0-fpm', cond: "{{ nginx_php70 }}" }
-    - { name: 'fcgiwrap', cond: true }
-  when: item.cond
+
+- name: SERVICE | Force start PHP
+  service:
+    name: "{{ item.version | php_fpm_service }}"
+    state: started
+  with_items: "{{ nginx_php }}"

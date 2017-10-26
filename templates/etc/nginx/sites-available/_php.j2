@@ -1,22 +1,14 @@
 {% extends "_base.j2" %}
 
-{% macro phpv(version) %}
-{% if version == 56 or version == "56" or version == "5.6" %}
-{{ nginx_upstream_php56 -}}
-{% elif version == 70 or version == "70" or version == "7.0" %}
-{{ nginx_upstream_php70 -}}
-{% else %}
-{# Hack... define another upstream #}
-{{ version -}}
-{% endif %}
-{%- endmacro -%}
-
 {% if item.php_version is defined %}
-{% set php_upstream = phpv(item.php_version) %}
-{% elif nginx_php56 %}
-{% set php_upstream = phpv(56) %}
-{% elif nginx_php70 %}
-{% set php_upstream = phpv(70) %}
+{% set php_info = 'Explicit PHP version on site' %}
+{% set php_upstream = (nginx_php|selectattr('version', 'equalto', item.php_version)|first).upstream_name | default(item.php_version | php_default_upstream_name) %}
+{% elif item.php_upstream is defined %}
+{% set php_info = 'Explicit Nginx/PHP upstream on site' %}
+{% set php_upstream = item.php_upstream %}
+{% else %}
+{% set php_info = 'Warning: using first PHP version on config' %}
+{% set php_upstream = nginx_php.0.upstream_name | default(nginx_php.0.version | php_default_upstream_name) %}
 {% endif %}
 
 {% block template_index %}
@@ -29,6 +21,7 @@
 
 {% block template_upstream_location %}
 	location ~ \.php$ {
+		# {{ php_info }}
 		fastcgi_pass {{ php_upstream }};
 		fastcgi_index index.php;
 {% if item.upstream_params is defined and item.upstream_params is iterable %}

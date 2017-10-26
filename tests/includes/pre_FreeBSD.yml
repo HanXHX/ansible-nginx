@@ -4,10 +4,11 @@
   set_fact:
     nginx_pkgng_package: 'nginx-devel'
     nginx_user: 'www'
-    nginx_php70: false
-    nginx_php56_sockets:
-      - host: '127.0.0.1'
-        port: 9000
+    nginx_php:
+      - version: '5.6'
+        sockets:
+          - host: '127.0.0.1'
+            port: 9000
 
 - name: PKGNG | Install needed packages
   pkgng:

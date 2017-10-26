@@ -2,6 +2,7 @@
 
 {% block template_upstream_location %}
 	location = /index.php {
+		# {{ php_info }}
 		fastcgi_pass {{ php_upstream }};
 		fastcgi_index index.php;
 {% if item.upstream_params is defined and item.upstream_params is iterable %}

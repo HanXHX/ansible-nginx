@@ -2,29 +2,19 @@
 # {{ ansible_managed }}
 #
 
-{% if nginx_php56 %}
-upstream {{ nginx_upstream_php56 }} {
-{% for item in nginx_php56_sockets %}
-{% if item.unix_socket is defined %}
-	server unix:{{ item.unix_socket }} weight={{ item.weight | default('1') }};
+{% for php in nginx_php %}
+upstream {{ php.upstream_name | default((php.version | php_default_upstream_name)) }} {
+{% for sock in php.sockets | default([]) %}
+{% if php.host is defined %}
+    server {{ sock.host }}:{{ sock.port }} weight={{ sock.weight | default('1') }} max_fails={{ sock.max_fails | default('5') }} fail_timeout={{ sock.fail_timeout | default('10s') }};
 {% else %}
-	server {{ item.host }}:{{ item.port }} weight={{ item.weight | default('1') }} max_fails={{ item.max_fails | default('5') }} fail_timeout={{ item.fail_timeout | default('10s') }};
+    server unix:{{ sock.unix | default((php.version | php_default_upstream_socket)) }} weight={{ sock.weight | default('1') }};
 {% endif %}
+{% else %}
+    server unix:{{ php.version | php_default_upstream_socket }} weight=1;
 {% endfor %}
 }
 
-{% endif %}
-{% if nginx_php70 %}
-upstream {{ nginx_upstream_php70 }} {
-{% for item in nginx_php70_sockets %}
-{% if item.unix_socket is defined %}
-	server unix:{{ item.unix_socket }} weight={{ item.weight | default('1') }};
-{% else %}
-	server {{ item.host }}:{{ item.port }} weight={{ item.weight | default('1') }} max_fails={{ item.max_fails | default('5') }} fail_timeout={{ item.fail_timeout | default('10s') }};
-{% endif %}
 {% endfor %}
-}
-
-{% endif %}
 
 # vim:filetype=nginx

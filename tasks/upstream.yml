@@ -1,15 +1,10 @@
 ---
 
-- name: SET_FACT | Backward compatibility with old version of this role
-  set_fact:
-    nginx_php56: true
-  when: nginx_php is defined and nginx_php
-
 - name: TEMPLATE | Deploy PHP upstream to Nginx
   template:
     src: "etc/nginx/upstream/php.conf.j2"
     dest: "{{ nginx_etc_dir }}/conf.d/php.conf"
-  when: nginx_php56 or nginx_php70
+  when: nginx_php | length > 0
   notify: reload nginx
 
 - name: TEMPLATE | Deploy other upstreams
