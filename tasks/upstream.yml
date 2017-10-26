@@ -2,14 +2,14 @@
 
 - name: TEMPLATE | Deploy PHP upstream to Nginx
   template:
-    src: "etc/nginx/upstream/php.conf.j2"
+    src: "etc/nginx/conf.d/php.conf.j2"
     dest: "{{ nginx_etc_dir }}/conf.d/php.conf"
   when: nginx_php | length > 0
   notify: reload nginx
 
 - name: TEMPLATE | Deploy other upstreams
   template:
-    src: "etc/nginx/upstream/upstream.conf.j2"
+    src: "etc/nginx/conf.d/_upstream.conf.j2"
     dest: "{{ nginx_etc_dir }}/conf.d/upstream-{{ item.name }}.conf"
   with_items: "{{ nginx_upstreams }}"
   when: item.state is not defined or item.state == 'present'
