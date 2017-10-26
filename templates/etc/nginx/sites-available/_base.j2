@@ -1,5 +1,5 @@
 {% set __proto = item.proto | default(['http']) %}
-{% set __main_name =  item.filename | default(item.name if item.name is string else item.name[0]) %}
+{% set __main_name =  item | nginx_site_filename %}
 {% set __listen = item.listen | default([80]) %}
 {% set __listen_ssl = item.listen_ssl | default([443]) %}
 {% set __http_proxy_protocol_port = item.http_proxy_protocol_port | default([]) %}

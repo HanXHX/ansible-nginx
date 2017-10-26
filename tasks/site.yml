@@ -2,7 +2,7 @@
 
 - name: FAIL | Check filenames
   fail:
-    msg: "Forbidden keyword default on site {{ item.name if item.name is string else item.name.0 }}"
+    msg: "Forbidden keyword default on site {{ item | nginx_site_name }}"
   when: item.filename is defined and item.filename == 'default'
   with_items: "{{ nginx_sites }}"
 
@@ -21,7 +21,7 @@
 
 - name: FILE | Create root public folders (foreach nginx_sites)
   file:
-    path: "{{ nginx_root }}/{{ item.filename | default(item.name if item.name is string else item.name.0) }}/public"
+    path: "{{ nginx_root }}/{{ item | nginx_site_filename }}/public"
     state: directory
     owner: "{{ item.owner | default(nginx_user) }}"
     group: "{{ item.group | default(nginx_user) }}"
@@ -36,14 +36,14 @@
 - name: TEMPLATE | Create sites
   template:
     src: "etc/nginx/sites-available/{{ item.template if item.redirect_to is not defined else '_redirect' }}.j2"
-    dest: "{{ nginx_etc_dir }}/sites-available/{{ item.filename | default(item.name if item.name is string else item.name.0) }}"
+    dest: "{{ nginx_etc_dir }}/sites-available/{{ item | nginx_site_filename }}"
   with_items: "{{ nginx_sites }}"
   notify: ['reload nginx', 'restart nginx freebsd']
   when: item.state is not defined or item.state != 'absent'
 
 - name: FILE | Delete sites
   file:
-    path: "{{ nginx_etc_dir }}/{{ item.1 }}/{{ item.0.filename | default(item.0.name if item.0.name is string else item.0.name.0) }}"
+    path: "{{ nginx_etc_dir }}/{{ item.1 }}/{{ item.0 | nginx_site_filename }}"
     state: absent
   with_nested:
     - "{{ nginx_sites }}"
@@ -53,8 +53,8 @@
 
 - name: FILE | Enable sites
   file:
-    src: "{{ nginx_etc_dir }}/sites-available/{{ item.filename | default(item.name if item.name is string else item.name.0) }}"
-    dest: "{{ nginx_etc_dir }}/sites-enabled/{{ item.filename | default(item.name if item.name is string else item.name.0) }}"
+    src: "{{ nginx_etc_dir }}/sites-available/{{ item | nginx_site_filename }}"
+    dest: "{{ nginx_etc_dir }}/sites-enabled/{{ item | nginx_site_filename }}"
     state: link
   with_items: "{{ nginx_sites }}"
   notify: ['reload nginx', 'restart nginx freebsd']
@@ -63,7 +63,7 @@
 
 - name: FILE | Disable sites
   file:
-    path: "{{ nginx_etc_dir}}/sites-enabled/{{ item.filename | default(item.name if item.name is string else item.name.0) }}"
+    path: "{{ nginx_etc_dir}}/sites-enabled/{{ item | nginx_site_filename }}"
     state: absent
   with_items: "{{ nginx_sites }}"
   notify: ['reload nginx', 'restart nginx freebsd']
