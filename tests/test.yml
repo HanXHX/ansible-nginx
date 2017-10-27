@@ -16,6 +16,12 @@
       copy:
         src: "file/test.key"
         dest: "{{ int_ansible_ssl_dir }}/test.key"
+    - name: LINEINFILE | Add all hosts in /etc/hosts
+      lineinfile:
+        line: "127.0.2.1\t{% for s in nginx_sites %}{% if s.name is string %}{{ s.name }}{% else %}{% for n in s.name %}{{ n }} {% endfor %}{% endif %} {% if s.redirect_from is defined %}{% for rf in s.redirect_from %}{{ rf }} {% endfor %}{% endif %}{% endfor %}"
+        regexp: '^127\.0\.2'
+        dest: "/etc/hosts"
+        unsafe_writes: yes
 
   vars:
 # Internal vars
@@ -284,85 +290,93 @@
 # Simple sites tests
 # --------------------------------
     - name: -- VERIFY SITES --
-      command: "curl -H 'Host: {{ item.name if item.name is string else item.name[0] }}' http://127.0.0.1{% if item.listen is defined %}:{{ item.listen[0] }}{% endif %}/"
+      uri:
+        url: "http://{{ item | nginx_site_name }}{% if item.listen is defined %}:{{ item.listen[0] }}{% endif %}/"
+        status_code: '200,301,302,401,403'
+        follow_redirects: none
       with_items: "{{ nginx_sites }}"
       when: item.state is undefined or item.state != "absent"
       changed_when: false
 
     - name: -- VERIFY FORBIDDEN --
-      command: "curl -H 'Host: test-php-index.local' http://127.0.0.1/phpinfo.php"
-      register: f
-      failed_when: f.stdout.find('403 Forbidden') == -1
-      changed_when: false
+      uri:
+        url: "http://test-php-index.local/phpinfo.php"
+        status_code: 403
 
     - name: -- VERIFY REDIRECT SITES --
-      command: "curl -H 'Host: {{ item.redirect_from[0] }}' http://127.0.0.1/"
+      uri:
+        url: "http://{{ item.redirect_from[0] }}/"
+        status_code: 301
+        follow_redirects: none
       with_items: "{{ nginx_sites }}"
       when: item.redirect_from is defined and (item.state is undefined or item.state != "absent")
       changed_when: false
-      register: r
-      failed_when: r.stdout.find('301 Moved Permanently') == -1
 
 # --------------------------------
 # PHP
 # --------------------------------
     - name: -- VERIFY PHP SITES --
-      command: "curl -H 'Host: {{ item.name }}' http://127.0.0.1/"
+      uri:
+        url: "http://{{ item.name}}/"
+        return_content: yes
       register: p
       with_items: "{{ nginx_sites }}"
       when: >
         item.template is defined and
         (item.template == '_php' or item.template == '_php_index')
-      changed_when: false
-      failed_when: p.stdout.find('PHP Version ' + item.php_version if 'php_version' in item else nginx_php.0.version) == -1
+      failed_when: p.content.find('PHP Version ' + item.php_version if 'php_version' in item else nginx_php.0.version) == -1
 
 # --------------------------------
 # Basic Auth
 # --------------------------------
+    - name: -- VERIFY AUTH BASIC NONE --
+      uri:
+        url: "http://test-htpasswd.local/hello/"
+        status_code: 401
 
-    - block:
+    - name: -- VERIFY AUTH BASIC FAIL --
+      uri:
+        url: "http://test-htpasswd.local/hello/"
+        status_code: 401
+        user: "fail"
+        password: "fail"
+        force_basic_auth: yes
 
-      - name: -- VERIFY AUTH BASIC NONE --
-        command: "curl -H 'Host: test-htpasswd.local' http://127.0.0.1/hello/"
-        changed_when: false
-        register: authnone
-        failed_when: authnone.stdout.find('401 Authorization Required') == -1
+    - name: -- VERIFY AUTH BASIC OK --
+      uri:
+        url: "http://test-htpasswd.local/hello/"
+        user: "hanx"
+        password: "qwerty"
+        force_basic_auth: yes
 
-      - name: -- VERIFY AUTH BASIC FAIL --
-        command: "curl -u fail:fail -H 'Host: test-htpasswd.local' http://127.0.0.1/hello/"
-        changed_when: false
-        register: authfail
-        failed_when: authfail.stdout.find('401 Authorization Required') == -1
+    - name: -- VERIFY AUTH BASIC FAIL GLOBAL --
+      uri:
+        url: "http://test-htpasswd-all.local/"
+        status_code: 401
+        user: "fail"
+        password: "fail"
+        force_basic_auth: yes
 
-      - name: -- VERIFY AUTH BASIC OK --
-        command: "curl -u hanx:qwerty -H 'Host: test-htpasswd.local' http://127.0.0.1/hello/"
-        changed_when: false
-        register: authok
-        failed_when: authok.stdout.find('hello') == -1
-
-      - name: -- VERIFY AUTH BASIC FAIL GLOBAL --
-        command: "curl -u fail:fail -H 'Host: test-htpasswd-all.local' http://127.0.0.1/"
-        changed_when: false
-        register: authgfail
-        failed_when: authgfail.stdout.find('401 Authorization Required') == -1
-
-      - name: -- VERIFY AUTH BASIC OK --
-        command: "curl -u hanx:qwerty -H 'Host: test-htpasswd-all.local' http://127.0.0.1/"
-        changed_when: false
-        register: authgok
-        failed_when: authgok.stdout.find('401 Authorization Required') != -1
-
-      when: nginx_htpasswd | length > 0
+    - name: -- VERIFY AUTH BASIC OK GLOBAL --
+      uri:
+        url: "http://test-htpasswd-all.local/"
+        user: "hanx"
+        password: "qwerty"
+        force_basic_auth: yes
 
 # --------------------------------
 # BackupPC
 # --------------------------------
     - name: -- VERIFY BACKUPPC --
-      command: "curl -u hanx:qwerty -H 'Host: backuppc.local' http://127.0.0.1/"
-      changed_when: false
+      uri:
+        url: "http://backuppc.local/"
+        user: "hanx"
+        password: "qwerty"
+        force_basic_auth: yes
+        return_content: yes
       register: authbpc
-      failed_when: authbpc.stdout.find('BackupPC Server Status') == -1
       when: ansible_distribution != 'FreeBSD'
+      failed_when: authbpc.content.find('BackupPC Server Status') == -1
 
 # --------------------------------
 # Nagios (not avaiblable on Debian >= 9)
@@ -370,18 +384,27 @@
     - block:
 
       - name: -- VERIFY NAGIOS3 PHP --
-        command: "curl -u nagiosadmin:nagios -H 'Host: nagios3.local' http://127.0.0.1/side.php"
-        changed_when: false
+        uri:
+          url: "http://nagios3.local/side.php"
+          user: "nagiosadmin"
+          password: "nagios"
+          force_basic_auth: yes
+          return_content: yes
         register: nagios_php
-        failed_when: nagios_php.stdout.find('Nagios Core') == -1
+        failed_when: nagios_php.content.find('Nagios Core') == -1
 
       - name: -- VERIFY NAGIOS3 CGI --
-        command: "curl -u nagiosadmin:nagios -H 'Host: nagios3.local' http://127.0.0.1/cgi-bin{% if ansible_distribution == 'Debian' %}/nagios3{% endif %}/summary.cgi"
-        changed_when: false
+        uri:
+          url: "http://nagios3.local/cgi-bin{% if ansible_distribution == 'Debian' %}/nagios3{% endif %}/summary.cgi"
+          user: "nagiosadmin"
+          password: "nagios"
+          force_basic_auth: yes
+          return_content: yes
         register: nagios_cgi
-        failed_when: nagios_cgi.stdout.find('Nagios Event Summary') == -1
+        failed_when: nagios_cgi.content.find('Nagios Event Summary') == -1
 
       when: ansible_distribution_major_version | version_compare('9', 'lt')
+
 
 # --------------------------------
 # Owncloud
@@ -408,19 +431,25 @@
 # SSL
 # --------------------------------
     - name: -- VERIFY SSL --
-      command: "curl --insecure -H 'Host: {{ item }}' https://127.0.0.1/"
-      changed_when: false
+      uri:
+        url: "https://{{ item }}/"
+        return_content: yes
+        validate_certs: no
       register: sslok
-      failed_when: sslok.stdout.find('Index HTML test OK') == -1
+      failed_when: sslok.content.find('Index HTML test OK') == -1
       with_items:
         - 'test-ssl-predeployed.local'
         - 'test-ssl.local'
 
     - name: -- VERIFY SSL REDIRECT --
-      command: "curl -v -H 'Host: {{ item.name }}' http://127.0.0.1/"
-      changed_when: false
+      uri:
+        url: "http://{{ item.name }}/"
+        validate_certs: no
+        status_code: 301
+        return_content: yes
+        follow_redirects: none
       register: sslredirok
-      failed_when: '"< Location:" + " https://%s%s" % (item.name, ":" + item.port if item.port is defined else "") not in sslredirok.stderr'
+      failed_when: '"https://%s%s" % (item.name, ":" + item.port if item.port is defined else "") not in sslredirok.location'
       with_items:
         - name: 'test-ssl-redirect.local'
         - name: 'test-ssl-redirect-many.local'
@@ -432,40 +461,47 @@
 # Default sites
 # --------------------------------
     - name: -- VERIFY DEFAULT SITE --
-      command: "curl -v http://127.0.0.1/"
-      changed_when: false
+      uri:
+        url: 'http://127.0.0.1/'
+        return_content: yes
       register: vdefault
       failed_when: >
-        vdefault.stdout.find('Index HTML test OK') == -1 or
-        vdefault.stderr.lower().find('x-ansible-default') == -1
+        vdefault.content.find('Index HTML test OK') == -1 or
+        vdefault.x_ansible_default is not defined
 
-    - name: -- VERIFY DEFAULT SSL SITE --
-      command: "curl --insecure -v https://127.0.0.1/"
-      changed_when: false
-      register: defaultssl
-      failed_when: >
-        defaultssl.stdout.find('Index HTML test OK') == -1 or
-        defaultssl.stderr.lower().find('x-ansible-default') == -1
-
-    - name: -- VERIFY NOT DEFAULT SITE --
-      command: "curl -v -H 'Host: test-php.local' http://127.0.0.1/"
-      changed_when: false
-      register: vphp
-      failed_when: vphp.stderr.lower().find('x-ansible-default') != -1
-
-    - name: -- VERIFY NOT DEFAULT SSL SITE --
-      command: "curl --insecure -v -H 'Host: test-ssl.local' https://127.0.0.1/"
-      changed_when: false
-      register: notdefaultssl
-      failed_when: notdefaultssl.stderr.lower().find('x-ansible-default') != -1
-
-    - name: -- VERIFY DEFAULT SITE + STUB_STATUS --
-      command: "curl -v http://127.0.0.1/status"
-      changed_when: false
+    - name: -- VERIFY DEFAULT SITE + STUB STATUS--
+      uri:
+        url: 'http://127.0.0.1/status'
+        return_content: yes
       register: vdefault_status
       failed_when: >
-        vdefault_status.stderr.lower().find('x-ansible-default') == -1 or
-        vdefault_status.stdout.find('Active connections') == -1
+        vdefault_status.content.find('Active connections') == -1 or
+        vdefault_status.x_ansible_default is not defined
+
+    - name: -- VERIFY DEFAULT SSL SITE --
+      uri:
+        url: 'https://127.0.0.1/'
+        return_content: yes
+        validate_certs: no
+      register: vdefault
+      failed_when: >
+        vdefault.content.find('Index HTML test OK') == -1 or
+        vdefault.x_ansible_default is not defined
+
+    - name: -- VERIFY NOT DEFAULT SITE --
+      uri:
+        url: 'http://test-php.local/'
+        return_content: yes
+      register: vphp
+      failed_when: vphp.x_ansible_default is defined
+
+    - name: -- VERIFY NOT DEFAULT SSL SITE --
+      uri:
+        url: 'https://test-ssl.local/'
+        return_content: yes
+        validate_certs: no
+      register: notdefaultssl
+      failed_when: notdefaultssl.x_ansible_default is defined
 
 # --------------------------------
 # Check HTTP2
