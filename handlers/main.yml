@@ -1,14 +1,22 @@
 ---
 
-# Reload wrapper
 - name: reload nginx
   command: nginx -t
   notify: real-reload nginx
+
+- name: restart nginx
+  command: nginx -t
+  notify: real-restart nginx
 
 - name: real-reload nginx
   service:
     name: nginx
     state: reloaded
+
+- name: real-restart nginx
+  service:
+    name: nginx
+    state: restarted
 
 - name: restart nginx freebsd
   service:

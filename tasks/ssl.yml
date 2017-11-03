@@ -5,7 +5,7 @@
   args:
     creates: "{{ nginx_dh_path }}"
   when: nginx_dh is not string
-  notify: reload nginx
+  notify: restart nginx
   async: 1000
   register: dh
 
@@ -14,7 +14,7 @@
     content: "{{ nginx_dh }}"
     dest: "{{ nginx_dh_path }}"
   when: nginx_dh is string
-  notify: reload nginx
+  notify: restart nginx
 
 - name: FILE | Create SSL directories
   file:
@@ -31,7 +31,7 @@
     mode: 0640
   with_items: "{{ nginx_ssl_pairs }}"
   when: item.key is defined
-  notify: reload nginx
+  notify: restart nginx
   no_log: true
 
 - name: COPY | Deploy SSL certs
@@ -41,7 +41,7 @@
     mode: 0644
   with_items: "{{ nginx_ssl_pairs }}"
   when: item.cert is defined
-  notify: reload nginx
+  notify: restart nginx
   no_log: true
 
 - name: Check DH command status
