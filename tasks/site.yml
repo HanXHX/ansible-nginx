@@ -5,6 +5,8 @@
     msg: "Forbidden keyword default on site {{ item | nginx_site_name }}"
   when: item.filename is defined and item.filename == 'default'
   with_items: "{{ nginx_sites }}"
+  loop_control:
+    label: "{{ item | nginx_site_name }}"
 
 - name: FAIL | Check HTTPS redir and proto
   fail:
@@ -13,6 +15,8 @@
     ((item.proto is defined and 'http' in item.proto) or (item.proto is not defined)) and
     (item.redirect_http is defined and item.redirect_http)
   with_items: "{{ nginx_sites }}"
+  loop_control:
+    label: "{{ item | nginx_site_name }}"
 
 - name: FILE | Create root directory
   file:
@@ -32,6 +36,8 @@
     (item.template is defined and item.template not in nginx_templates_no_dir) and
     (item.state is not defined or not item.state != 'absent') and
     item.redirect_to is not defined
+  loop_control:
+    label: "{{ item | nginx_site_name }}"
 
 - name: TEMPLATE | Create sites
   template:
@@ -40,6 +46,8 @@
   with_items: "{{ nginx_sites }}"
   notify: ['reload nginx', 'restart nginx freebsd']
   when: item.state is not defined or item.state != 'absent'
+  loop_control:
+    label: "{{ item | nginx_site_name }}"
 
 - name: FILE | Delete sites
   file:
@@ -50,6 +58,8 @@
     - ['sites-available', 'sites-enabled']
   notify: ['reload nginx', 'restart nginx freebsd']
   when: item.state is defined and item.state == 'absent'
+  loop_control:
+    label: "{{ item | nginx_site_name }}"
 
 - name: FILE | Enable sites
   file:
@@ -60,6 +70,8 @@
   notify: ['reload nginx', 'restart nginx freebsd']
   when: >
     item.state is not defined or item.state == 'present'
+  loop_control:
+    label: "{{ item | nginx_site_name }}"
 
 - name: FILE | Disable sites
   file:
@@ -68,6 +80,8 @@
   with_items: "{{ nginx_sites }}"
   notify: ['reload nginx', 'restart nginx freebsd']
   when: item.state is defined and item.state == 'disabled'
+  loop_control:
+    label: "{{ item | nginx_site_name }}"
 
 - name: FILE | Delete default site when explicitely defined
   file:
