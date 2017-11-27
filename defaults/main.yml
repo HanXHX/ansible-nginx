@@ -90,6 +90,11 @@ nginx_custom_http: []
 nginx_sites: []
 
 #
+# Upstreams
+#
+nginx_upstreams: []
+
+#
 # htpasswd
 #
 nginx_htpasswd: []
