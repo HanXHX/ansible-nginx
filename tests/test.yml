@@ -189,6 +189,8 @@
         use_access_log: true
       - name: 'test-php-index.local'
         template: '_php_index'
+      - name: 'test-php-index2.local'
+        template: '_php_index2'
       - name: 'test-proxy.local'
         listen:
           - 8080
@@ -257,6 +259,7 @@
       with_items:
         - 'test-php.local'
         - 'test-php-index.local'
+        - 'test-php-index2.local'
 
     - name: -- Add HTML file --
       copy:
@@ -323,8 +326,15 @@
       with_items: "{{ nginx_sites }}"
       when: >
         item.template is defined and
-        (item.template == '_php' or item.template == '_php_index')
+        (item.template == '_php' or item.template == '_php_index' or item.template == '_php_index2')
       failed_when: p.content.find('PHP Version ' + item.php_version if 'php_version' in item else nginx_php.0.version) == -1
+
+    - name: -- VERIFY INDEX2 --
+      uri:
+        url: "http://test-php-index2.local/lorem.php?ipsum=sit&dolor=amet"
+        return_content: yes
+      register: p2
+      failed_when: p2.content.find('PHP Version') == -1
 
 # --------------------------------
 # Basic Auth
