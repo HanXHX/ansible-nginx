@@ -16,6 +16,7 @@ Features:
 - Manage dynamic modules (install and loading)
 - Deploy custom facts.d with sites config
 - Can listen with proxy protocol
+- Generate certificates with acme.sh (let's encrypt) -- *EXPERIMENTAL*
 
 Requirements
 ------------
@@ -75,6 +76,7 @@ Fine configuration
 
 [FreeBSD](doc/freebsd.md)
 
+[acme.sh](doc/acme.md)
 
 Note
 ----

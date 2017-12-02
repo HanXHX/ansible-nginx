@@ -43,3 +43,5 @@ nginx_servers_default_headers:
   'X-Frame-Options': 'DENY always'
   'X-Content-Type-Options': 'nosniff always'
   'X-XSS-Protection': '1; mode=block'
+
+nginx_acmesh_bin: "{{ nginx_acmesh_dir }}/acme.sh"

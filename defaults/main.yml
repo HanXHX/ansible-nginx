@@ -116,6 +116,14 @@ nginx_dh: null
 nginx_dh_path: '{{ nginx_ssl_dir }}/dhparam.pem'
 nginx_dh_length: 2048
 
+#
+# acme.sh
+#
+nginx_acmesh: false
+nginx_acmesh_dir: "/opt/acme.sh"
+nginx_acmesh_git_dir: "/tmp/acme.sh"
+nginx_acmesh_test: false
+
 # Extra
 
 # Note:

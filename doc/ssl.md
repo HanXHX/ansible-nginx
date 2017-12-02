@@ -52,6 +52,9 @@ nginx_sites;
   - name: 'test-ssl2.local'
     proto: ['http', 'https']
     template: '_base'
+  - name: 'test-ssl3.local'
+    proto: ['http', 'https']
+    template: '_base'
 
 nginx_ssl_pairs:
   - name: mysuperkey
@@ -64,14 +67,6 @@ nginx_ssl_pairs:
       ....(snip)....
       -----END CERTIFICATE-----
   - name: test-ssl2.local
-    key: |
-      -----BEGIN RSA PRIVATE KEY-----
-      ....(snip)....
-      -----END RSA PRIVATE KEY-----
-    cert: |
-      -----BEGIN CERTIFICATE-----
-      ....(snip)....
-      -----END CERTIFICATE-----
-
+    acme: true
 ```
 

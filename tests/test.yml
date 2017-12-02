@@ -62,7 +62,12 @@
         description: 'Please login!'
         users: []
         state: 'absent'
+    nginx_acmesh: true
+    nginx_acmesh_test: true
     nginx_ssl_pairs:
+      - name: '{{ ngrok.stdout }}'
+        acme: true
+        acme_port: 8888
       - name: 'test-ssl-predeployed.local'
         dest_key: "{{ int_ansible_ssl_dir }}/test.key"
         dest_cert: "{{ int_ansible_ssl_dir }}/test.crt"
@@ -239,6 +244,12 @@
         https_proxy_protocol_port: [20443]
         template: '_base'
         ssl_name: 'test-ssl.local'
+      - name: '{{ ngrok.stdout }}'
+        proto: ['http', 'https']
+        template: '_base'
+        ssl_name: '{{ ngrok.stdout }}'
+        headers:
+          'X-acme': '1'
     nginx_dh_length: 1024
   roles:
     - ../../
@@ -272,6 +283,7 @@
         - '{{ nginx_root }}/test-ssl.local/public'
         - '{{ nginx_root }}/test-ssl-predeployed.local/public'
         - '{{ nginx_root }}/test-ssl-proxy-protocol.local/public'
+        - '{{ nginx_root }}/{{ ngrok.stdout }}/public'
 
     - name: -- Create directory --
       file:
@@ -450,6 +462,7 @@
       with_items:
         - 'test-ssl-predeployed.local'
         - 'test-ssl.local'
+        - '{{ ngrok.stdout }}'
 
     - name: -- VERIFY SSL REDIRECT --
       uri:

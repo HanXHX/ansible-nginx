@@ -50,11 +50,18 @@
     cache_valid_time: 3600
     state: present
   with_items:
+    - cron
     - curl
     - fcgiwrap
+    - jq
     - nghttp2
     - strace
     - vim
+    - unzip
+
+- name: APT | Install daemonize from Stretch
+  apt:
+    deb: http://ftp.us.debian.org/debian/pool/main/d/daemonize/daemonize_1.7.7-1+b1_amd64.deb
 
 - name: APT | Install PHP
   apt:
@@ -74,3 +81,37 @@
     name: "{{ item.version | php_fpm_service }}"
     state: started
   with_items: "{{ nginx_php }}"
+
+- name: GET_URL | Download ngrok
+  get_url:
+    url: "https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip"
+    dest: "/tmp/ngrok.zip"
+
+- name: UNARCHIVE | Uncompress ngrok
+  unarchive:
+    src: "/tmp/ngrok.zip"
+    dest: "/tmp"
+    remote_src: yes
+
+- name: SHELL | Check if ngrok is started
+  shell: ps aux | grep -q [n]grok
+  register: psngrok
+  changed_when: false
+  failed_when: false
+
+- block:
+
+  - name: SHELL | Start ngrok
+    shell: daemonize /tmp/ngrok http 8888 -bind-tls=false
+
+  - name: WAIT_FOR | ngrok started
+    wait_for:
+      delay: 2
+      port: 4040
+
+  when: psngrok.rc > 0
+
+- name: SHELL | Get ngrok public address
+  shell: curl 'http://127.0.0.1:4040/api/tunnels/command_line' | jq '.public_url' | grep -oE '[[:alnum:]]+\.ngrok\.io'
+  register: ngrok
+  changed_when: false
