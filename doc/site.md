@@ -9,7 +9,7 @@ Common
 ------
 
 - `name`: (M) Domain or list of domain used.
-- `template`: (D) template used to create site. Optional if you set `delete` to true or using `redirect_tor`.
+- `template`: (D) template used to create site. Optional if you set `state`=`absent` or using `redirect_to`.
 - `filename`: (O) Specify filename in /etc/nginx/sites-*. Do NOT specify default (reserved keyword). It will be used for log filenames and directories creation.
 - `state`: (O) Site status. Can be "present" (default), "absent" and "disabled".
 - `redirect_from`: (O) Domain list to redirect to the first `name`. You can use this key to redirect non-www to www

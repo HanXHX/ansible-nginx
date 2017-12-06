@@ -57,7 +57,7 @@
     - "{{ nginx_sites }}"
     - ['sites-available', 'sites-enabled']
   notify: ['reload nginx', 'restart nginx freebsd']
-  when: item.state is defined and item.state == 'absent'
+  when: item.0.state is defined and item.0.state == 'absent'
   loop_control:
     label: "{{ nginx_etc_dir }}/{{ item.1 }}/{{ item.0 | nginx_site_filename }}"
 
