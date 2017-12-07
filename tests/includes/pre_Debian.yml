@@ -70,17 +70,18 @@
     cache_valid_time: 3600
     state: present
   with_items: "{{ nginx_php }}"
+  register: apt_php
 
 - name: SERVICE | Force start fcgiwrap
   service:
     name: "fcgiwrap"
     state: started
 
-- name: SERVICE | Force start PHP
-  service:
-    name: "{{ item.version | php_fpm_service }}"
-    state: started
+# Bypasses Ansible 2.4 issue (cannot use service module)... With service module... php is not really started!
+- name: COMMAND | Force start PHP
+  command: "service {{ item.version | php_fpm_service }} start"
   with_items: "{{ nginx_php }}"
+  when: apt_php.changed
 
 - name: GET_URL | Download ngrok
   get_url:
