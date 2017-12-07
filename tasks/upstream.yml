@@ -7,6 +7,12 @@
   when: nginx_php | length > 0
   notify: reload nginx
 
+- name: FILE | Delete PHP upstream
+  file:
+    path: "{{ nginx_etc_dir }}/conf.d/php.conf"
+    state: absent
+  when: nginx_php | length == 0
+
 - name: TEMPLATE | Deploy other upstreams
   template:
     src: "etc/nginx/conf.d/_upstream.conf.j2"
