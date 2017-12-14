@@ -54,7 +54,7 @@ FreeBSD:
 - `nginx_events_*`: all variables in events block
 - `nginx_http_*`: all variables in http block
 - `nginx_custom_http`: instructions list (will put data in `/etc/nginx/conf.d/custom.conf`)
-- `nginx_dyn_modules`: dynamic module list to load
+- `nginx_module_packages`: package list module to install
 
 About modules
 -------------

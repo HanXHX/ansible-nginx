@@ -29,7 +29,7 @@
 # Role vars
     nginx_worker_processes: 1 # Ansible+FreeBSD can't detect CPU number
     nginx_apt_package: 'nginx-extras'
-    nginx_dyn_modules: ['http_geoip', 'http_headers_more']
+    nginx_module_packages: ['libnginx-mod-http-headers-more-filter']
     nginx_upstreams:
       - name: 'test'
         servers:

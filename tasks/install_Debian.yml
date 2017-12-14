@@ -29,10 +29,9 @@
 
 - name: APT | Install nginx modules
   apt:
-    pkg: "libnginx-mod-{{ item | replace('_', '-') }}"
+    pkg: "{{ item }}"
     state: present
-  with_items: "{{ nginx_dyn_modules }}"
-  when:  ansible_distribution == 'Debian'
+  with_items: "{{ nginx_module_packages }}"
 
 - name: APT | Install python-passlib
   apt:
