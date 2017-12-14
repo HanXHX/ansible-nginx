@@ -27,6 +27,13 @@
     state: present
     default_release: "{{ ansible_distribution_release + '-backports' if nginx_backports else ansible_distribution_release }}"
 
+- name: APT | Install nginx modules
+  apt:
+    pkg: "libnginx-mod-{{ item | replace('_', '-') }}"
+    state: present
+  with_items: "{{ nginx_dyn_modules }}"
+  when:  ansible_distribution == 'Debian'
+
 - name: APT | Install python-passlib
   apt:
     pkg: python-passlib
