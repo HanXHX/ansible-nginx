@@ -40,7 +40,7 @@
     pkg: "{{ item }}"
     state: present
   with_items: "{{ nginx_module_packages }}"
-  when: "{{ nginx_version.stdout | version_compare('1.9.11', 'ge')"
+  when: nginx_version.stdout | version_compare('1.9.11', 'ge')
 
 - name: APT | Install python-passlib
   apt:
