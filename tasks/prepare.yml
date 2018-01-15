@@ -1,5 +1,13 @@
 ---
 
+- name: SHELL | Get Nginx version
+  shell: nginx -v 2>&1 | sed -r 's#.*/##;' | cut -d ' ' -f 1
+  args:
+    executable: /bin/sh
+  register: nginx_version
+  changed_when: false
+  check_mode: no
+
 - name: SHELL | Get module list
   shell: nginx -V 2>&1 | tr -- - '\n' | grep -A 1 with | grep _module | sed -r 's/_module//g; s/\s+//g' | sort
   args:
