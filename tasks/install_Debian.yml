@@ -27,11 +27,20 @@
     state: present
     default_release: "{{ ansible_distribution_release + '-backports' if nginx_backports else ansible_distribution_release }}"
 
+- name: SHELL | Get Nginx version
+  shell: nginx -v 2>&1 | sed -r 's#.*/##;' | cut -d ' ' -f 1
+  args:
+    executable: /bin/sh
+  register: nginx_version
+  changed_when: false
+  check_mode: no
+
 - name: APT | Install nginx modules
   apt:
     pkg: "{{ item }}"
     state: present
   with_items: "{{ nginx_module_packages }}"
+  when: "{{ nginx_version.stdout | version_compare('1.9.11', 'ge')"
 
 - name: APT | Install python-passlib
   apt:
