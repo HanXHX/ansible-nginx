@@ -28,7 +28,9 @@ server {
 	listen {{ port }}{% if port | int in __http_proxy_protocol_port %} proxy_protocol{% endif %};
 {% endfor %}
 	server_name {{ name }};
-	return 301 https://{{ name }}{% if '443' not in __listen_ssl and 443 not in __listen_ssl %}:{{ __listen_ssl[0] }}{% endif %}$request_uri;
+	location / {
+		return 301 https://{{ name }}{% if '443' not in __listen_ssl and 443 not in __listen_ssl %}:{{ __listen_ssl[0] }}{% endif %}$request_uri;
+	}
 }
 {% endmacro %}
 
@@ -170,7 +172,9 @@ server {
 	listen {{ port }}{% if port | int in __http_proxy_protocol_port %} proxy_protocol{% endif %};
 {% endfor %}
 	server_name {% if item.redirect_from is string %}{{ item.redirect_from }}{% else %}{{ "\n\t\t" }}{{ item.redirect_from | join("\n\t\t") }}{% endif %};
-	return 301 $scheme://{{ item.name if item.name is string else item.name[0] }}$request_uri;
+	location / {
+		return 301 $scheme://{{ item.name if item.name is string else item.name[0] }}$request_uri;
+	}
 }
 
 {% if 'https' in __proto %}
@@ -183,7 +187,9 @@ server {
 	include {{ nginx_helper_dir + '/ssl-' + item.ssl_template | default('strong') }};
 {% endif %}
 	server_name {% if item.redirect_from is string %}{{ item.redirect_from }}{% else %}{{ "\n\t\t" }}{{ item.redirect_from | join("\n\t\t") }}{% endif %};
-	return 301 https://{{ item.name if item.name is string else item.name[0] }}{% if '443' not in __listen_ssl and 443 not in __listen_ssl %}:{{ __listen_ssl[0] }}{% endif %}$request_uri;
+	location / {
+		return 301 https://{{ item.name if item.name is string else item.name[0] }}{% if '443' not in __listen_ssl and 443 not in __listen_ssl %}:{{ __listen_ssl[0] }}{% endif %}$request_uri;
+	}
 }
 {% endif %}
 
