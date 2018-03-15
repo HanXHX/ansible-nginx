@@ -22,7 +22,7 @@
     state: directory
   with_items: "{{ nginx_ssl_pairs }}"
   when: item.dest_key is not defined or item.dest_cert is not defined
-  no_log: true
+  no_log: not nginx_debug_role
 
 - name: COPY | Deploy SSL keys
   copy:
@@ -32,7 +32,7 @@
   with_items: "{{ nginx_ssl_pairs }}"
   when: item.key is defined
   notify: restart nginx
-  no_log: true
+  no_log: not nginx_debug_role
 
 - name: COPY | Deploy SSL certs
   copy:
@@ -42,7 +42,7 @@
   with_items: "{{ nginx_ssl_pairs }}"
   when: item.cert is defined
   notify: restart nginx
-  no_log: true
+  no_log: not nginx_debug_role
 
 - name: Check DH command status
   async_status:

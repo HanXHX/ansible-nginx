@@ -61,7 +61,7 @@
   with_items: "{{ acme_create }}"
   register: acme_get
   failed_when: acme_get.rc != 0 and acme_get.rc != 2
-  no_log: true
+  no_log: not nginx_debug_role
 
 - name: FILE | Create SSL dir per site
   file:

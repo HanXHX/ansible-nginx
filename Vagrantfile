@@ -38,7 +38,7 @@ Vagrant.configure("2") do |config|
         ansible.playbook = "tests/test.yml"
         ansible.verbose = 'vv'
         ansible.become = true
-        ansible.extra_vars = opts[:vars]
+        ansible.extra_vars = opts[:vars].merge({ "nginx_debug_role": true })
       end
     end
   end
@@ -54,7 +54,7 @@ Vagrant.configure("2") do |config|
          ansible.playbook = "tests/test.yml"
          ansible.verbose = 'vv'
          ansible.become = true
-         ansible.extra_vars = opts[:vars]
+         ansible.extra_vars = opts[:vars].merge({ "nginx_debug_role": true })
        end
     end
   end

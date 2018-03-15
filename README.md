@@ -56,6 +56,10 @@ FreeBSD:
 - `nginx_custom_http`: instructions list (will put data in `/etc/nginx/conf.d/custom.conf`)
 - `nginx_module_packages`: package list module to install
 
+### Misc
+
+- `nginx_debug_role`: set _true_ if you need to see output of no\_log tasks 
+
 About modules
 -------------
 
