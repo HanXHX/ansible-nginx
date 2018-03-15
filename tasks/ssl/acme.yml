@@ -48,11 +48,15 @@
   with_items: "{{ acme_create }}"
   register: fake_site
 
-- name: SERVICE | Reload nginx
+- name: SERVICE | Restart nginx
   service:
     name: nginx
-    state: reloaded
-  when: fake_site.changed
+    state: restarted
+  when: fake_site.changed and ansible_virtualization_type != 'docker'
+
+- name: COMMAND | Restart nginx
+  command: service nginx restart
+  when: fake_site.changed and ansible_virtualization_type == 'docker'
 
 - name: SHELL | Get certificates
   shell: '{{ nginx_acmesh_bin }} --issue{% if item.name is string %} -d {{ item.name }}{% else %}{% for name in item.name %} -d {{ name }}{% endfor %}{% endif %} --nginx {% if nginx_acmesh_test %}--test{% endif %}'

@@ -2,21 +2,35 @@
 
 - name: reload nginx
   command: nginx -t
-  notify: real-reload nginx
+  notify:
+    - real-reload nginx
+    - docker reload nginx
 
 - name: restart nginx
   command: nginx -t
-  notify: real-restart nginx
+  notify:
+    - real-restart nginx
+    - docker restart nginx
 
 - name: real-reload nginx
   service:
     name: nginx
     state: reloaded
+  when: ansible_virtualization_type != 'docker'
 
 - name: real-restart nginx
   service:
     name: nginx
     state: restarted
+  when: ansible_virtualization_type != 'docker'
+
+- name: docker reload nginx
+  command: service nginx reload
+  when: ansible_virtualization_type == 'docker'
+
+- name: docker restart nginx
+  command: service nginx restart
+  when: ansible_virtualization_type == 'docker'
 
 - name: restart nginx freebsd
   service:
