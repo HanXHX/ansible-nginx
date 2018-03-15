@@ -236,6 +236,9 @@
         template: '_base'
         ssl_name: 'test-ssl.local'
         redirect_https: true
+        redirect_from:
+          - 'www.test-ssl-redirect-many.local'
+          - 'www.test-ssl-redirect-many2.local'
       - name: 'test-ssl-proxy-protocol.local'
         proto: ['http', 'https']
         listen: [80, 20080]
@@ -324,7 +327,17 @@
         status_code: 301
         follow_redirects: none
       with_items: "{{ nginx_sites }}"
-      when: item.redirect_from is defined and (item.state is undefined or item.state != "absent")
+      when: item.redirect_from is defined and (item.state is undefined or item.state != "absent") and (item.proto is not defined or 'https' not in item.proto)
+      changed_when: false
+
+    - name: -- VERIFY REDIRECT HTTPS SITES --
+      uri:
+        url: "https://{{ item.redirect_from[0] }}:{{ item.listen_ssl[0] | default(443) }}/"
+        status_code: 301
+        follow_redirects: none
+        validate_certs: no
+      with_items: "{{ nginx_sites }}"
+      when: item.redirect_from is defined and (item.state is undefined or item.state != "absent") and item.proto is defined and 'https' in item.proto
       changed_when: false
 
 # --------------------------------

@@ -172,6 +172,21 @@ server {
 	server_name {% if item.redirect_from is string %}{{ item.redirect_from }}{% else %}{{ "\n\t\t" }}{{ item.redirect_from | join("\n\t\t") }}{% endif %};
 	return 301 $scheme://{{ item.name if item.name is string else item.name[0] }}$request_uri;
 }
+
+{% if 'https' in __proto %}
+server {
+{% for port in __listen_ssl %}
+	listen {{ port }}{% if nginx_default_site_ssl == __main_name %} default_server{% endif %} ssl{% if nginx_auto_config_httpv2 and 'http_v2' in nginx_modules %} http2{% endif %}{% if port | int in __https_proxy_protocol_port %} proxy_protocol{% endif %};
+{% endfor %}
+{{ ssl(__ssl_name) }}
+{% if item.ssl_template is not defined or item.ssl_template != false %}
+	include {{ nginx_helper_dir + '/ssl-' + item.ssl_template | default('strong') }};
+{% endif %}
+	server_name {% if item.redirect_from is string %}{{ item.redirect_from }}{% else %}{{ "\n\t\t" }}{{ item.redirect_from | join("\n\t\t") }}{% endif %};
+	return 301 https://{{ item.name if item.name is string else item.name[0] }}{% if '443' not in __listen_ssl and 443 not in __listen_ssl %}:{{ __listen_ssl[0] }}{% endif %}$request_uri;
+}
+{% endif %}
+
 {% endif %}
 
 # vim:filetype=nginx
