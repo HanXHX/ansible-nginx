@@ -20,11 +20,6 @@ env:
 
 matrix:
   allow_failures:
-    - env: PLATFORM='docker-debian-jessie'           ANSIBLE_VERSION='ansible>=2.4,<2.5'
-    - env: PLATFORM='docker-debian-jessie-backports' ANSIBLE_VERSION='ansible>=2.4,<2.5'
-    - env: PLATFORM='docker-debian-jessie-dotdeb'    ANSIBLE_VERSION='ansible>=2.4,<2.5'
-    - env: PLATFORM='docker-debian-stretch'          ANSIBLE_VERSION='ansible>=2.4,<2.5'
-    - env: PLATFORM='docker-debian-stretch-sury'     ANSIBLE_VERSION='ansible>=2.4,<2.5'
     - env: PLATFORM='docker-debian-jessie'           ANSIBLE_VERSION='ansible>=2.5b,<2.6'
     - env: PLATFORM='docker-debian-jessie-backports' ANSIBLE_VERSION='ansible>=2.5b,<2.6'
     - env: PLATFORM='docker-debian-jessie-dotdeb'    ANSIBLE_VERSION='ansible>=2.5b,<2.6'
