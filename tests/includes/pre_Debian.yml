@@ -94,25 +94,6 @@
     dest: "/tmp"
     remote_src: yes
 
-- name: SHELL | Check if ngrok is started
-  shell: ps aux | grep -q [n]grok
-  register: psngrok
-  changed_when: false
-  failed_when: false
-
-- block:
-
-  - name: SHELL | Start ngrok
-    shell: daemonize /tmp/ngrok http 8888 -bind-tls=false
-
-  - name: WAIT_FOR | ngrok started
-    wait_for:
-      delay: 2
-      port: 4040
-
-  when: psngrok.rc > 0
-
-- name: SHELL | Get ngrok public address
-  shell: curl 'http://127.0.0.1:4040/api/tunnels/command_line' | jq '.public_url' | grep -oE '[[:alnum:]]+\.ngrok\.io'
-  register: ngrok
-  changed_when: false
+- name: SET_FACT | ngrok_path
+  set_fact:
+    ngrok_path: '/tmp/ngrok'

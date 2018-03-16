@@ -4,22 +4,29 @@
   pre_tasks:
     - name: INCLUDE | Pre_tasks related to OS version
       include: "includes/pre_{{ ansible_distribution }}.yml"
+
+    - name: INCLUDE | Pre_tasks common
+      include: "includes/pre_common.yml"
+
     - name: FILE | Create an internal SSL dir
       file:
         path: "{{ int_ansible_ssl_dir }}"
         state: directory
+
     - name: COPY | Deploy test certificate
       copy:
         src: "file/test.crt"
         dest: "{{ int_ansible_ssl_dir }}/test.crt"
+
     - name: COPY | Deploy test key
       copy:
         src: "file/test.key"
         dest: "{{ int_ansible_ssl_dir }}/test.key"
+
     - name: LINEINFILE | Add all hosts in /etc/hosts
       lineinfile:
-        line: "127.0.2.1\t{% for s in nginx_sites %}{% if s.name is string %}{{ s.name }}{% else %}{% for n in s.name %}{{ n }} {% endfor %}{% endif %} {% if s.redirect_from is defined %}{% for rf in s.redirect_from %}{{ rf }} {% endfor %}{% endif %}{% endfor %}"
-        regexp: '^127\.0\.2'
+        line: "127.0.0.1\tlocalhost {% for s in nginx_sites %}{% if s.name is string %}{{ s.name }}{% else %}{% for n in s.name %}{{ n }} {% endfor %}{% endif %} {% if s.redirect_from is defined %}{% for rf in s.redirect_from %}{{ rf }} {% endfor %}{% endif %}{% endfor %}"
+        regexp: '^127\.0\.0\.1'
         dest: "/etc/hosts"
         unsafe_writes: yes
 
@@ -122,7 +129,7 @@
           -----END CERTIFICATE-----
     nginx_custom_http:
       - 'add_header X-ansible 1;'
-      - 'geoip_country /usr/share/GeoIP/GeoIP.dat;'
+      - 'geoip_country {% if ansible_distribution == "Debian" %}/usr/share/GeoIP/GeoIP.dat{% else %}/usr/local/share/GeoIP/GeoIP.dat{% endif %};'
       - 'map $geoip_country_code $allowed_country {'
       - '    default yes;'
       - '    MA no;'
@@ -414,7 +421,7 @@
       failed_when: authbpc.content.find('BackupPC Server Status') == -1
 
 # --------------------------------
-# Nagios (not avaiblable on Debian >= 9)
+# Nagios (not avaiblable on Debian >= 9 and not tested on FreeBSD)
 # --------------------------------
     - block:
 
@@ -438,7 +445,7 @@
         register: nagios_cgi
         failed_when: nagios_cgi.content.find('Nagios Event Summary') == -1
 
-      when: ansible_distribution_major_version | version_compare('9', 'lt')
+      when: ansible_distribution == 'Debian' and ansible_distribution_major_version | version_compare('9', 'lt')
 
 
 # --------------------------------

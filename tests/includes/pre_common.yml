@@ -1,0 +1,18 @@
+---
+
+- name: SHELL | Start ngrok
+  shell: daemonize -l /tmp/ngrok {{ ngrok_path }} http 8888 -bind-tls=false
+  failed_when: false
+  changed_when: ngrok.stderr.find("Can't lock the lock file") == -1
+  register: ngrok
+
+- name: WAIT_FOR | ngrok started
+  wait_for:
+    delay: 2
+    port: 4040
+  when: ngrok.changed
+
+- name: SHELL | Get ngrok public address
+  shell: curl 'http://127.0.0.1:4040/api/tunnels/command_line' | jq '.public_url' | grep -oE '[[:alnum:]]+\.ngrok\.io'
+  register: ngrok
+  changed_when: false

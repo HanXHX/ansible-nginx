@@ -2,23 +2,35 @@
 
 - name: SET_FACT | FreeBSD web user
   set_fact:
-    nginx_pkgng_package: 'nginx-devel'
+    nginx_pkgng_package: 'nginx-full'
     nginx_user: 'www'
     nginx_php:
-      - version: '5.6'
+      - version: '7.2'
         sockets:
           - host: '127.0.0.1'
             port: 9000
+    nginx_load_modules:
+      - /usr/local/libexec/nginx/ngx_http_geoip_module.so
+    ngrok_path: '/usr/local/bin/ngrok'
 
 - name: PKGNG | Install needed packages
   pkgng:
     pkg: "{{ item }}"
     state: present
   with_items:
-    - php56
     - curl
+    - daemonize
     - fcgiwrap
+    - GeoIP
+    - jq
     - nghttp2
+    - php72
+    - vim
+
+- name: COMMAND | Get geoip database
+  command: geoipupdate.sh
+  args:
+    creates: /usr/local/share/GeoIP/GeoIP.dat
 
 - name: SERVICE | Force start services
   service:
@@ -29,3 +41,25 @@
   with_items:
     - php-fpm
     - fcgiwrap
+
+- name: STAT | Check ports
+  stat:
+    path: /usr/ports
+  register: ports
+
+- block:
+
+    - name: COMMAND | Get ports
+      command: portsnap fetch --interactive
+
+    - name: COMMAND | Extract ports
+      command: portsnap extract
+      no_log: true
+
+  when: not ports.stat.exists
+
+- name: SHELL | Install ngrok
+  shell: make install clean DISABLE_LICENSES=yes
+  args:
+    chdir: /usr/ports/security/ngrok
+    creates: "{{ ngrok_path }}"

@@ -5,9 +5,36 @@
     name: "{{ item }}"
     state: present
   with_items:
+    - acme.sh
     - "{{ nginx_pkgng_package }}"
     - py27-passlib
     - curl
+
+#
+# Bypass https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=224166#c1
+#
+- block:
+
+    - name: COMMAND | Create /usr/local/etc/fdfs/http.conf
+      command: touch /usr/local/etc/fdfs/http.conf
+      args:
+        creates: /usr/local/etc/fdfs/http.conf
+      register: fd1
+
+    - name: LINEINFILE | Tune fdfs
+      lineinfile:
+        regexp: ^load_fdfs_parameters_from_tracker
+        line: load_fdfs_parameters_from_tracker=false
+        path: /usr/local/etc/fdfs/mod_fastdfs.conf
+      register: fd2
+
+    - name: SERVICE | Restart nginx when fdfs is tuned
+      service:
+        name: nginx
+        state: restarted
+      when: fd1.changed or fd2.changed
+
+  when: true
 
 - name: FILE | Create configuration dir (like Debian)
   file:

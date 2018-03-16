@@ -30,5 +30,16 @@
         line: 'fastcgi_param  SCRIPT_FILENAME    $realpath_root$fastcgi_script_name;'
       - regexp: '^fastcgi_param  DOCUMENT_ROOT'
         line: 'fastcgi_param  DOCUMENT_ROOT      $realpath_root;'
-    - [ '/etc/nginx/fastcgi_params', '/etc/nginx/fastcgi.conf' ]
+    -
+      - '{{ nginx_etc_dir }}/fastcgi_params'
+      - '{{ nginx_etc_dir }}/fastcgi.conf'
   when: nginx_fastcgi_fix_realpath
+
+- name: COPY | Add modules manually
+  copy:
+    content: |
+      {% for m in nginx_load_modules %}
+      load_module {{ m }};
+      {% endfor %}
+    dest: "{{ nginx_etc_dir }}/modules-enabled/000-modules.conf"
+  notify: reload nginx

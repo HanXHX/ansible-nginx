@@ -32,6 +32,12 @@ nginx_dirs:
   - dir: "{{ nginx_helper_dir }}"
     mode: "0755"
     owner: "root"
+  - dir: "{{ nginx_etc_dir }}/modules-available"
+    mode: "0755"
+    owner: "root"
+  - dir: "{{ nginx_etc_dir }}/modules-enabled"
+    mode: "0755"
+    owner: "root"
 
 nginx_templates_no_dir:
   - '_backuppc'

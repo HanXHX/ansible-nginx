@@ -108,6 +108,7 @@ nginx_ssl_pairs: []
 # Dynamic modules
 #
 nginx_module_packages: []
+nginx_load_modules: []
 
 #
 # Diffie-Hellman

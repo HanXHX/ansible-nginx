@@ -5,3 +5,5 @@ nginx_etc_dir: '/usr/local/etc/nginx'
 # Specific sites
 nginx_nagios_root: '/usr/local/www/nagios'
 nginx_fcgiwrap_sock: '/var/run/fcgiwrap/fcgiwrap.sock'
+
+nginx_acmesh_bin: '/usr/local/sbin/acme.sh'

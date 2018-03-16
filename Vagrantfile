@@ -14,7 +14,9 @@ Vagrant.configure("2") do |config|
   ]
 
   vms_freebsd = [
-    { :name => "freebsd-10.2", :box => "freebsd/FreeBSD-10.2-STABLE" }
+    { :name => "freebsd-10", :box => "freebsd/FreeBSD-10.4-STABLE", :vars => {} },
+    { :name => "freebsd-11", :box => "freebsd/FreeBSD-11.1-STABLE", :vars => {} },
+    { :name => "freebsd-12", :box => "freebsd/FreeBSD-12.0-CURRENT", :vars => {} }
   ]
 
   conts = [
@@ -26,6 +28,7 @@ Vagrant.configure("2") do |config|
   ]
 
   config.vm.network "private_network", type: "dhcp"
+  config.vm.synced_folder ".", "/vagrant", id: "vagrant-root", disabled: true
 
   conts.each do |opts|
     config.vm.define opts[:name] do |m|
@@ -50,36 +53,32 @@ Vagrant.configure("2") do |config|
         v.cpus = 1
         v.memory = 256
       end
-       m.vm.provision "ansible" do |ansible|
-         ansible.playbook = "tests/test.yml"
-         ansible.verbose = 'vv'
-         ansible.become = true
-         ansible.extra_vars = opts[:vars].merge({ "nginx_debug_role": true })
-       end
+      m.vm.provision "ansible" do |ansible|
+        ansible.playbook = "tests/test.yml"
+        ansible.verbose = 'vv'
+        ansible.become = true
+        ansible.extra_vars = opts[:vars].merge({ "nginx_debug_role": true })
+      end
     end
   end
 
-  # See: https://forums.freebsd.org/threads/52717/
-# vms_freebsd.each do |opts|
-#   config.vm.define opts[:name] do |m|
-#     m.vm.box = opts[:box]
-#     m.vm.provider "virtualbox" do |v|
-#       v.vm.cpus = 1
-#       v.vm.memory = 256
-#       v.vm.guest = :freebsd
-#       v.vm.synced_folder ".", "/vagrant", id: "vagrant-root", disabled: true
-#       v.vm.base_mac = "080027D14C66"
-#     end
-#     config.ssh.shell = "sh"
-#     m.vm.provision "shell", inline: "pkg install -y python bash"
-#     m.vm.provision "ansible" do |ansible|
-#       ansible.playbook = "tests/test.yml"
-#       ansible.verbose = 'vv'
-#       ansible.become = true
-#       ansible.extra_vars = {
-#         ansible_python_interpreter: '/usr/local/bin/python'
-#       }
-#     end
-#   end
-# end
+  vms_freebsd.each do |opts|
+    config.ssh.shell = "csh"
+    config.vm.base_mac = "080027D14C66"
+    config.vm.define opts[:name] do |m|
+      m.vm.box = opts[:box]
+      m.vm.provider "virtualbox" do |v|
+        v.cpus = 2
+        v.memory = 512
+      end
+      m.vm.provision "shell", inline: "pkg install -y python bash"
+      m.vm.provision "ansible" do |ansible|
+        ansible.playbook = "tests/test.yml"
+        ansible.verbose = 'vv'
+        ansible.become = true
+        ansible.extra_vars = opts[:vars].merge({ "nginx_debug_role": true, "ansible_python_interpreter": '/usr/local/bin/python' })
+      end
+    end
+  end
+
 end
