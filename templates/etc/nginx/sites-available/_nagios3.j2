@@ -46,11 +46,7 @@
 	location /cgi-bin {
 {% endif %}
 		try_files $uri =404;
-{% if nginx_version.stdout | version_compare('1.6.1', 'lt') %}
-		include fastcgi_params;
-{% else %}
 		include fastcgi.conf;
-{% endif %}
 		fastcgi_pass unix:{{ nginx_fcgiwrap_sock }};
 		fastcgi_param AUTH_USER $remote_user;
 		fastcgi_param REMOTE_USER $remote_user;
@@ -58,10 +54,6 @@
 	location ~ \.php$ {
 		fastcgi_pass {{ php_upstream }};
 		fastcgi_index index.php;
-{% if nginx_version.stdout | version_compare('1.6.1', 'lt') %}
-		include fastcgi_params;
-{% else %}
 		include fastcgi.conf;
-{% endif %}
 	}
 {% endblock %}

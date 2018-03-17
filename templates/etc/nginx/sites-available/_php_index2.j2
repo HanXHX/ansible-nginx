@@ -14,10 +14,6 @@
 		{{ param }}
 {% endfor %}
 {% endif %}
-{% if nginx_version.stdout | version_compare('1.6.1', 'lt') %}
-		include fastcgi_params;
-{% else %}
 		include fastcgi.conf;
-{% endif %}
 	}
 {% endblock %}

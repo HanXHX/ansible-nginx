@@ -42,11 +42,7 @@
 		fastcgi_param PATH /usr/local/bin:/usr/bin:/bin;
 		fastcgi_param modHeadersAvailable true;
 		fastcgi_split_path_info ^(.+\.php)(/.+)$;
-{% if nginx_version.stdout | version_compare('1.6.1', 'lt') %}
-		include fastcgi_params;
-{% else %}
 		include fastcgi.conf;
-{% endif %}
 	}
 
 	location ~ \.php(?:$|/) {
@@ -57,11 +53,7 @@
 		fastcgi_param PATH /usr/local/bin:/usr/bin:/bin;
 		fastcgi_param modHeadersAvailable true;
 		fastcgi_split_path_info ^(.+\.php)(/.+)$;
-{% if nginx_version.stdout | version_compare('1.6.1', 'lt') %}
-		include fastcgi_params;
-{% else %}
 		include fastcgi.conf;
-{% endif %}
 	}
 {% endblock %}
 

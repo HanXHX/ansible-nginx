@@ -31,7 +31,6 @@
       - regexp: '^fastcgi_param  DOCUMENT_ROOT'
         line: 'fastcgi_param  DOCUMENT_ROOT      $realpath_root;'
     -
-      - '{{ nginx_etc_dir }}/fastcgi_params'
       - '{{ nginx_etc_dir }}/fastcgi.conf'
   when: nginx_fastcgi_fix_realpath
 

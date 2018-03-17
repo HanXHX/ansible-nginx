@@ -25,7 +25,7 @@
 {% block template_upstream_location %}
 	location ~ \.cgi$ {
 		gzip off;
-		include {{ nginx_etc_dir }}/fastcgi_params;
+		include fastcgi.conf;
 		fastcgi_pass unix:/var/run/fcgiwrap.socket;
 		fastcgi_index BackupPC_Admin;
 		fastcgi_param SCRIPT_FILENAME /usr/share/backuppc/cgi-bin$fastcgi_script_name;
