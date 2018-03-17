@@ -1,7 +1,7 @@
 ---
 
 - name: SHELL | Start ngrok
-  shell: daemonize -l /tmp/ngrok {{ ngrok_path }} http 8888 -bind-tls=false
+  shell: daemonize -l /tmp/ngrok.lock {{ ngrok_path }} http 8888 -bind-tls=false
   failed_when: false
   changed_when: ngrok.stderr.find("Can't lock the lock file") == -1
   register: ngrok
