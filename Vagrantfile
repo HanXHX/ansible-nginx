@@ -62,11 +62,11 @@ Vagrant.configure("2") do |config|
   end
 
   vms_freebsd.each do |opts|
-    config.ssh.shell = "csh"
     config.vm.base_mac = "080027D14C66"
     config.vm.define opts[:name] do |m|
       m.vm.box = opts[:box]
-      m.vm.provider "virtualbox" do |v|
+      m.vm.provider "virtualbox" do |v, override|
+        override.ssh.shell = "csh"
         v.cpus = 2
         v.memory = 512
       end
