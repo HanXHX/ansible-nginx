@@ -7,7 +7,6 @@
     install_recommends: no
   with_items:
     - backuppc
-#    - owncloud
 
 - name: APT | Install nagios3 (only on old Debian releases)
   apt:

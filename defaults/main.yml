@@ -125,14 +125,6 @@ nginx_acmesh_dir: "/opt/acme.sh"
 nginx_acmesh_git_dir: "/tmp/acme.sh"
 nginx_acmesh_test: false
 
-# Extra
-
-# Note:
-#   - On Debian, if you use Owncloud from Upstream repository, you must set this var to "/var/www/owncloud"
-#   - TODO: force this var in vars/FreeBSD.yml
-nginx_owncloud_root: '/usr/share/owncloud'
-
-
 #
 # Debug
 #
