@@ -14,8 +14,7 @@ Vagrant.configure("2") do |config|
   ]
 
   vms_freebsd = [
-    { :name => "freebsd-10", :box => "freebsd/FreeBSD-10.4-STABLE", :vars => {} },
-    { :name => "freebsd-11", :box => "freebsd/FreeBSD-11.1-STABLE", :vars => {} },
+    { :name => "freebsd-11", :box => "freebsd/FreeBSD-11.1-STABLE",  :vars => {} },
     { :name => "freebsd-12", :box => "freebsd/FreeBSD-12.0-CURRENT", :vars => {} }
   ]
 

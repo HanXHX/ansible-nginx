@@ -18,6 +18,15 @@ Features:
 - Can listen with proxy protocol
 - Generate certificates with acme.sh (let's encrypt) -- *EXPERIMENTAL*
 
+Supported OS:
+
+| OS                 | Working | Stable (active support) |
+| ------------------ | ------- | ----------------------- |
+| Debian Jessie (8)  | Yes     | Yes                     |
+| Debian Stretch (9) | Yes     | Yes                     |
+| FreeBSD 11         | Yes     | No                      |
+| FreeBSD 12         | Yes     | No                      |
+
 Requirements
 ------------
 
