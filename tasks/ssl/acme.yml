@@ -56,7 +56,7 @@
   with_items: "{{ acme_create }}"
 
 - name: SHELL | Install certificates
-  shell: '{{ nginx_acmesh_bin }} --install-cert -d {{ item | nginx_site_name }} --fullchain-file {{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.crt --key-file {{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.key'
+  shell: '{{ nginx_acmesh_bin }} --install-cert -d {{ item | nginx_site_name }} --fullchain-file {{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.crt --key-file {{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.key --reloadcmd "service nginx restart"'
   args:
     creates: "{{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.key"
   with_items: "{{ nginx_ssl_pairs }}"
