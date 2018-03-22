@@ -19,7 +19,7 @@
 
 - name: TEMPLATE | Create fake site
   template:
-    src: "etc/nginx/sites-available/_base.j2"
+    src: "etc/nginx/conf.d/FAKESITE.conf.j2"
     dest: "{{ nginx_etc_dir }}/conf.d/FAKESITE_{{ item | nginx_site_name }}.conf"
   with_items: "{{ acme_create }}"
   register: fake_site
