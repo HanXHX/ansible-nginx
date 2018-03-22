@@ -24,6 +24,13 @@
   with_items: "{{ acme_create }}"
   register: fake_site
 
+- name: FILE | Delete current site if needed
+  file:
+    path: "{{ nginx_etc_dir }}/sites-enabled/{{ item | nginx_site_name }}"
+    state: absent
+  with_items: "{{ acme_create }}"
+  when: fake_site.changed
+
 - name: SERVICE | Restart nginx
   service:
     name: nginx
