@@ -72,7 +72,8 @@
     nginx_acmesh: true
     nginx_acmesh_test: true
     nginx_ssl_pairs:
-      - name: '{{ ngrok.stdout }}'
+      - name:
+          - '{{ ngrok.stdout }}'
         acme: true
         acme_port: 8888
       - name: 'test-ssl-predeployed.local'
