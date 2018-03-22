@@ -13,7 +13,7 @@
 
 - name: SET_FACT | Assign var with certificates to create
   set_fact:
-    acme_create: "{{ acme_create | default([]) + [ (item.item | combine({'listen': ([item.item.acme_port|default(80)]) }) ) ] }}"
+    acme_create: "{{ acme_create | default([]) }}"
   with_items: "{{ acme_installed_certs.results }}"
   when: item.skipped is not defined and not item.stat.exists
 

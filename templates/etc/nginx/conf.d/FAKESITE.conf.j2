@@ -1,7 +1,7 @@
 server {
-{% for port in item.listen | default(['80', '[::]:80']) %}
-	listen {{ port }};
-{% endfor %}
+	listen {{ item.acme_port | default('80') }};
+	listen [::]:{{ item.acme_port | default('80') }};
+
 	server_name {% if item.name is string %}{{ item.name }}{% else %}{{ item.name | join(" ") }}{% endif %}{% if item.redirect_from is defined %} {% if item.redirect_from is string %}{{ item.redirect_from }}{% else %}{{ item.redirect_from | join(" ") }}{% endif %}{% endif %};
 
 	location / {
