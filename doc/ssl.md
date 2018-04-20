@@ -15,25 +15,42 @@ Variables
 Cert/Key pairs
 --------------
 
-This list have 3 mandatory keys:
+Each pair must have a `name`.
+Note: `name` is used to deploy key/cert. With defaults values dans `name` = "foo", key is -> /etc/nginx/ssl/foo/foo.key
 
-- `name`: MUST be unique
+### Content mode
+
+Key/Cert content is stored in variable. Usefull with vault.
 
 - `key`: content of the private key
 - `cert`: content of the public key
 
-OR
+### Remote file
+
+You can use these variables if you use another task/role to manages your certificates.
 
 - `dest_cert`: remote path where certificate is located
 - `dest_key`: remote path where key is located
 
-Note: `name` is used to deploy key/cert. With defaults values dans `name` = "foo", key is -> /etc/nginx/ssl/foo/foo.key
+### Self signed
+
+Create a self-signed pair and deploy it. Do not use this feature in production.
+
+- `self_signed`: set true to use this featrure
+- `force`: optional feature (default: false), force regen pair (not idempotent)
+
+### Acme
+
+Uses acme.sh to create free certificates. It uses HTTP-01 challenge. Use this feature for standalone servers.
+
+- `acme`: set true to use this feature. It uses `name` (can be a string or string list).
+
+Have a look to [acme configuratuion](acme.md configuration).
 
 Tips
 ----
 
-- Deploying key/cert is not mandatory with this role. You can manage it in other place ([letsencrypt](https://letsencrypt.org/)? :)). You just need to set `dest_cert` and `dest_key`!
-- In `nginx_sites`, `ssl_name` is mandatory. This role will search in `nginx_ssl_pairs` with site `name` (first in list if it's a list).
+- In `nginx_sites`, `ssl_name` is mandatory. This role will search in `nginx_ssl_pairs` with site `name` (first in list if it's a list).  
 
 Diffie-Hellman
 --------------
@@ -55,6 +72,10 @@ nginx_sites;
   - name: 'test-ssl3.local'
     proto: ['http', 'https']
     template: '_base'
+  - name: 'test-self-signed.local'
+    proto: ['http', 'https']
+    template: '_base'
+    ssl_name: 'this.is.self.signed'
 
 nginx_ssl_pairs:
   - name: mysuperkey
@@ -68,5 +89,8 @@ nginx_ssl_pairs:
       -----END CERTIFICATE-----
   - name: test-ssl2.local
     acme: true
+  - name: this.is.self.signed
+    self_signed: true
+    force: false
 ```
 

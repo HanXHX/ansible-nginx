@@ -76,6 +76,9 @@
           - '{{ ngrok.stdout }}'
         acme: true
         acme_port: 8888
+      - name: 'test-ssl-selfsigned.local'
+        self_signed: true
+        force: false
       - name: 'test-ssl-predeployed.local'
         dest_key: "{{ int_ansible_ssl_dir }}/test.key"
         dest_cert: "{{ int_ansible_ssl_dir }}/test.crt"
@@ -224,6 +227,9 @@
       - name: 'test-ssl.local'
         proto: ['http', 'https']
         template: '_base'
+      - name: 'test-ssl-selfsigned.local'
+        proto: ['http', 'https']
+        template: '_base'
       - name: 'test-ssl-predeployed.local'
         proto: ['http', 'https']
         template: '_base'
@@ -292,6 +298,7 @@
         - '/var/tmp'
         - '{{ nginx_root }}/test-htpasswd-all.local/public'
         - '{{ nginx_root }}/test-ssl.local/public'
+        - '{{ nginx_root }}/test-ssl-selfsigned.local/public'
         - '{{ nginx_root }}/test-ssl-predeployed.local/public'
         - '{{ nginx_root }}/test-ssl-proxy-protocol.local/public'
         - '{{ nginx_root }}/{{ ngrok.stdout }}/public'
@@ -460,6 +467,7 @@
       failed_when: sslok.content.find('Index HTML test OK') == -1
       with_items:
         - 'test-ssl-predeployed.local'
+        - 'test-ssl-selfsigned.local'
         - 'test-ssl.local'
         - '{{ ngrok.stdout }}'
 

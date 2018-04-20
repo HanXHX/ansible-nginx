@@ -44,6 +44,16 @@
   notify: restart nginx
   no_log: not nginx_debug_role
 
+- name: COMMAND | Create self-signed certificates
+  command: "openssl req -new -newkey rsa:2048 -sha256 -days 3650 -nodes -x509 -subj '/CN={{ item | nginx_site_name }}' -keyout {{ item | nginx_site_name + '.key' }} -out {{ item | nginx_site_name + '.crt' }}"
+  args:
+    chdir: "{{ nginx_ssl_dir + '/' + item | nginx_site_name }}"
+    creates: "{% if item.force is defined and item.force %}/tmp/dummy{% else %}{{ nginx_ssl_dir + '/' + item | nginx_site_name + '/' + item | nginx_site_name + '.crt' }}{% endif %}"
+  with_items: "{{ nginx_ssl_pairs }}"
+  when: item.self_signed is defined
+  notify: restart nginx
+  no_log: not nginx_debug_role
+
 - name: Check DH command status
   async_status:
     jid: "{{ dh.ansible_job_id }}"
