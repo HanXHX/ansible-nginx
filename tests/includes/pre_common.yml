@@ -16,3 +16,12 @@
   shell: curl 'http://127.0.0.1:4040/api/tunnels/command_line' | jq '.public_url' | grep -oE '[[:alnum:]]+\.ngrok\.io'
   register: ngrok
   changed_when: false
+
+- name: LINEINFILE | Tune vimrc
+  lineinfile:
+    line: "set mouse="
+    dest: "{{ item }}/.vimrc"
+    create: yes
+  with_items:
+    - /root
+    - /home/vagrant
