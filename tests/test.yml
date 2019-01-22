@@ -60,11 +60,6 @@
             state: 'absent'
           - name: 'hanx'
             password: 'qwerty'
-      - name: 'nagios'
-        description: 'Please login to Nagios!'
-        users:
-          - name: 'nagiosadmin'
-            password: 'nagios'
       - name: 'deleteme'
         description: 'Please login!'
         users: []
@@ -221,9 +216,6 @@
       - name: 'backuppc.local'
         template: '_backuppc'
         htpasswd: 'hello'
-      - name: 'nagios3.local'
-        template: '_nagios3'
-        htpasswd: 'nagios'
       - name: 'test-ssl.local'
         proto: ['http', 'https']
         template: '_base'
@@ -427,33 +419,6 @@
       register: authbpc
       when: ansible_distribution != 'FreeBSD'
       failed_when: authbpc.content.find('BackupPC Server Status') == -1
-
-# --------------------------------
-# Nagios (not avaiblable on Debian >= 9 and not tested on FreeBSD)
-# --------------------------------
-    - block:
-
-      - name: -- VERIFY NAGIOS3 PHP --
-        uri:
-          url: "http://nagios3.local/side.php"
-          user: "nagiosadmin"
-          password: "nagios"
-          force_basic_auth: yes
-          return_content: yes
-        register: nagios_php
-        failed_when: nagios_php.content.find('Nagios Core') == -1
-
-      - name: -- VERIFY NAGIOS3 CGI --
-        uri:
-          url: "http://nagios3.local/cgi-bin{% if ansible_distribution == 'Debian' %}/nagios3{% endif %}/summary.cgi"
-          user: "nagiosadmin"
-          password: "nagios"
-          force_basic_auth: yes
-          return_content: yes
-        register: nagios_cgi
-        failed_when: nagios_cgi.content.find('Nagios Event Summary') == -1
-
-      when: ansible_distribution == 'Debian' and ansible_distribution_major_version | version_compare('9', 'lt')
 
 # --------------------------------
 # SSL

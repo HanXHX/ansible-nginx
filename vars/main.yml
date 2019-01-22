@@ -41,7 +41,6 @@ nginx_dirs:
 
 nginx_templates_no_dir:
   - '_backuppc'
-  - '_nagios3'
   - '_proxy'
 
 nginx_servers_default_headers:
