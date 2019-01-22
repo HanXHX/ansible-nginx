@@ -2,11 +2,12 @@
 
 - name: APT | Install webapps
   apt:
-    pkg: "{{ item }}"
+    pkg: "{{ packages }}"
     state: present
     install_recommends: no
-  with_items:
-    - backuppc
+  vars:
+    packages:
+      - backuppc
 
 - name: SERVICE | Ensure backuppc is started
   service:

@@ -30,7 +30,7 @@ Supported OS:
 Requirements
 ------------
 
-None. If you set true to `nginx_backports`, you must install backports repository before lauching this role.
+Ansible 2.5+. If you set true to `nginx_backports`, you must install backports repository before lauching this role.
 
 Role Variables
 --------------

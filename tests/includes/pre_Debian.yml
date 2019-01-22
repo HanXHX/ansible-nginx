@@ -45,19 +45,20 @@
 
 - name: APT | Install needed packages
   apt:
-    pkg: "{{ item }}"
+    pkg: "{{ packages }}"
     update_cache: yes
     cache_valid_time: 3600
     state: present
-  with_items:
-    - cron
-    - curl
-    - fcgiwrap
-    - jq
-    - nghttp2
-    - strace
-    - vim
-    - unzip
+  vars:
+    packages:
+      - cron
+      - curl
+      - fcgiwrap
+      - jq
+      - nghttp2
+      - strace
+      - vim
+      - unzip
 
 - name: APT | Install daemonize from Stretch
   apt:
@@ -69,7 +70,7 @@
     update_cache: yes
     cache_valid_time: 3600
     state: present
-  with_items: "{{ nginx_php }}"
+  loop: "{{ nginx_php }}"
   register: apt_php
 
 - name: SERVICE | Force start fcgiwrap
@@ -77,10 +78,11 @@
     name: "fcgiwrap"
     state: started
 
-# Bypasses Ansible 2.4 issue (cannot use service module)... With service module... php is not really started!
 - name: COMMAND | Force start PHP
-  command: "service {{ item.version | php_fpm_service }} start"
-  with_items: "{{ nginx_php }}"
+  service:
+    name: "{{ item.version | php_fpm_service }}"
+    state: started
+  loop: "{{ nginx_php }}"
   when: apt_php.changed
 
 - name: GET_URL | Download ngrok

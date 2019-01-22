@@ -17,7 +17,7 @@
   template:
     src: "etc/nginx/conf.d/_upstream.conf.j2"
     dest: "{{ nginx_etc_dir }}/conf.d/upstream-{{ item.name }}.conf"
-  with_items: "{{ nginx_upstreams }}"
+  loop: "{{ nginx_upstreams }}"
   when: item.state is not defined or item.state == 'present'
   notify: reload nginx
 

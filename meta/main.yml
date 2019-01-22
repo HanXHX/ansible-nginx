@@ -1,14 +1,15 @@
 ---
 galaxy_info:
   author: Emilien Mantel
-  description: Nginx for Debian
+  description: Nginx for Debian / FreeBSD
   company:
   license: GPLv2
-  min_ansible_version: 2.2
+  min_ansible_version: 2.5
   platforms:
   - name: Debian
     versions:
     - jessie
+    - stretch
   - name: FreeBSD
     versions:
     - 11.0

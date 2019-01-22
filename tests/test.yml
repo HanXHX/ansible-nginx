@@ -276,7 +276,7 @@
       copy:
         dest: "{{ nginx_root }}/{{ item }}/public/index.php"
         content: "<?php phpinfo();"
-      with_items:
+      loop:
         - 'test-php.local'
         - 'test-php-index.local'
         - 'test-php-index2.local'
@@ -285,7 +285,7 @@
       copy:
         dest: "{{ item }}/index.html"
         content: "Index HTML test OK\n"
-      with_items:
+      loop:
         - '{{ nginx_root }}/first-test/public'
         - '/var/tmp'
         - '{{ nginx_root }}/test-htpasswd-all.local/public'
@@ -319,7 +319,7 @@
         url: "http://{{ item | nginx_site_name }}{% if item.listen is defined %}:{{ item.listen[0] }}{% endif %}/"
         status_code: '200,301,302,401,403'
         follow_redirects: none
-      with_items: "{{ nginx_sites }}"
+      loop: "{{ nginx_sites }}"
       when: item.state is undefined or item.state != "absent"
       changed_when: false
 
@@ -333,7 +333,7 @@
         url: "http://{{ item.redirect_from[0] }}/"
         status_code: 301
         follow_redirects: none
-      with_items: "{{ nginx_sites }}"
+      loop: "{{ nginx_sites }}"
       when: item.redirect_from is defined and (item.state is undefined or item.state != "absent") and (item.proto is not defined or 'https' not in item.proto)
       changed_when: false
 
@@ -343,7 +343,7 @@
         status_code: 301
         follow_redirects: none
         validate_certs: no
-      with_items: "{{ nginx_sites }}"
+      loop: "{{ nginx_sites }}"
       when: item.redirect_from is defined and (item.state is undefined or item.state != "absent") and item.proto is defined and 'https' in item.proto
       changed_when: false
 
@@ -355,7 +355,7 @@
         url: "http://{{ item.name}}/"
         return_content: yes
       register: p
-      with_items: "{{ nginx_sites }}"
+      loop: "{{ nginx_sites }}"
       when: >
         item.template is defined and
         (item.template == '_php' or item.template == '_php_index' or item.template == '_php_index2')
@@ -430,7 +430,7 @@
         validate_certs: no
       register: sslok
       failed_when: sslok.content.find('Index HTML test OK') == -1
-      with_items:
+      loop:
         - 'test-ssl-predeployed.local'
         - 'test-ssl-selfsigned.local'
         - 'test-ssl.local'
@@ -445,7 +445,7 @@
         follow_redirects: none
       register: sslredirok
       failed_when: '"https://%s%s" % (item.name, ":" + item.port if item.port is defined else "") not in sslredirok.location'
-      with_items:
+      loop:
         - name: 'test-ssl-redirect.local'
         - name: 'test-ssl-redirect-many.local'
           port: '8443'
