@@ -78,12 +78,13 @@
     name: "fcgiwrap"
     state: started
 
+# Bypasses Ansible+Docker issue. With service module... php is not really started!
 - name: COMMAND | Force start PHP
-  service:
-    name: "{{ item.version | php_fpm_service }}"
-    state: started
+  command: "service {{ item.version | php_fpm_service }} start"
+  args:
+    creates: "{{ item.version | php_default_upstream_socket }}"
+    warn: false
   loop: "{{ nginx_php }}"
-  when: apt_php.changed
 
 - name: GET_URL | Download ngrok
   get_url:
