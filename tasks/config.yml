@@ -24,13 +24,14 @@
     regexp: '{{ item.0.regexp }}'
     line: '{{ item.0.line }}'
     dest: '{{ item.1 }}'
-  with_nested:
-    -
+  loop: "{{ list_one | product(list_two) | list }}"
+  vars:
+    list_one:
       - regexp: '^fastcgi_param  SCRIPT_FILENAME'
         line: 'fastcgi_param  SCRIPT_FILENAME    $realpath_root$fastcgi_script_name;'
       - regexp: '^fastcgi_param  DOCUMENT_ROOT'
         line: 'fastcgi_param  DOCUMENT_ROOT      $realpath_root;'
-    -
+    list_two:
       - '{{ nginx_etc_dir }}/fastcgi.conf'
   when: nginx_fastcgi_fix_realpath
 

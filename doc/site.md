@@ -42,7 +42,6 @@ Templates
 - `_backuppc`: access to [BackupPC](http://backuppc.sourceforge.net/) (be careful: you need to install [fcgiwrap](https://packages.debian.org/jessie/fcgiwrap))
 - `_dokuwiki`
 - `_redirect`: should not be called explicitly
-- `_nagios3`: access to Nagios3 (be careful: you need to install [fcgiwrap](https://packages.debian.org/jessie/fcgiwrap))
 - `_phalcon`: Phalcon PHP Framework
 - `_php`: PHP base template. Can work with many frameworks/tools
 - `_php_index`: Same as above. But you can only run index.php

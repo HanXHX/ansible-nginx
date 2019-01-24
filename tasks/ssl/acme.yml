@@ -39,6 +39,8 @@
 
 - name: COMMAND | Restart nginx
   command: service nginx restart
+  args:
+    warn: false
   when: fake_site.changed and ansible_virtualization_type == 'docker'
 
 - name: SHELL | Get certificates

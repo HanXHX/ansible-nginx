@@ -5,7 +5,7 @@
 user {{ nginx_user }};
 worker_processes {{ nginx_worker_processes }};
 pid {{ nginx_pid }};
-{% if nginx_version.stdout | version_compare('1.9.11', 'ge') %}
+{% if nginx_version.stdout is version('1.9.11', 'ge') %}
 include {{ nginx_etc_dir }}/modules-enabled/*.conf;
 {% endif %}
 

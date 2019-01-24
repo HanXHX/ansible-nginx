@@ -2,17 +2,12 @@
 
 - name: APT | Install webapps
   apt:
-    pkg: "{{ item }}"
+    pkg: "{{ packages }}"
     state: present
     install_recommends: no
-  with_items:
-    - backuppc
-
-- name: APT | Install nagios3 (only on old Debian releases)
-  apt:
-    pkg: nagios3
-    state: present
-  when: ansible_distribution_major_version | version_compare('9', 'lt')
+  vars:
+    packages:
+      - backuppc
 
 - name: SERVICE | Ensure backuppc is started
   service:

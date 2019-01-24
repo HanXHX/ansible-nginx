@@ -15,4 +15,3 @@ Sites not tested
 ----------------
 
 - BackupPC
-- Nagios

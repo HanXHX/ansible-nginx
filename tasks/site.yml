@@ -30,7 +30,7 @@
     owner: "{{ item.owner | default(nginx_user) }}"
     group: "{{ item.group | default(nginx_user) }}"
     mode: "{{ item.mode | default('0755') }}"
-  with_items: "{{ nginx_sites }}"
+  loop: "{{ nginx_sites }}"
   when: >
     item.root is not defined and
     (item.template is defined and item.template not in nginx_templates_no_dir) and
@@ -43,9 +43,9 @@
   template:
     src: "etc/nginx/sites-available/{{ item.template if item.redirect_to is not defined else '_redirect' }}.j2"
     dest: "{{ nginx_etc_dir }}/sites-available/{{ item | nginx_site_filename }}"
-  with_items: "{{ nginx_sites }}"
   notify: ['reload nginx', 'restart nginx freebsd']
   when: item.state is not defined or item.state != 'absent'
+  loop: "{{ nginx_sites }}"
   loop_control:
     label: "{{ item | nginx_site_name }}"
 
