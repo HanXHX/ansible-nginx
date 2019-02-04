@@ -20,7 +20,7 @@
   file:
     path: "{{ nginx_ssl_dir + '/' + item | nginx_site_name }}"
     state: directory
-  with_items: "{{ nginx_ssl_pairs }}"
+  loop: "{{ nginx_ssl_pairs }}"
   when: item.dest_key is not defined or item.dest_cert is not defined
   no_log: not nginx_debug_role
 
@@ -29,7 +29,7 @@
     content: "{{ item.key }}"
     dest: "{{ nginx_ssl_dir + '/' + item | nginx_site_name + '/' + item | nginx_site_name + '.key' if item.dest_key is not defined else item.dest_key }}"
     mode: 0640
-  with_items: "{{ nginx_ssl_pairs }}"
+  loop: "{{ nginx_ssl_pairs }}"
   when: item.key is defined
   notify: restart nginx
   no_log: not nginx_debug_role
@@ -39,7 +39,7 @@
     content: "{{ item.cert }}"
     dest: "{{ nginx_ssl_dir + '/' + item | nginx_site_name + '/' + item | nginx_site_name + '.crt' if item.dest_cert is not defined else item.dest_cert }}"
     mode: 0644
-  with_items: "{{ nginx_ssl_pairs }}"
+  loop: "{{ nginx_ssl_pairs }}"
   when: item.cert is defined
   notify: restart nginx
   no_log: not nginx_debug_role
@@ -49,7 +49,7 @@
   args:
     chdir: "{{ nginx_ssl_dir + '/' + item | nginx_site_name }}"
     creates: "{% if item.force is defined and item.force %}/tmp/dummy{% else %}{{ nginx_ssl_dir + '/' + item | nginx_site_name + '/' + item | nginx_site_name + '.crt' }}{% endif %}"
-  with_items: "{{ nginx_ssl_pairs }}"
+  loop: "{{ nginx_ssl_pairs }}"
   when: item.self_signed is defined
   notify: restart nginx
   no_log: not nginx_debug_role

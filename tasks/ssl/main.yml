@@ -1,8 +1,8 @@
 ---
 
-- name: INCLUDE | standard.yml
-  include: standard.yml
+- name: IMPORT_TASKS | standard.yml
+  import_tasks: standard.yml
 
-- name: INCLUDE | acme.yml
-  include: acme.yml
+- name: IMPORT_TASKS | acme.yml
+  import_tasks: acme.yml
   when: nginx_acmesh

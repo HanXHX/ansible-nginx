@@ -2,10 +2,8 @@
 
 #- name: APT | Install web apps
 #  pkgng:
-#    pkg: "{{ item }}"
+#    name: "backuppc"
 #    state: present
-#  with_items:
-#    - backuppc
 #
 #- name: COMMAND | Activate backuppc config
 #  command: >

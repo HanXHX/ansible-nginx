@@ -7,28 +7,28 @@
 - name: STAT | Check if certificates are already installed
   stat:
     path: "{{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.crt"
-  with_items: "{{ nginx_ssl_pairs }}"
+  loop: "{{ nginx_ssl_pairs }}"
   when: item.acme is defined and item.acme
   register: acme_installed_certs
 
 - name: SET_FACT | Assign var with certificates to create
   set_fact:
     acme_create: "{{ acme_create | default([]) + [ (item.item) ] }}"
-  with_items: "{{ acme_installed_certs.results }}"
+  loop: "{{ acme_installed_certs.results }}"
   when: item.skipped is not defined and not item.stat.exists
 
 - name: TEMPLATE | Create fake site
   template:
     src: "etc/nginx/conf.d/FAKESITE.conf.j2"
     dest: "{{ nginx_etc_dir }}/conf.d/FAKESITE_{{ item | nginx_site_name }}.conf"
-  with_items: "{{ acme_create }}"
+  loop: "{{ acme_create }}"
   register: fake_site
 
 - name: FILE | Delete current site if needed
   file:
     path: "{{ nginx_etc_dir }}/sites-enabled/{{ item | nginx_site_name }}"
     state: absent
-  with_items: "{{ acme_create }}"
+  loop: "{{ acme_create }}"
   when: fake_site.changed
 
 - name: SERVICE | Restart nginx
@@ -47,7 +47,7 @@
   shell: '{{ nginx_acmesh_bin }} --issue{% if item.name is string %} -d {{ item.name }}{% else %}{% for name in item.name %} -d {{ name }}{% endfor %}{% endif %} --nginx {% if nginx_acmesh_test %}--test{% endif %}'
   args:
     creates: "/root/.acme.sh/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.key"
-  with_items: "{{ acme_create }}"
+  loop: "{{ acme_create }}"
   register: acme_get
   failed_when: acme_get.rc != 0 and acme_get.rc != 2
   no_log: not nginx_debug_role
@@ -55,13 +55,13 @@
 - name: FILE | Create SSL dir per site
   file:
     path: "{{ nginx_ssl_dir }}/{{ item | nginx_site_name }}"
-  with_items: "{{ acme_create }}"
+  loop: "{{ acme_create }}"
 
 - name: SHELL | Install certificates
   shell: '{{ nginx_acmesh_bin }} --install-cert -d {{ item | nginx_site_name }} --fullchain-file {{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.crt --key-file {{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.key --reloadcmd "service nginx restart"'
   args:
     creates: "{{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.key"
-  with_items: "{{ nginx_ssl_pairs }}"
+  loop: "{{ nginx_ssl_pairs }}"
   when: item.acme is defined and item.acme
   notify: restart nginx
 
@@ -69,4 +69,4 @@
   file:
     path: "{{ nginx_etc_dir }}/conf.d/FAKESITE_{{ item | nginx_site_name }}.conf"
     state: absent
-  with_items: "{{ acme_create }}"
+  loop: "{{ acme_create }}"

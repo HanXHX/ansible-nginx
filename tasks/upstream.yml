@@ -25,6 +25,6 @@
   file:
     path: "{{ nginx_etc_dir }}/conf.d/upstream-{{ item.name }}.conf"
     state: absent
-  with_items: "{{ nginx_upstreams }}"
+  loop: "{{ nginx_upstreams }}"
   when: item.state is defined and item.state == 'absent'
   notify: reload nginx

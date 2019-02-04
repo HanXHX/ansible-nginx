@@ -2,11 +2,11 @@
 
 - hosts: all
   pre_tasks:
-    - name: INCLUDE | Pre_tasks related to OS version
-      include: "includes/pre_{{ ansible_distribution }}.yml"
+    - name: INCLUDE_TASKS | Pre_tasks related to OS version
+      include_tasks: "includes/pre_{{ ansible_distribution }}.yml"
 
-    - name: INCLUDE | Pre_tasks common
-      include: "includes/pre_common.yml"
+    - name: IMPORT_TASKS | Pre_tasks common
+      import_tasks: "includes/pre_common.yml"
 
     - name: FILE | Create an internal SSL dir
       file:
@@ -266,8 +266,8 @@
 # --------------------------------
 # Apps
 # --------------------------------
-    - name: INCLUDE | Post_tasks related to OS version
-      include: "includes/post_{{ ansible_distribution }}.yml"
+    - name: INCLUDE_TASKS | Post_tasks related to OS version
+      include_tasks: "includes/post_{{ ansible_distribution }}.yml"
 
 # --------------------------------
 # Deploy index files

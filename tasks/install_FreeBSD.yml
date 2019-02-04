@@ -4,7 +4,7 @@
   pkgng:
     name: "{{ item }}"
     state: present
-  with_items:
+  loop:
     - acme.sh
     - "{{ nginx_pkgng_package }}"
     - py27-passlib
@@ -40,7 +40,7 @@
   file:
     path: "{{ nginx_etc_dir }}/{{ item }}"
     state: directory
-  with_items:
+  loop:
     - conf.d
     - sites-available
     - sites-enabled

@@ -4,7 +4,7 @@
   fail:
     msg: "Forbidden keyword default on site {{ item | nginx_site_name }}"
   when: item.filename is defined and item.filename == 'default'
-  with_items: "{{ nginx_sites }}"
+  loop: "{{ nginx_sites }}"
   loop_control:
     label: "{{ item | nginx_site_name }}"
 
@@ -14,7 +14,7 @@
   when:
     ((item.proto is defined and 'http' in item.proto) or (item.proto is not defined)) and
     (item.redirect_http is defined and item.redirect_http)
-  with_items: "{{ nginx_sites }}"
+  loop: "{{ nginx_sites }}"
   loop_control:
     label: "{{ item | nginx_site_name }}"
 
@@ -53,9 +53,7 @@
   file:
     path: "{{ nginx_etc_dir }}/{{ item.1 }}/{{ item.0 | nginx_site_filename }}"
     state: absent
-  with_nested:
-    - "{{ nginx_sites }}"
-    - ['sites-available', 'sites-enabled']
+  loop: "{{ nginx_sites | product(['sites-available', 'sites-enabled']) }}"
   notify: ['reload nginx', 'restart nginx freebsd']
   when: item.0.state is defined and item.0.state == 'absent'
   loop_control:
@@ -66,7 +64,7 @@
     src: "{{ nginx_etc_dir }}/sites-available/{{ item | nginx_site_filename }}"
     dest: "{{ nginx_etc_dir }}/sites-enabled/{{ item | nginx_site_filename }}"
     state: link
-  with_items: "{{ nginx_sites }}"
+  loop: "{{ nginx_sites }}"
   notify: ['reload nginx', 'restart nginx freebsd']
   when: >
     item.state is not defined or item.state == 'present'
@@ -77,7 +75,7 @@
   file:
     path: "{{ nginx_etc_dir}}/sites-enabled/{{ item | nginx_site_filename }}"
     state: absent
-  with_items: "{{ nginx_sites }}"
+  loop: "{{ nginx_sites }}"
   notify: ['reload nginx', 'restart nginx freebsd']
   when: item.state is defined and item.state == 'disabled'
   loop_control:
