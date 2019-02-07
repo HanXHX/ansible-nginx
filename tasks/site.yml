@@ -53,9 +53,11 @@
   file:
     path: "{{ nginx_etc_dir }}/{{ item.1 }}/{{ item.0 | nginx_site_filename }}"
     state: absent
-  loop: "{{ nginx_sites | product(['sites-available', 'sites-enabled']) }}"
+  loop: "{{ nginx_sites | product(dirs) | list }}"
   notify: ['reload nginx', 'restart nginx freebsd']
   when: item.0.state is defined and item.0.state == 'absent'
+  vars:
+    dirs: ['sites-available', 'sites-enabled']
   loop_control:
     label: "{{ nginx_etc_dir }}/{{ item.1 }}/{{ item.0 | nginx_site_filename }}"
 
