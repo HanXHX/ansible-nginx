@@ -1,13 +1,25 @@
 ---
 
-- name: COMMAND | Generate DH file
-  command: openssl dhparam -out {{ nginx_dh_path }} {{ nginx_dh_length }}
-  args:
-    creates: "{{ nginx_dh_path }}"
+- block:
+
+  - name: STAT | Get info ajout DH file
+    stat:
+      path: "{{ nginx_dh_path }}"
+      get_checksum: no
+    register: stat_dh_file
+
+  - name: SHELL | Get info about DH file
+    shell: openssl dhparam -in {{ nginx_dh_path }} -text -noout 2>&1 | awk '/DH Parameters/ { print substr($3, 2) }'
+    changed_when: false
+    register: dh_info
+    when: stat_dh_file.stat.exists
+
+  - name: COMMAND | Generate DH file
+    command: openssl dhparam -out {{ nginx_dh_path }} {{ nginx_dh_length }}
+    when: not stat_dh_file.stat.exists or (dh_info.stdout | int != nginx_dh_length | int)
+    notify: restart nginx
+
   when: nginx_dh is not string
-  notify: restart nginx
-  async: 1000
-  register: dh
 
 - name: COPY | Deploy DH file from vars
   copy:
@@ -53,11 +65,3 @@
   when: item.self_signed is defined
   notify: restart nginx
   no_log: not nginx_debug_role
-
-- name: Check DH command status
-  async_status:
-    jid: "{{ dh.ansible_job_id }}"
-  register: job_result
-  until: job_result.finished
-  retries: 30
-  when: not ansible_check_mode and nginx_dh is not string
