@@ -2,13 +2,16 @@
 # {{ ansible_managed }}
 #
 
-ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
-ssl_protocols TLSv1 TLSv1.1 TLSv1.2{% if nginx_version.stdout is version('1.13.0', 'ge') %} TLSv1.3{% endif %};
+ssl_ciphers "ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384";
+ssl_protocols TLSv1.2{% if nginx_version.stdout is version('1.13.0', 'ge') %} TLSv1.3{% endif %};
 ssl_prefer_server_ciphers on;
+ssl_ecdh_curve secp384r1;
+ssl_session_timeout 10m;
 ssl_session_cache shared:SSL:10m;
-add_header Strict-Transport-Security "max-age=63072000; includeSubDomains"{% if nginx_version.stdout is version('1.7.5', 'ge') %} always{% endif %};
+ssl_session_tickets off;
 ssl_stapling on;
 ssl_stapling_verify on;
+add_header Strict-Transport-Security "max-age=63072000; includeSubDomains"{% if nginx_version.stdout is version('1.7.5', 'ge') %} always{% endif %};
 resolver {{ nginx_resolver_hosts | join(' ') }} valid={{ nginx_resolver_valid }};
 resolver_timeout {{ nginx_resolver_timeout }};
 ssl_dhparam {{ nginx_dh_path }};
