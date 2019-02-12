@@ -26,10 +26,14 @@
 
 - name: docker reload nginx
   command: service nginx reload
+  args:
+    warn: false
   when: ansible_virtualization_type == 'docker'
 
 - name: docker restart nginx
   command: service nginx restart
+  args:
+    warn: false
   when: ansible_virtualization_type == 'docker'
 
 - name: restart nginx freebsd
