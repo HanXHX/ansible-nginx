@@ -6,9 +6,6 @@
 Vagrant.configure("2") do |config|
 
   vms_debian = [
-    { :name => "debian-jessie", :box => "debian/jessie64", :vars => { "nginx_php": [{"version": "5.6"}] }},
-    { :name => "debian-jessie-backports", :box => "debian/jessie64", :vars => { "nginx_php": [{"version": "5.6"}], "nginx_backports": true }},
-    { :name => "debian-jessie-dotdeb", :box => "debian/jessie64", :vars => { "nginx_php": [{"version": "7.0"}, {"version": "5.6", "upstream_name": "legacy"} ], "dotdeb": true }},
     { :name => "debian-stretch", :box => "debian/stretch64", :vars => { "nginx_php": [{"version": "7.0"}] }},
     { :name => "debian-stretch-sury", :box => "debian/stretch64", :vars => { "nginx_php": [{"version": "7.1"}], "sury": true }}
   ]
@@ -19,9 +16,6 @@ Vagrant.configure("2") do |config|
   ]
 
   conts = [
-    { :name => "docker-debian-jessie", :docker => "hanxhx/vagrant-ansible:debian8", :vars => { "nginx_php" => [{"version" => "5.6"}] }},
-    { :name => "docker-debian-jessie-backports", :docker => "hanxhx/vagrant-ansible:debian8", :vars => { "nginx_php": [{"version": "5.6"}], "nginx_backports": true }},
-    { :name => "docker-debian-jessie-dotdeb", :docker => "hanxhx/vagrant-ansible:debian8", :vars => { "nginx_php": [{"version": "7.0"}, {"version": "5.6", "upstream_name": "legacy"} ], "dotdeb": true }},
     { :name => "docker-debian-stretch", :docker => "hanxhx/vagrant-ansible:debian9", :vars => { "nginx_php": [{"version": "7.0"}] }},
     { :name => "docker-debian-stretch-sury", :docker => "hanxhx/vagrant-ansible:debian9", :vars => { "nginx_php": [{"version": "7.1"}], "sury": true }}
   ]

@@ -23,9 +23,6 @@
   apt:
     pkg: "{{ nginx_module_packages }}"
     state: present
-  when:
-    ansible_distribution_major_version is version('9', 'ge') or
-    nginx_backports
 
 - name: APT | Install python-passlib
   apt:

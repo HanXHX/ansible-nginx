@@ -3,8 +3,6 @@ Upstream management
 
 `nginx_upstreams`: List of dict. An upstream has few keys. See bellow.
 
-Note: Few params are unavailable on old Nginx version. But this role do _not_ put it if your version is too old!
-
 Upstream params
 ---------------
 

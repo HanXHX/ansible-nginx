@@ -22,7 +22,7 @@ Supported OS:
 
 | OS                 | Working | Stable (active support) |
 | ------------------ | ------- | ----------------------- |
-| Debian Jessie (8)  | Yes     | Yes                     |
+| Debian Jessie (8)  | Yes     | Check latest supported version ([1.5.0](https://github.com/HanXHX/ansible-nginx/releases/tag/1.5.0)) |
 | Debian Stretch (9) | Yes     | Yes                     |
 | FreeBSD 11         | Yes     | No                      |
 | FreeBSD 12         | Yes     | No                      |
@@ -30,7 +30,7 @@ Supported OS:
 Requirements
 ------------
 
-Ansible 2.5+. If you set true to `nginx_backports`, you must install backports repository before lauching this role.
+Ansible 2.6+. If you set true to `nginx_backports`, you must install backports repository before lauching this role.
 
 Role Variables
 --------------

@@ -1,12 +1,6 @@
 env:
-  - PLATFORM='docker-debian-jessie'           ANSIBLE_VERSION='ansible>=2.6,<2.7'
-  - PLATFORM='docker-debian-jessie-backports' ANSIBLE_VERSION='ansible>=2.6,<2.7'
-  - PLATFORM='docker-debian-jessie-dotdeb'    ANSIBLE_VERSION='ansible>=2.6,<2.7'
   - PLATFORM='docker-debian-stretch'          ANSIBLE_VERSION='ansible>=2.6,<2.7'
   - PLATFORM='docker-debian-stretch-sury'     ANSIBLE_VERSION='ansible>=2.6,<2.7'
-  - PLATFORM='docker-debian-jessie'           ANSIBLE_VERSION='ansible>=2.7,<2.8'
-  - PLATFORM='docker-debian-jessie-backports' ANSIBLE_VERSION='ansible>=2.7,<2.8'
-  - PLATFORM='docker-debian-jessie-dotdeb'    ANSIBLE_VERSION='ansible>=2.7,<2.8'
   - PLATFORM='docker-debian-stretch'          ANSIBLE_VERSION='ansible>=2.7,<2.8'
   - PLATFORM='docker-debian-stretch-sury'     ANSIBLE_VERSION='ansible>=2.7,<2.8'
 

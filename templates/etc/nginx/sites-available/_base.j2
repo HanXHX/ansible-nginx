@@ -83,7 +83,7 @@ server {
 {% block template_headers %}
 	# --> Custom headers
 {% for key, value in __headers.iteritems() %}
-	add_header {{ key }} "{{ value | replace(' always', '') }}"{% if nginx_version.stdout is version('1.7.5', 'ge') and ' always' in value %} always{% endif %};
+	add_header {{ key }} "{{ value }}";
 {% endfor %}
 	# <-- Custom headers
 {% endblock %}
