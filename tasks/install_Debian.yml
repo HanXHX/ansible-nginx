@@ -10,14 +10,14 @@
   apt:
     pkg: openssl
     state: latest
-    default_release: "{{ ansible_distribution_release + '-backports' }}"
+    default_release: "{{ ansible_lsb.codename + '-backports' }}"
   when: nginx_backports
 
 - name: APT | Install nginx and dependencies
   apt:
     pkg: "{{ nginx_apt_package }}"
     state: present
-    default_release: "{{ ansible_distribution_release + '-backports' if nginx_backports else ansible_distribution_release }}"
+    default_release: "{{ ansible_lsb.codename + '-backports' if nginx_backports else ansible_lsb.codename }}"
 
 - name: APT | Install nginx modules
   apt:

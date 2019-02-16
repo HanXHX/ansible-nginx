@@ -7,7 +7,8 @@ Vagrant.configure("2") do |config|
 
   vms_debian = [
     { :name => "debian-stretch", :box => "debian/stretch64", :vars => { "nginx_php": [{"version": "7.0"}] }},
-    { :name => "debian-stretch-sury", :box => "debian/stretch64", :vars => { "nginx_php": [{"version": "7.1"}], "sury": true }}
+    { :name => "debian-stretch-sury", :box => "debian/stretch64", :vars => { "nginx_php": [{"version": "7.1"}], "sury": true }},
+    { :name => "debian-buster", :box => "debian/buster64", :vars => { "nginx_php": [{"version": "7.3"}] }}
   ]
 
   vms_freebsd = [
@@ -17,7 +18,8 @@ Vagrant.configure("2") do |config|
 
   conts = [
     { :name => "docker-debian-stretch", :docker => "hanxhx/vagrant-ansible:debian9", :vars => { "nginx_php": [{"version": "7.0"}] }},
-    { :name => "docker-debian-stretch-sury", :docker => "hanxhx/vagrant-ansible:debian9", :vars => { "nginx_php": [{"version": "7.1"}], "sury": true }}
+    { :name => "docker-debian-stretch-sury", :docker => "hanxhx/vagrant-ansible:debian9", :vars => { "nginx_php": [{"version": "7.1"}], "sury": true }},
+    { :name => "docker-debian-buster", :docker => "hanxhx/vagrant-ansible:debian10", :vars => { "nginx_php": [{"version": "7.3"}] }},
   ]
 
   config.vm.network "private_network", type: "dhcp"
