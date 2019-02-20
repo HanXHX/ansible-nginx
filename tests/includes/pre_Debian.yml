@@ -34,16 +34,13 @@
     packages:
       - cron
       - curl
+      - daemonize
       - fcgiwrap
       - jq
       - nghttp2
       - strace
       - vim
       - unzip
-
-- name: APT | Install daemonize from Stretch
-  apt:
-    deb: http://ftp.us.debian.org/debian/pool/main/d/daemonize/daemonize_1.7.7-1+b1_amd64.deb
 
 - name: APT | Install PHP
   apt:
