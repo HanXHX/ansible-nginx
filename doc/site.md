@@ -19,6 +19,8 @@ Common
 - `redirect_https`: (O) Boolean. Redirect HTTP to HTTPS. If "true", you _MUST_ set `proto` to ```['https']```.
 - `location`: (O) Add new custom locations (it does not overwrite!)
 - `location_order`: (O) Due to non preditive `location` order, you can provide the good order (see test-location.local in [tests/test.yml](../tests/test.yml)).
+- `location_before`: (O) Add new custom locations before generated location by template
+- `location_order_before`: (O) Manages location order for `location_before`
 - `more`: (O) Add more custom infos.
 - `upstream_params`: (O) Add upstream params (useful when you want to pass variables to PHP)
 - `override_try_files`: (O) overrides default try\_files defined in template

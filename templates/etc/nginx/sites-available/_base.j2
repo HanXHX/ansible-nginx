@@ -5,9 +5,29 @@
 {% set __http_proxy_protocol_port = item.http_proxy_protocol_port | default([]) %}
 {% set __https_proxy_protocol_port = item.https_proxy_protocol_port | default([]) %}
 {% set __location = item.location | default({}) %}
+{% set __location_before = item.location_before | default({}) %}
 {% set __headers = item.headers | default(nginx_servers_default_headers) %}
 {% set __ssl_name = item.ssl_name | default(item.name if item.name is string else item.name[0]) %}
 {% set __location_order = item.location_order | default(__location.keys()) %}
+{% set __location_order_before = item.location_order_before | default(__location_before.keys()) %}
+{% macro locations(list, order) %}
+{% if order | length > 0 %}
+	# --> Custom locations
+{% for location in order %}
+	location {{ location }} {
+{% set opts = list[location] %}
+{% for opt in opts %}
+{% if opt.htpasswd is defined %}
+{{ htpasswd(opt.htpasswd, 2) }}
+{% else %}
+	{{ opt }}
+{% endif %}
+{% endfor  %}
+	}
+{% endfor %}
+	# <-- Custom locations
+{% endif %}
+{% endmacro %}
 {% macro htpasswd(htpasswd_name, indent=1) -%}
 {%- if htpasswd_name != false %}
 {%- for ht in nginx_htpasswd if ht.name == htpasswd_name %}
@@ -88,6 +108,8 @@ server {
 	# <-- Custom headers
 {% endblock %}
 
+{{ locations(__location_before, __location_order_before) }}
+
 {% if not __location.has_key('/') %}
 	location / {
 {% block template_try_files %}
@@ -101,19 +123,7 @@ server {
 {% block template_custom_location %}
 {% endblock %}
 
-{% if __location_order | length > 0 %}
-	# --> Custom locations
-{% for location in __location_order %}
-	location {{ location }} {
-{% set opts = __location[location] %}
-{% for opt in opts %}
-{% if opt.htpasswd is defined %}{{ htpasswd(opt.htpasswd, 2) }}{% else %}
-		{{ opt }}
-{% endif %}
-{% endfor  %}
-	}
-{% endfor %}	# <-- Custom locations
-{% endif %}
+{{ locations(__location, __location_order) }}
 
 {% block template_local_content %}
 {% if item.manage_local_content is not defined or item.manage_local_content %}
