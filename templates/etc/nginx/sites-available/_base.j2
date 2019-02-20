@@ -113,7 +113,7 @@ server {
 {% if not __location.has_key('/') %}
 	location / {
 {% block template_try_files %}
-		try_files {{ override_try_files | default('$uri $uri/ =404') }};
+		try_files {{ item.override_try_files | default('$uri $uri/ =404') }};
 {% endblock %}
 	}
 {% endif %}

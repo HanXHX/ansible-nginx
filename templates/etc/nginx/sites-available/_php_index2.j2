@@ -1,7 +1,7 @@
 {% extends "_php.j2" %}
 
 {% block template_try_files %}
-		try_files {{ override_try_files | default('$uri $uri/ /index.php') }};
+		try_files {{ item.override_try_files | default('$uri $uri/ /index.php') }};
 {% endblock %}
 
 {% block template_upstream_location %}
