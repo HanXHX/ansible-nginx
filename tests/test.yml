@@ -144,7 +144,7 @@
           - 'test2-alias.local'
         template: '_base'
         filename : 'first-test'
-        override_try_files: '$uri $uri index.htm index.html'
+        override_try_files: '$uri $uri /index.htm /index.html'
         headers:
           'X-Frame-Options': 'deny always'
           'X-ansible-default': '1'
