@@ -1,5 +1,10 @@
 ---
 
+- name: SET_FACT | Bypass https://github.com/ansible/ansible/issues/19874
+  set_fact:
+    ansible_distribution_release: 'buster'
+  when: ansible_facts.distribution_major_version == "buster/sid"
+
 - name: APT | Update cache
   apt:
     update_cache: yes
@@ -10,14 +15,14 @@
   apt:
     pkg: openssl
     state: latest
-    default_release: "{{ ansible_lsb.codename + '-backports' }}"
+    default_release: "{{ ansible_distribution_release + '-backports' }}"
   when: nginx_backports
 
 - name: APT | Install nginx and dependencies
   apt:
     pkg: "{{ nginx_apt_package }}"
     state: present
-    default_release: "{{ ansible_lsb.codename + '-backports' if nginx_backports else ansible_lsb.codename }}"
+    default_release: "{{ ansible_distribution_release + '-backports' if nginx_backports else ansible_distribution_release }}"
 
 - name: APT | Install nginx modules
   apt:
