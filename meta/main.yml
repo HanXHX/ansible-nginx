@@ -9,6 +9,7 @@ galaxy_info:
   - name: Debian
     versions:
     - stretch
+    - buster
   - name: FreeBSD
     versions:
     - 11.0
