@@ -1,6 +1,6 @@
 ---
 
-- name: APT | Install webapps
+- name: APT | Install webapps and related tools
   apt:
     pkg: "{{ packages }}"
     state: present
@@ -8,8 +8,12 @@
   vars:
     packages:
       - backuppc
+      - samba-common-bin
+      - smbclient
 
 - name: SERVICE | Ensure backuppc is started
   service:
     name: backuppc
     state: started
+  register: b
+  failed_when: b.failed and 'Another BackupPC is running' not in b.msg
