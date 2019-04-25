@@ -17,56 +17,77 @@
   loop: "{{ acme_installed_certs.results }}"
   when: item.skipped is not defined and not item.stat.exists
 
-- name: TEMPLATE | Create fake site
-  template:
-    src: "etc/nginx/conf.d/FAKESITE.conf.j2"
-    dest: "{{ nginx_etc_dir }}/conf.d/FAKESITE_{{ item | nginx_site_name }}.conf"
-  loop: "{{ acme_create }}"
-  register: fake_site
+- name: BLOCK | Start acme
+  block:
 
-- name: FILE | Delete current site if needed
-  file:
-    path: "{{ nginx_etc_dir }}/sites-enabled/{{ item | nginx_site_name }}"
-    state: absent
-  loop: "{{ acme_create }}"
-  when: fake_site.changed
+  - name: TEMPLATE | Create fake site
+    template:
+      src: "etc/nginx/conf.d/FAKESITE.conf.j2"
+      dest: "{{ nginx_etc_dir }}/conf.d/FAKESITE_{{ item | nginx_site_name }}.conf"
+    loop: "{{ acme_create }}"
+    register: fake_site
 
-- name: SERVICE | Restart nginx
-  service:
-    name: nginx
-    state: restarted
-  when: fake_site.changed and ansible_virtualization_type != 'docker'
+  - name: FILE | Delete current site if needed
+    file:
+      path: "{{ nginx_etc_dir }}/sites-enabled/{{ item | nginx_site_name }}"
+      state: absent
+    loop: "{{ acme_create }}"
+    when: fake_site.changed
 
-- name: COMMAND | Restart nginx
-  command: service nginx restart
-  args:
-    warn: false
-  when: fake_site.changed and ansible_virtualization_type == 'docker'
+  - name: SERVICE | Restart nginx
+    service:
+      name: nginx
+      state: restarted
+    when: fake_site.changed and ansible_virtualization_type != 'docker'
 
-- name: SHELL | Get certificates
-  shell: '{{ nginx_acmesh_bin }} --issue{% if item.name is string %} -d {{ item.name }}{% else %}{% for name in item.name %} -d {{ name }}{% endfor %}{% endif %} --nginx {% if nginx_acmesh_test %}--test{% endif %}'
-  args:
-    creates: "/root/.acme.sh/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.key"
-  loop: "{{ acme_create }}"
-  register: acme_get
-  failed_when: acme_get.rc != 0 and acme_get.rc != 2
-  no_log: not nginx_debug_role
+  - name: COMMAND | Restart nginx
+    command: service nginx restart
+    args:
+      warn: false
+    when: fake_site.changed and ansible_virtualization_type == 'docker'
 
-- name: FILE | Create SSL dir per site
-  file:
-    path: "{{ nginx_ssl_dir }}/{{ item | nginx_site_name }}"
-  loop: "{{ acme_create }}"
+  - name: SHELL | Get certificates
+    shell: '{{ nginx_acmesh_bin }} --home {{ nginx_acmesh_dir }} --issue{% if item.name is string %} -d {{ item.name }}{% else %}{% for name in item.name %} -d {{ name }}{% endfor %}{% endif %} --nginx {% if nginx_acmesh_test %}--test{% endif %}'
+    args:
+      creates: "{{ nginx_acmesh_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.key"
+    loop: "{{ acme_create }}"
+    register: acme_get
+    failed_when: acme_get.rc != 0 and acme_get.rc != 2
+    no_log: not nginx_debug_role
 
-- name: SHELL | Install certificates
-  shell: '{{ nginx_acmesh_bin }} --install-cert -d {{ item | nginx_site_name }} --fullchain-file {{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.crt --key-file {{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.key --reloadcmd "service nginx restart"'
-  args:
-    creates: "{{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.key"
-  loop: "{{ nginx_ssl_pairs }}"
-  when: item.acme is defined and item.acme
-  notify: restart nginx
+  - name: FILE | Create SSL dir per site
+    file:
+      path: "{{ nginx_ssl_dir }}/{{ item | nginx_site_name }}"
+    loop: "{{ acme_create }}"
 
-- name: FILE | Delete fake sites
-  file:
-    path: "{{ nginx_etc_dir }}/conf.d/FAKESITE_{{ item | nginx_site_name }}.conf"
-    state: absent
-  loop: "{{ acme_create }}"
+  - name: SHELL | Install certificates
+    shell: '{{ nginx_acmesh_bin }} --home {{ nginx_acmesh_dir }} --install-cert -d {{ item | nginx_site_name }} --fullchain-file {{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.crt --key-file {{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.key --reloadcmd "service nginx restart"'
+    args:
+      creates: "{{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.key"
+    loop: "{{ nginx_ssl_pairs }}"
+    when: item.acme is defined and item.acme
+    notify: restart nginx
+
+  rescue:
+
+  - name: FILE | Delete acme.sh files
+    file:
+      path: "{{ nginx_acmesh_dir }}/{{ item | nginx_site_name }}/"
+      state: absent
+    loop: "{{ nginx_ssl_pairs }}"
+
+  - name: FAIL | Explicit
+    fail:
+      msg: "Something is bad... Auto crash!"
+
+  always:
+
+  - name: FILE | Delete fake sites
+    file:
+      path: "{{ nginx_etc_dir }}/conf.d/FAKESITE_{{ item | nginx_site_name }}.conf"
+      state: absent
+    loop: "{{ acme_create }}"
+    notify: restart nginx
+
+  - name: META | Flush handlers
+    meta: flush_handlers

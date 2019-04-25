@@ -52,7 +52,7 @@
       update: no
 
   - name: SHELL | Install acme.sh
-    shell: ./acme.sh --install --home {{ nginx_acmesh_dir }} --cert-home {{ nginx_acmesh_dir }}
+    shell: ./acme.sh --install --home "{{ nginx_acmesh_dir }}"
     args:
       chdir: "{{ nginx_acmesh_git_dir }}"
       creates: "{{ nginx_acmesh_dir }}"
