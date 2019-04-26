@@ -41,8 +41,8 @@
 {%- endmacro %}
 {% macro ssl(ssl_name) %}
 {% for sn in nginx_ssl_pairs if ((sn.name is string and sn.name == ssl_name) or (sn.name.0 == ssl_name)) %}
-	ssl_certificate {{ nginx_ssl_dir + '/' + ssl_name + '/' + ssl_name + '.crt' if sn.dest_cert is not defined else sn.dest_cert }};
-	ssl_certificate_key {{ nginx_ssl_dir + '/' + ssl_name + '/' + ssl_name + '.key' if sn.dest_key is not defined else sn.dest_key }};
+	ssl_certificate {{ sn | nginx_cert_path(nginx_ssl_dir) }};
+	ssl_certificate_key {{ sn | nginx_key_path(nginx_ssl_dir) }};
 {% endfor %}
 {%- endmacro %}
 {% macro httpsredirect(name) %}
