@@ -23,10 +23,20 @@
         src: "file/test.key"
         dest: "{{ int_ansible_ssl_dir }}/test.key"
 
-    - name: LINEINFILE | Add all hosts in /etc/hosts
-      lineinfile:
-        line: "127.0.0.1\tlocalhost {% for s in nginx_sites %}{% if s.name is string %}{{ s.name }}{% else %}{% for n in s.name %}{{ n }} {% endfor %}{% endif %} {% if s.redirect_from is defined %}{% for rf in s.redirect_from %}{{ rf }} {% endfor %}{% endif %}{% endfor %}"
-        regexp: '^127\.0\.0\.1'
+    - name: COPY | Add all hosts in /etc/hosts
+      copy:
+        content: |
+          127.0.0.1 localhost
+          {% for s in nginx_sites %}
+          {% if s.name is string %}
+          127.0.0.1 {{ s.name }}
+          {% else %}
+          127.0.0.1 {% for n in s.name %}{{ n }} {% endfor %}
+          {% endif %}
+          {% if s.redirect_from is defined %}
+          127.0.0.1 {% for rf in s.redirect_from %}{{ rf }} {% endfor %}
+          {% endif %}
+          {% endfor %}
         dest: "/etc/hosts"
         unsafe_writes: yes
 
@@ -355,7 +365,7 @@
 # --------------------------------
     - name: -- VERIFY PHP SITES --
       uri:
-        url: "http://{{ item.name}}/"
+        url: "http://{{ item.name }}/"
         return_content: yes
       register: p
       loop: "{{ nginx_sites }}"

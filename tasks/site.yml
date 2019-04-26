@@ -75,7 +75,7 @@
 
 - name: FILE | Disable sites
   file:
-    path: "{{ nginx_etc_dir}}/sites-enabled/{{ item | nginx_site_filename }}"
+    path: "{{ nginx_etc_dir }}/sites-enabled/{{ item | nginx_site_filename }}"
     state: absent
   loop: "{{ nginx_sites }}"
   notify: ['reload nginx', 'restart nginx freebsd']
