@@ -7,14 +7,24 @@
   register: nginx_version
   changed_when: false
   check_mode: no
+  tags:
+    - skip_ansible_lint
 
 - name: SHELL | Get module list
-  shell: nginx -V 2>&1 | tr -- - '\n' | grep -A 1 with | grep _module | sed -r 's/_module//g; s/\s+//g' | sort
+  shell: |
+    nginx -V 2>&1 |
+    tr -- - '\n' |
+    grep -A 1 with |
+    grep _module |
+    sed -r 's/_module//g; s/\s+//g' |
+    sort
   args:
     executable: /bin/sh
   register: shell_modules
   changed_when: false
   check_mode: no
+  tags:
+    - skip_ansible_lint
 
 - name: SET_FACT | Save modules
   set_fact:

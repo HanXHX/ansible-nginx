@@ -11,17 +11,9 @@
     cache_valid_time: 3600
   changed_when: false
 
-- name: APT | Force OpenSSL from backports (fix dependency break)
-  apt:
-    pkg: openssl
-    state: latest
-    default_release: "{{ ansible_distribution_release + '-backports' }}"
-  when: nginx_backports
-
 - name: APT | Install nginx and dependencies
   apt:
     pkg: "{{ nginx_apt_package }}"
-    state: present
     default_release: "{{ ansible_distribution_release + '-backports' if nginx_backports else ansible_distribution_release }}"
 
 - name: APT | Install nginx modules
@@ -50,9 +42,10 @@
       repo: 'https://github.com/Neilpang/acme.sh.git'
       dest: '{{ nginx_acmesh_git_dir }}'
       update: no
+      version: master
 
-  - name: SHELL | Install acme.sh
-    shell: ./acme.sh --install --home "{{ nginx_acmesh_dir }}"
+  - name: COMMAND | Install acme.sh
+    command: ./acme.sh --install --home "{{ nginx_acmesh_dir }}"
     args:
       chdir: "{{ nginx_acmesh_git_dir }}"
       creates: "{{ nginx_acmesh_dir }}"
