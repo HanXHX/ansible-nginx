@@ -72,7 +72,7 @@
         --install-cert -d {{ item | nginx_site_name }}
         --fullchain-file {{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.crt
         --key-file {{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.key
-        --reloadcmd "service nginx restart"
+        --reloadcmd "service nginx reload"
     args:
       creates: "{{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.key"
     loop: "{{ nginx_ssl_pairs }}"
