@@ -81,12 +81,6 @@
 
   rescue:
 
-  - name: FILE | Delete acme.sh files
-    file:
-      path: "{{ nginx_acmesh_dir }}/{{ item | nginx_site_name }}/"
-      state: absent
-    loop: "{{ nginx_ssl_pairs }}"
-
   - name: FAIL | Explicit
     fail:
       msg: "Something is bad... Auto crash!"
