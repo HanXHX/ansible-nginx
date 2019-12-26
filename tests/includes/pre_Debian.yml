@@ -88,6 +88,7 @@
   include_role:
     name: "{{ playbook_dir }}/HanXHX.php"
   vars:
+    php_version: "{{ nginx_php.0.version }}"
     php_autoremove_default_pool: false
     php_fpm_poold:
       - name: 'hx_unix'
