@@ -112,7 +112,7 @@ If you need to dev this role locally
 Before use vagrant, run once:
 
 ```
-ansible-galaxy install -p ./tests/ HanXHX.php,master && mv tests/HanXHX.php/ tests/TMP__HanXHX.php
+ansible-galaxy install -p ./tests/ HanXHX.php,master
 ```
 
 Example Playbook
