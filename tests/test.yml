@@ -213,8 +213,10 @@
         use_access_log: true
       - name: 'test-php-index.local'
         template: '_php_index'
+        php_upstream: 'hx_unix'
       - name: 'test-php-index2.local'
         template: '_php_index2'
+        php_upstream: 'hx_ip'
       - name: 'test-proxy.local'
         listen:
           - 8080

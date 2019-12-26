@@ -14,7 +14,18 @@ upstream {{ php.upstream_name | default((php.version | php_default_upstream_name
     server unix:{{ php.version | php_default_upstream_socket }} weight=1;
 {% endfor %}
 }
-
 {% endfor %}
+
+{% if ansible_local.hanxhx_php.fpm_pool is defined%}
+# -------------------------------------------------------
+# Auto-detected PHP config for HanXHX.php ansible role
+# -------------------------------------------------------
+
+{% for php in ansible_local.hanxhx_php.fpm_pool %}
+upstream {{ php.name }} {
+	server {% if php.listen.startswith('/') %}unix:{{ php.listen }}{% else %}{{ php.listen }}{% endif %};
+}
+{% endfor %}
+{% endif %}
 
 # vim:filetype=nginx

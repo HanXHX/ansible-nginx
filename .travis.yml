@@ -26,6 +26,8 @@ before_install:
 
 install:
   - pip install "$ANSIBLE_VERSION"
+  - ansible-galaxy install -p ./tests HanXHX.php,master
+  - mv ./tests/HanXHX.php ./tests/TMP__HanXHX.php
 
 script:
   - VAGRANT_DEFAULT_PROVIDER=docker vagrant up $PLATFORM

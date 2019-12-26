@@ -78,3 +78,23 @@
 - name: SET_FACT | ngrok_path
   set_fact:
     ngrok_path: '/tmp/ngrok'
+
+- name: USER | Create PHP User foo
+  user:
+    name: foo
+    system: yes
+
+- name: INCLUDE_ROLE | HanXHX.php
+  include_role:
+    name: "{{ playbook_dir }}/HanXHX.php"
+  vars:
+    php_autoremove_default_pool: false
+    php_fpm_poold:
+      - name: 'hx_unix'
+        user: 'foo'
+        php_value:
+          display_errors: 'Off'
+        php_admin_value:
+          memory_limit: '98M'
+      - name: 'hx_ip'
+        listen: '127.0.0.1:9636'

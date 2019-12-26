@@ -1,17 +1,39 @@
 ---
 
+- block:
+
+  - name: SET_FACT | temp
+    set_fact:
+      tmp_fpm_pool: |
+        [
+        {% for p in ansible_local.hanxhx_php.fpm_pool %}
+        {
+          "upstream_name": "{{ p.name }}",
+          "sockets": [{
+              {% if p.listen.startswith('/') %}
+              "unix": "{{ p.listen }}"
+              {% else %}
+              {% set host = p.listen.split(":")[0] %}
+              {% set port = p.listen.split(":")[1] %}
+              "host": "{{ host }}",
+              "port": "{{ port }}"
+              {% endif %}
+              }]
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+        ]
+
+  - name: SET_FACT | new php
+    set_fact:
+      nginx_php: "{{ nginx_php + tmp_fpm_pool }}"
+
+  when: ansible_local.hanxhx_php.fpm_pool is defined
+
 - name: TEMPLATE | Deploy PHP upstream to Nginx
   template:
     src: "etc/nginx/conf.d/php.conf.j2"
     dest: "{{ nginx_etc_dir }}/conf.d/php.conf"
-  when: nginx_php | length > 0
   notify: reload nginx
-
-- name: FILE | Delete PHP upstream
-  file:
-    path: "{{ nginx_etc_dir }}/conf.d/php.conf"
-    state: absent
-  when: nginx_php | length == 0
 
 - name: TEMPLATE | Deploy other upstreams
   template:
