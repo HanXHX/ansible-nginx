@@ -1,0 +1,28 @@
+{% extends "_php.j2" %}
+
+{% block template_try_files %}
+		 try_files $uri /index.php$is_args$args;
+{% endblock %}
+
+{% block template_upstream_location %}
+	location /bundles {
+		try_files $uri =404;
+	}
+
+	location ~ ^/index\.php(/|$) {
+		# {{ php_info }}
+		fastcgi_pass {{ php_upstream }};
+		fastcgi_index index.php;
+{% if item.upstream_params is defined and item.upstream_params is iterable %}
+{% for param in item.upstream_params %}
+		{{ param }}
+{% endfor %}
+{% endif %}
+		include fastcgi.conf;
+		internal;
+	}
+
+	location ~ \.php$ {
+		return 404;
+	}
+{% endblock %}
