@@ -6,24 +6,6 @@
     state: present
   when: nginx_backports
 
-- block:
-
-  - name: APT | Install apt-transport-https
-    apt:
-      pkg: apt-transport-https
-      update_cache: yes
-      cache_valid_time: 3600
-
-  - name: APT_KEY | Install GPG key
-    apt_key:
-      url: 'https://packages.sury.org/php/apt.gpg'
-
-  - name: APT_REPOSITORY | Add APT repository
-    apt_repository:
-      repo: 'deb https://packages.sury.org/php {{ ansible_distribution_release }} main'
-
-  when: sury | default(false)
-
 - name: APT | Install needed packages
   apt:
     pkg: "{{ packages }}"
@@ -44,12 +26,19 @@
 
 - name: APT | Install PHP
   apt:
-    pkg: "{{ item.version | php_fpm_package }}"
+    pkg: "{{ pkgs }}"
     update_cache: yes
     cache_valid_time: 3600
     state: present
-  loop: "{{ nginx_php }}"
-  register: apt_php
+  vars:
+    pkgs:
+      - php-cli
+      - php-fpm
+
+- name: SHELL | Get current PHP version
+  shell: php --version | awk '/^PHP/ { print $2 }' | grep -o -E '^.{3}'
+  changed_when: false
+  register: cur_php_version
 
 - name: SERVICE | Force start fcgiwrap
   service:
@@ -58,11 +47,10 @@
 
 # Bypasses Ansible+Docker issue. With service module... php is not really started!
 - name: COMMAND | Force start PHP
-  command: "service {{ item.version | php_fpm_service }} start"
+  command: "service php{{ cur_php_version.stdout }}-fpm start"
   args:
-    creates: "{{ item.version | php_default_upstream_socket }}"
+    creates: "/run/php/php{{ cur_php_version.stdout }}-fpm.pid"
     warn: false
-  loop: "{{ nginx_php }}"
 
 - name: GET_URL | Download ngrok
   get_url:
@@ -88,7 +76,7 @@
   include_role:
     name: "{{ playbook_dir }}/HanXHX.php"
   vars:
-    php_version: "{{ nginx_php.0.version }}"
+    php_version: "{{ cur_php_version.stdout }}"
     php_autoremove_default_pool: false
     php_fpm_poold:
       - name: 'hx_unix'

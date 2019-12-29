@@ -3,15 +3,13 @@
 #
 
 {% for php in nginx_php %}
-upstream {{ php.upstream_name | default((php.version | php_default_upstream_name)) }} {
+upstream {{ php.upstream_name }} {
 {% for sock in php.sockets | default([]) %}
 {% if sock.host is defined %}
     server {{ sock.host }}:{{ sock.port }} weight={{ sock.weight | default('1') }} max_fails={{ sock.max_fails | default('5') }} fail_timeout={{ sock.fail_timeout | default('10s') }};
 {% else %}
-    server unix:{{ sock.unix | default((php.version | php_default_upstream_socket)) }} weight={{ sock.weight | default('1') }};
+    server unix:{{ sock.unix }} weight={{ sock.weight | default('1') }};
 {% endif %}
-{% else %}
-    server unix:{{ php.version | php_default_upstream_socket }} weight=1;
 {% endfor %}
 }
 {% endfor %}

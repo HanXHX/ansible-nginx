@@ -2,8 +2,7 @@ PHP
 ===
 
 `nginx_php`:
-  - `version`: (M) PHP version
-  - `upstream_name` (O)
+  - `upstream_name` (M)
   - `sockets`: (O) socket list
 
 If `sockets` is not provided, if uses local unix socket (based on PHP version).
@@ -16,8 +15,8 @@ Each socket have:
 
 XOR
 
-- `host`
-- `port`
-- `weight`
-- `max_fails`
-- `fail_timeout`
+- `host` (M)
+- `port` (M)
+- `weight` (O)
+- `max_fails` (O)
+- `fail_timeout` (O)

@@ -2,6 +2,7 @@
 
 - hosts: all
   pre_tasks:
+
     - name: INCLUDE_TASKS | Pre_tasks related to OS version
       include_tasks: "includes/pre_{{ ansible_distribution }}.yml"
 
@@ -23,6 +24,7 @@
         src: "file/test.key"
         dest: "{{ int_ansible_ssl_dir }}/test.key"
 
+    - debug: var=nginx_sites
     - name: COPY | Add all hosts in /etc/hosts
       copy:
         content: |
@@ -203,7 +205,7 @@
           - '/'
           - '/a'
       - name: 'test-php.local'
-        php_version: "{{ nginx_php.1.version if nginx_php.1 is defined else nginx_php.0.version }}"
+        php_upstream: "manual"
         upstream_params:
           - 'fastcgi_param FOO bar;'
         redirect_from:
@@ -274,6 +276,9 @@
         ssl_name: '{{ ngrok.stdout }}'
         headers:
           'X-acme': '1'
+
+    #nginx_php: "{{ __nginx_php + [{'upstream_name': 'manual', 'sockets': [{'host': '127.0.0.1', 'port': '9636' }] }] }}"
+    nginx_php: "{{ [{'upstream_name': 'manual', 'sockets': [{'host': '127.0.0.1', 'port': '9636' }] }] }}"
     nginx_dh_length: 1024
   roles:
     - ../../
@@ -374,7 +379,7 @@
       when: >
         item.template is defined and
         (item.template == '_php' or item.template == '_php_index' or item.template == '_php_index2')
-      failed_when: p.content.find('PHP Version ' + item.php_version if 'php_version' in item else nginx_php.0.version) == -1
+      failed_when: p.content.find('PHP Version') == -1
 
     - name: -- VERIFY INDEX2 --
       uri:

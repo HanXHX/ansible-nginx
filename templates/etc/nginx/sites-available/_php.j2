@@ -1,16 +1,5 @@
 {% extends "_base.j2" %}
 
-{% if item.php_version is defined %}
-{% set php_info = 'Explicit PHP version on site' %}
-{% set php_upstream = (nginx_php|selectattr('version', 'equalto', item.php_version)|first).upstream_name | default(item.php_version | php_default_upstream_name) %}
-{% elif item.php_upstream is defined %}
-{% set php_info = 'Explicit Nginx/PHP upstream on site' %}
-{% set php_upstream = item.php_upstream %}
-{% else %}
-{% set php_info = 'Warning: using first PHP version on config' %}
-{% set php_upstream = nginx_php.0.upstream_name | default(nginx_php.0.version | php_default_upstream_name) %}
-{% endif %}
-
 {% block template_index %}
 	index {{ item.index | default('index.html index.htm index.php') }};
 {% endblock %}
@@ -21,8 +10,7 @@
 
 {% block template_upstream_location %}
 	location ~ \.php$ {
-		# {{ php_info }}
-		fastcgi_pass {{ php_upstream }};
+		fastcgi_pass {{ item.php_upstream }};
 		fastcgi_index index.php;
 {% if item.upstream_params is defined and item.upstream_params is iterable %}
 {% for param in item.upstream_params %}
