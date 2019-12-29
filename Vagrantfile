@@ -11,8 +11,8 @@ Vagrant.configure("2") do |config|
   ]
 
   vms_freebsd = [
-    { :name => "freebsd-11", :box => "freebsd/FreeBSD-11.1-STABLE",  :vars => {} },
-    { :name => "freebsd-12", :box => "freebsd/FreeBSD-12.0-CURRENT", :vars => {} }
+    { :name => "freebsd-11", :box => "freebsd/FreeBSD-11.3-STABLE", :vars => {} },
+    { :name => "freebsd-12", :box => "freebsd/FreeBSD-12.1-STABLE", :vars => {} }
   ]
 
   conts = [
@@ -64,7 +64,7 @@ Vagrant.configure("2") do |config|
         v.cpus = 2
         v.memory = 512
       end
-      m.vm.provision "shell", inline: "pkg install -y python bash"
+      m.vm.provision "shell", inline: "[ -e /usr/local/bin/bash ] || pkg install -y python bash"
       m.vm.provision "ansible" do |ansible|
         ansible.playbook = "tests/test.yml"
         ansible.verbose = 'vv'
