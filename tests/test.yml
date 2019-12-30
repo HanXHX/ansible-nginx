@@ -268,6 +268,8 @@
         https_proxy_protocol_port: [20443]
         template: '_base'
         ssl_name: 'test-ssl.local'
+        headers:
+          'X-Proxy-Protocol': '1'
       - name: '{{ ngrok.stdout }}'
         proto: ['http', 'https']
         template: '_base'
@@ -515,6 +517,28 @@
         validate_certs: no
       register: notdefaultssl
       failed_when: notdefaultssl.x_ansible_default is defined
+
+
+# --------------------------------
+# Check Proxy protocol
+# --------------------------------
+    - name: SHELL | Check HTTP proxy protocol
+      shell: curl -I --haproxy-protocol http://test-ssl-proxy-protocol.local:20080 | grep -qi 'X-Proxy-Protocol'
+      args:
+        executable: /bin/sh
+        warn: no
+      changed_when: false
+      tags:
+        - skip_ansible_lint
+
+    - name: SHELL | Check HTTPS proxy protocol
+      shell: curl -I --haproxy-protocol -k https://test-ssl-proxy-protocol.local:20443 | grep -qi 'X-Proxy-Protocol'
+      args:
+        executable: /bin/sh
+        warn: no
+      changed_when: false
+      tags:
+        - skip_ansible_lint
 
 # --------------------------------
 # Check HTTP2
