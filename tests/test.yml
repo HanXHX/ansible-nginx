@@ -147,7 +147,7 @@
       - '    DZ no;'
       - '    TN no;'
       - '}'
-    nginx_default_site: 'first-test'
+    nginx_default_site: 'test.local'
     nginx_default_site_ssl: 'test-ssl-predeployed.local'
     nginx_sites:
       - name:
@@ -156,7 +156,7 @@
           - 'test2-alias.local'
         template: '_base'
         filename : 'first-test'
-        override_try_files: '$uri $uri /index.htm /index.html'
+        override_try_files: '$uri/ $uri =404'
         headers:
           'X-Frame-Options': 'deny always'
           'X-ansible-default': '1'
@@ -264,8 +264,6 @@
           - 'www.test-ssl-redirect-many2.local'
       - name: 'test-ssl-proxy-protocol.local'
         proto: ['http', 'https']
-        listen: [80, 20080]
-        listen_ssl: [443, 20443]
         http_proxy_protocol_port: [20080]
         https_proxy_protocol_port: [20443]
         template: '_base'

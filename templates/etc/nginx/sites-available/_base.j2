@@ -1,5 +1,5 @@
 {% set __proto = item.proto | default(['http']) %}
-{% set __main_name =  item | nginx_site_filename %}
+{% set __main_name =  item | nginx_site_name %}
 {% set __listen = item.listen | default(['80', '[::]:80']) %}
 {% set __listen_ssl = item.listen_ssl | default(['443', '[::]:443']) %}
 {% set __http_proxy_protocol_port = item.http_proxy_protocol_port | default([]) %}
@@ -7,9 +7,12 @@
 {% set __location = item.location | default({}) %}
 {% set __location_before = item.location_before | default({}) %}
 {% set __headers = item.headers | default(nginx_servers_default_headers) %}
-{% set __ssl_name = item.ssl_name | default(item.name if item.name is string else item.name[0]) %}
+{% set __ssl_name = item.ssl_name | default(__main_name) %}
 {% set __location_order = item.location_order | default(__location.keys()) %}
 {% set __location_order_before = item.location_order_before | default(__location_before.keys()) %}
+{% set __http2 = nginx_auto_config_httpv2 and 'http_v2' in nginx_modules %}
+{% macro listen_http() %}
+{% endmacro %}
 {% macro server_name(name) %}
 {% if name is string %}{{ name }}{% else %}{{ name | join(" ") }}{% endif %}
 {% endmacro %}
@@ -48,7 +51,10 @@
 {% macro httpsredirect(name) %}
 server {
 {% for port in __listen %}
-	listen {{ port }}{% if port | int in __http_proxy_protocol_port %} proxy_protocol{% endif %};
+	listen {{ port }};
+{% endfor %}
+{% for port in __http_proxy_protocol_port %}
+	listen {{ port }} proxy_protocol;
 {% endfor %}
 	server_name {{ server_name(name) }};
 	location / {
@@ -67,12 +73,18 @@ server {
 server {
 {% if 'http' in __proto %}
 {% for port in __listen %}
-	listen {{ port }}{% if nginx_default_site == __main_name %} default_server{% endif %}{% if port | int in __http_proxy_protocol_port %} proxy_protocol{% endif %};
+	listen {{ port }}{% if nginx_default_site == __main_name %} default_server{% endif %};
+{% endfor %}
+{% for port in __http_proxy_protocol_port %}
+	listen {{ port }}{% if nginx_default_site == __main_name %} default_server{% endif %} proxy_protocol;
 {% endfor %}
 {% endif %}
 {% if 'https' in __proto %}
 {% for port in __listen_ssl %}
-	listen {{ port }}{% if nginx_default_site_ssl == __main_name %} default_server{% endif %} ssl{% if nginx_auto_config_httpv2 and 'http_v2' in nginx_modules %} http2{% endif %}{% if port | int in __https_proxy_protocol_port %} proxy_protocol{% endif %};
+	listen {{ port }}{% if nginx_default_site_ssl == __main_name %} default_server{% endif %} ssl{% if __http2 %} http2{% endif %};
+{% endfor %}
+{% for port in __https_proxy_protocol_port %}
+	listen {{ port }}{% if nginx_default_site_ssl == __main_name %} default_server{% endif %} ssl{% if __http2 %} http2{% endif %} proxy_protocol;
 {% endfor %}
 {{ ssl(__ssl_name) }}
 {% if item.ssl_template is not defined or item.ssl_template != false %}
@@ -84,7 +96,7 @@ server {
 {% if item.root is defined %}
 	root {{ item.root }};
 {% else %}
-	root {{ nginx_root }}/{{ __main_name }}/public;
+	root {{ nginx_root }}/{{ item | nginx_site_filename }}/public;
 {% endif %}
 {% endblock %}
 {% block template_index %}
@@ -182,18 +194,25 @@ server {
 #
 server {
 {% for port in __listen %}
-	listen {{ port }}{% if port | int in __http_proxy_protocol_port %} proxy_protocol{% endif %};
+	listen {{ port }};
 {% endfor %}
+{% for port in __http_proxy_protocol_port %}
+	listen {{ port }} proxy_protocol;
+{% endfor %}
+
 	server_name {{ server_name(item.redirect_from) }};
 	location / {
-		return 301 $scheme://{{ item.name if item.name is string else item.name[0] }}$request_uri;
+		return 301 $scheme://{{ __main_name }}$request_uri;
 	}
 }
 
 {% if 'https' in __proto %}
 server {
 {% for port in __listen_ssl %}
-	listen {{ port }}{% if nginx_default_site_ssl == __main_name %} default_server{% endif %} ssl{% if nginx_auto_config_httpv2 and 'http_v2' in nginx_modules %} http2{% endif %}{% if port | int in __https_proxy_protocol_port %} proxy_protocol{% endif %};
+	listen {{ port }}{% if nginx_default_site_ssl == __main_name %} default_server{% endif %} ssl{% if __http2 %} http2{% endif %};
+{% endfor %}
+{% for port in __https_proxy_protocol_port %}
+	listen {{ port }}{% if nginx_default_site_ssl == __main_name %} default_server{% endif %} ssl{% if __http2 %} http2{% endif %} proxy_protocol;
 {% endfor %}
 {{ ssl(__ssl_name) }}
 {% if item.ssl_template is not defined or item.ssl_template != false %}
@@ -201,7 +220,7 @@ server {
 {% endif %}
 	server_name {{ server_name(item.redirect_from) }};
 	location / {
-		return 301 https://{{ item.name if item.name is string else item.name[0] }}{% if '443' not in __listen_ssl and 443 not in __listen_ssl %}:{{ __listen_ssl[0] }}{% endif %}$request_uri;
+		return 301 https://{{ __main_name }}{% if '443' not in __listen_ssl and 443 not in __listen_ssl %}:{{ __listen_ssl[0] }}{% endif %}$request_uri;
 	}
 }
 {% endif %}
