@@ -522,23 +522,30 @@
 # --------------------------------
 # Check Proxy protocol
 # --------------------------------
-    - name: SHELL | Check HTTP proxy protocol
-      shell: curl -I --haproxy-protocol http://test-ssl-proxy-protocol.local:20080 | grep -qi 'X-Proxy-Protocol'
-      args:
-        executable: /bin/sh
-        warn: no
-      changed_when: false
-      tags:
-        - skip_ansible_lint
 
-    - name: SHELL | Check HTTPS proxy protocol
-      shell: curl -I --haproxy-protocol -k https://test-ssl-proxy-protocol.local:20443 | grep -qi 'X-Proxy-Protocol'
-      args:
-        executable: /bin/sh
-        warn: no
-      changed_when: false
-      tags:
-        - skip_ansible_lint
+# Note: Debian Stretch doesn't any version of curl with "--haproxy-protocol" argument
+
+    - block:
+
+      - name: SHELL | Check HTTP proxy protocol
+        shell: curl -I --haproxy-protocol http://test-ssl-proxy-protocol.local:20080 | grep -qi 'X-Proxy-Protocol'
+        args:
+          executable: /bin/sh
+          warn: no
+        changed_when: false
+        tags:
+          - skip_ansible_lint
+
+      - name: SHELL | Check HTTPS proxy protocol
+        shell: curl -I --haproxy-protocol -k https://test-ssl-proxy-protocol.local:20443 | grep -qi 'X-Proxy-Protocol'
+        args:
+          executable: /bin/sh
+          warn: no
+        changed_when: false
+        tags:
+          - skip_ansible_lint
+
+      when: not (ansible_distribution == 'Debian' and ansible_distribution_major_version is version('9', 'eq'))
 
 # --------------------------------
 # Check HTTP2
