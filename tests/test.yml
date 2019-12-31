@@ -24,7 +24,6 @@
         src: "file/test.key"
         dest: "{{ int_ansible_ssl_dir }}/test.key"
 
-    - debug: var=nginx_sites
     - name: COPY | Add all hosts in /etc/hosts
       copy:
         content: |
@@ -79,10 +78,8 @@
     nginx_acmesh: true
     nginx_acmesh_test: true
     nginx_ssl_pairs:
-      - name:
-          - '{{ ngrok.stdout }}'
+      - name: '{{ ngrok.stdout }}'
         acme: true
-        acme_port: 8888
       - name: 'test-ssl-selfsigned.local'
         self_signed: true
         force: false
@@ -236,7 +233,9 @@
       - name: 'test-ssl.local'
         proto: ['http', 'https']
         template: '_base'
-      - name: 'test-ssl-selfsigned.local'
+      - name:
+          - 'test-ssl-selfsigned.local'
+          - 'www.test-ssl-selfsigned.local'
         proto: ['http', 'https']
         template: '_base'
       - name: 'test-ssl-predeployed.local'
@@ -272,12 +271,13 @@
           'X-Proxy-Protocol': '1'
       - name: '{{ ngrok.stdout }}'
         proto: ['http', 'https']
+        http_proxy_protocol_port: [21080]
+        https_proxy_protocol_port: [21443]
         template: '_base'
         ssl_name: '{{ ngrok.stdout }}'
         headers:
           'X-acme': '1'
 
-    #nginx_php: "{{ __nginx_php + [{'upstream_name': 'manual', 'sockets': [{'host': '127.0.0.1', 'port': '9636' }] }] }}"
     nginx_php: "{{ [{'upstream_name': 'manual', 'sockets': [{'host': '127.0.0.1', 'port': '9636' }] }] }}"
     nginx_dh_length: 1024
   roles:

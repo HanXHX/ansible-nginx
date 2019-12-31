@@ -1,8 +1,16 @@
-server {
-	listen {{ item.acme_port | default('80') }};
-	listen [::]:{{ item.acme_port | default('80') }};
+{% set site = nginx_sites | nginx_search_by_ssl_name(item.name) %}
+{% set __listen = site.listen | default(['80', '[::]:80']) %}
+{% set __http_proxy_protocol_port = site.http_proxy_protocol_port | default([]) %}
 
-	server_name {% if item.name is string %}{{ item.name }}{% else %}{{ item.name | join(" ") }}{% endif %}{% if item.redirect_from is defined %} {% if item.redirect_from is string %}{{ item.redirect_from }}{% else %}{{ item.redirect_from | join(" ") }}{% endif %}{% endif %};
+server {
+{% for port in __listen %}
+	listen {{ port }};
+{% endfor %}
+{% for port in __http_proxy_protocol_port %}
+	listen {{ port }} proxy_protocol;
+{% endfor %}
+
+	server_name {{ site | nginx_all_site_names | join(" ") }};
 
 	location / {
 		return 503;

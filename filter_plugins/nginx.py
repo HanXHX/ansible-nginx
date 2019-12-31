@@ -25,6 +25,29 @@ def nginx_cert_path(pair, ssl_dir):
     else:
         return nginx_ssl_dir(pair, ssl_dir) + '/' + nginx_site_filename(pair) + '.crt'
 
+def nginx_all_site_names(site):
+    all_sites = []
+    if isinstance(site['name'], list):
+        all_sites = all_sites + site['name']
+    else:
+        all_sites.append(site['name'])
+
+    if site.has_key('redirect_from'):
+        if isinstance(site['redirect_from'], list):
+             all_sites = all_sites + site['redirect_from']
+        else:
+            all_sites.append(site['redirect_from'])
+
+    return all_sites
+
+def nginx_search_by_ssl_name(sites, ssl_name):
+    res = None
+    for site in sites:
+        if site.has_key('ssl_name') and site['ssl_name'] == ssl_name:
+            res = site
+            break
+    return res
+
 class FilterModule(object):
     ''' Nginx module '''
 
@@ -34,5 +57,7 @@ class FilterModule(object):
             'nginx_site_name': nginx_site_name,
             'nginx_ssl_dir': nginx_ssl_dir,
             'nginx_key_path': nginx_key_path,
-            'nginx_cert_path': nginx_cert_path
+            'nginx_cert_path': nginx_cert_path,
+            'nginx_all_site_names': nginx_all_site_names,
+            'nginx_search_by_ssl_name': nginx_search_by_ssl_name
         }

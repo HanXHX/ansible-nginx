@@ -1,12 +1,12 @@
 ---
 
-- name: SET_FACT | Assign default..
+- name: SET_FACT | Assign default...
   set_fact:
     acme_create: []
 
 - name: STAT | Check if certificates are already installed
   stat:
-    path: "{{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.crt"
+    path: "{{ item | nginx_cert_path(nginx_ssl_dir) }}"
   loop: "{{ nginx_ssl_pairs }}"
   when: item.acme is defined and item.acme
   register: acme_installed_certs
@@ -15,7 +15,7 @@
   set_fact:
     acme_create: "{{ acme_create | default([]) + [ (item.item) ] }}"
   loop: "{{ acme_installed_certs.results }}"
-  when: item.skipped is not defined and not item.stat.exists
+  when: item.skipped is not defined and (not item.stat.exists or item.stat.size == 0)
 
 - name: BLOCK | Start acme
   block:
@@ -50,11 +50,11 @@
     command: |
       {{ nginx_acmesh_bin }}
         --home {{ nginx_acmesh_dir }}
-        --issue{% if item.name is string %} -d {{ item.name }}{% else %}{% for name in item.name %} -d {{ name }}{% endfor %}{% endif %}
+        --issue{% for s in nginx_sites | nginx_search_by_ssl_name(item.name) | nginx_all_site_names %} -d {{ s }}{% endfor %}
         --nginx
-        {% if nginx_acmesh_test %}--test{% endif %}
+        {% if nginx_acmesh_test %}--test --log{% endif %}
     args:
-      creates: "{{ nginx_acmesh_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.key"
+      creates: "{{ nginx_acmesh_dir }}/{{ item | nginx_site_name }}/fullchain.cer"
     loop: "{{ acme_create }}"
     register: acme_get
     failed_when: acme_get.rc != 0 and acme_get.rc != 2
@@ -69,12 +69,12 @@
     command: |
       {{ nginx_acmesh_bin }}
         --home {{ nginx_acmesh_dir }}
-        --install-cert -d {{ item | nginx_site_name }}
-        --fullchain-file {{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.crt
-        --key-file {{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.key
+        --install-cert -d {{ nginx_sites | nginx_search_by_ssl_name(item | nginx_site_name) | nginx_site_name }}
+        --fullchain-file {{ item | nginx_cert_path(nginx_ssl_dir) }}
+        --key-file {{ item | nginx_key_path(nginx_ssl_dir) }}
         --reloadcmd "service nginx reload"
     args:
-      creates: "{{ nginx_ssl_dir }}/{{ item | nginx_site_name }}/{{ item | nginx_site_name }}.key"
+      creates: "{{ item | nginx_cert_path(nginx_ssl_dir) }}"
     loop: "{{ nginx_ssl_pairs }}"
     when: item.acme is defined and item.acme
     notify: restart nginx

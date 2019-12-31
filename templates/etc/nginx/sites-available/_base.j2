@@ -43,7 +43,7 @@
 {%- endif %}
 {%- endmacro %}
 {% macro ssl(ssl_name) %}
-{% for sn in nginx_ssl_pairs if ((sn.name is string and sn.name == ssl_name) or (sn.name.0 == ssl_name)) %}
+{% for sn in nginx_ssl_pairs if (sn.name is defined and sn.name == ssl_name) %}
 	ssl_certificate {{ sn | nginx_cert_path(nginx_ssl_dir) }};
 	ssl_certificate_key {{ sn | nginx_key_path(nginx_ssl_dir) }};
 {% endfor %}
