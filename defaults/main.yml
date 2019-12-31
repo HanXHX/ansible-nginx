@@ -85,6 +85,18 @@ nginx_http_gzip_disable: '"msie6"'
 nginx_custom_http: []
 
 #
+# Nginx default
+#
+nginx_default_listen:
+  - '80'
+  - '[::]:80'
+nginx_default_listen_ssl:
+  - '443'
+  - '[::]:443'
+nginx_default_listen_proxy_protocol: []
+nginx_default_listen_proxy_protocol_ssl: []
+
+#
 # Sites
 #
 nginx_sites: []

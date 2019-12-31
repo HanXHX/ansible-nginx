@@ -263,16 +263,16 @@
           - 'www.test-ssl-redirect-many2.local'
       - name: 'test-ssl-proxy-protocol.local'
         proto: ['http', 'https']
-        http_proxy_protocol_port: [20080]
-        https_proxy_protocol_port: [20443]
+        listen_proxy_protocol: [20080]
+        listen_proxy_protocol_ssl: [20443]
         template: '_base'
         ssl_name: 'test-ssl.local'
         headers:
           'X-Proxy-Protocol': '1'
       - name: '{{ ngrok.stdout }}'
         proto: ['http', 'https']
-        http_proxy_protocol_port: [21080]
-        https_proxy_protocol_port: [21443]
+        listen_proxy_protocol: [21080]
+        listen_proxy_protocol_ssl: [21443]
         template: '_base'
         ssl_name: '{{ ngrok.stdout }}'
         headers:

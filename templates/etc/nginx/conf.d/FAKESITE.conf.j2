@@ -1,12 +1,12 @@
 {% set site = nginx_sites | nginx_search_by_ssl_name(item.name) %}
-{% set __listen = site.listen | default(['80', '[::]:80']) %}
-{% set __http_proxy_protocol_port = site.http_proxy_protocol_port | default([]) %}
+{% set __listen = item.listen | default(nginx_default_listen) %}
+{% set __listen_proxy_protocol = item.listen_proxy_protocol | default(nginx_default_listen_proxy_protocol) %}
 
 server {
 {% for port in __listen %}
 	listen {{ port }};
 {% endfor %}
-{% for port in __http_proxy_protocol_port %}
+{% for port in __listen_proxy_protocol %}
 	listen {{ port }} proxy_protocol;
 {% endfor %}
 
