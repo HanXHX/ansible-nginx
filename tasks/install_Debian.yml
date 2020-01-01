@@ -23,7 +23,7 @@
 
 - name: APT | Install python-passlib
   apt:
-    pkg: python-passlib
+    pkg: "python{% if ansible_python_version is version('3', '>=') %}3{% endif %}-passlib"
     state: present
 
 - name: STAT | Check acme.sh is installed
