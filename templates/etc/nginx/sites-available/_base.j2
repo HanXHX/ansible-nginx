@@ -89,6 +89,7 @@ server {
 {{ ssl(__ssl_name) }}
 {% if item.ssl_template is not defined or item.ssl_template != false %}
 	include {{ nginx_helper_dir + '/ssl-' + item.ssl_template | default('strong') }};
+	add_header Strict-Transport-Security "{{ item.hsts | default(nginx_default_hsts) }}" always;
 {% endif %}
 {% endif %}
 	server_name {{ server_name(item.name) }};
@@ -217,6 +218,7 @@ server {
 {{ ssl(__ssl_name) }}
 {% if item.ssl_template is not defined or item.ssl_template != false %}
 	include {{ nginx_helper_dir + '/ssl-' + item.ssl_template | default('strong') }};
+	add_header Strict-Transport-Security "{{ item.hsts | default(nginx_default_hsts) }}" always;
 {% endif %}
 	server_name {{ server_name(item.redirect_from) }};
 	location / {

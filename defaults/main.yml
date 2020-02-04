@@ -19,6 +19,7 @@ nginx_auto_config_httpv2: true
 nginx_default_site: null
 nginx_default_site_ssl: null
 nginx_fastcgi_fix_realpath: true
+nginx_default_hsts: 'max-age=63072000; includeSubDomains'
 
 #
 # Nginx directories

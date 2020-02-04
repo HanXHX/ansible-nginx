@@ -31,6 +31,7 @@ Common
 - `ssl_template` (O) "strong" (default) or "legacy". You can disable SSL helpers and add your own directives by setting "false".
 - `listen_proxy_protocol` (O) Enable proxy protocol on http port.
 - `listen_proxy_protocol_ssl` (O) Enable proxy protocol on https port.
+- `hsts` (O) overwrite default header for hsts
 
 (O): Optional
 (M): Mandatory

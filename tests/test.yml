@@ -240,6 +240,7 @@
           - 'www.test-ssl-selfsigned.local'
         proto: ['http', 'https']
         template: '_base'
+        hsts: 'max-age=1664;'
       - name: 'test-ssl-predeployed.local'
         proto: ['http', 'https']
         template: '_base'
