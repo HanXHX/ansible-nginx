@@ -41,9 +41,14 @@ def nginx_all_site_names(site):
     return all_sites
 
 def nginx_search_by_ssl_name(sites, ssl_name):
+    if isinstance(ssl_name, list):
+        comp_ssl_name = ssl_name[0]
+    else:
+        comp_ssl_name = ssl_name
+
     res = None
     for site in sites:
-        if site.has_key('ssl_name') and site['ssl_name'] == ssl_name:
+        if site.has_key('ssl_name') and site['ssl_name'] == comp_ssl_name:
             res = site
             break
     return res

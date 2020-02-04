@@ -83,7 +83,9 @@
       - name: 'test-ssl-selfsigned.local'
         self_signed: true
         force: false
-      - name: 'test-ssl-predeployed.local'
+      - name:
+          - 'test-ssl-predeployed.local'
+          - 'test-multiple-name.local' # Hack: tests for acme with multiple name, without using acme
         dest_key: "{{ int_ansible_ssl_dir }}/test.key"
         dest_cert: "{{ int_ansible_ssl_dir }}/test.crt"
       - name: 'test-ssl.local'
