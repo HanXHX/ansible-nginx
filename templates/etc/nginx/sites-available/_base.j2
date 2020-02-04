@@ -209,10 +209,10 @@ server {
 {% if 'https' in __proto %}
 server {
 {% for port in __listen_ssl %}
-	listen {{ port }}{% if nginx_default_site_ssl == __main_name %} default_server{% endif %} ssl{% if __http2 %} http2{% endif %};
+	listen {{ port }} ssl{% if __http2 %} http2{% endif %};
 {% endfor %}
 {% for port in __listen_proxy_protocol_ssl %}
-	listen {{ port }}{% if nginx_default_site_ssl == __main_name %} default_server{% endif %} ssl{% if __http2 %} http2{% endif %} proxy_protocol;
+	listen {{ port }} ssl{% if __http2 %} http2{% endif %} proxy_protocol;
 {% endfor %}
 {{ ssl(__ssl_name) }}
 {% if item.ssl_template is not defined or item.ssl_template != false %}
