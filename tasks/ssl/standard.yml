@@ -2,7 +2,7 @@
 
 - block:
 
-  - name: STAT | Get info ajout DH file
+  - name: STAT | Get info about DH file
     stat:
       path: "{{ nginx_dh_path }}"
       get_checksum: no
