@@ -1,5 +1,5 @@
 def nginx_site_filename(site):
-    if site.has_key('filename'):
+    if 'filename' in site:
         return site['filename']
     else:
         return nginx_site_name(site)
@@ -14,13 +14,13 @@ def nginx_ssl_dir(pair, ssl_dir):
     return ssl_dir + '/' + nginx_site_filename(pair)
 
 def nginx_key_path(pair, ssl_dir):
-    if pair.has_key('dest_key'):
+    if 'dest_key' in pair:
         return pair['dest_key']
     else:
         return nginx_ssl_dir(pair, ssl_dir) + '/' + nginx_site_filename(pair) + '.key'
 
 def nginx_cert_path(pair, ssl_dir):
-    if pair.has_key('dest_cert'):
+    if 'dest_cert' in pair:
         return pair['dest_cert']
     else:
         return nginx_ssl_dir(pair, ssl_dir) + '/' + nginx_site_filename(pair) + '.crt'
@@ -32,7 +32,7 @@ def nginx_all_site_names(site):
     else:
         all_sites.append(site['name'])
 
-    if site.has_key('redirect_from'):
+    if 'redirect_from' in site:
         if isinstance(site['redirect_from'], list):
              all_sites = all_sites + site['redirect_from']
         else:
@@ -48,7 +48,7 @@ def nginx_search_by_ssl_name(sites, ssl_name):
 
     res = None
     for site in sites:
-        if site.has_key('ssl_name') and site['ssl_name'] == comp_ssl_name:
+        if 'ssl_name' in site and site['ssl_name'] == comp_ssl_name:
             res = site
             break
     return res

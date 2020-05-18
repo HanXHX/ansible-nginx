@@ -118,7 +118,7 @@ server {
 
 {% block template_headers %}
 	# --> Custom headers
-{% for key, value in __headers.iteritems() %}
+{% for key, value in __headers.items() %}
 	add_header {{ key }} "{{ value | regex_replace('\s+always$', '') }}"{% if value | regex_search('\s+always$') %} always{% endif %};
 {% endfor %}
 	# <-- Custom headers
@@ -126,7 +126,7 @@ server {
 
 {{ locations(__location_before, __location_order_before) }}
 
-{% if not __location.has_key('/') %}
+{% if not '/' in  __location %}
 	location / {
 {% block template_try_files %}
 		try_files {{ item.override_try_files | default('$uri $uri/ =404') }};
