@@ -29,7 +29,6 @@
     packages:
       - curl
       - daemonize
-      - fcgiwrap
 #     - GeoIP
       - jq
       - nghttp2
@@ -49,7 +48,6 @@
   register: sf
   loop:
     - php-fpm
-    - fcgiwrap
 
 - name: STAT | Check ports
   stat:
