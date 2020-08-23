@@ -39,12 +39,22 @@
   loop_control:
     label: "{{ item | nginx_site_name }}"
 
-- name: TEMPLATE | Create sites
+- name: TEMPLATE | Create sites with preconfigured template
   template:
     src: "etc/nginx/sites-available/{{ item.template if item.redirect_to is not defined else '_redirect' }}.j2"
     dest: "{{ nginx_etc_dir }}/sites-available/{{ item | nginx_site_filename }}"
   notify: ['reload nginx', 'restart nginx freebsd']
-  when: item.state is not defined or item.state != 'absent'
+  when: (item.state is not defined or item.state != 'absent') and item.custom_template is not defined
+  loop: "{{ nginx_sites }}"
+  loop_control:
+    label: "{{ item | nginx_site_name }}"
+
+- name: TEMPLATE | Create sites with preconfigured template
+  template:
+    src: "{{ item.custom_template }}"
+    dest: "{{ nginx_etc_dir }}/sites-available/{{ item | nginx_site_filename }}"
+  notify: ['reload nginx', 'restart nginx freebsd']
+  when: (item.state is not defined or item.state != 'absent') and item.custom_template is defined
   loop: "{{ nginx_sites }}"
   loop_control:
     label: "{{ item | nginx_site_name }}"
