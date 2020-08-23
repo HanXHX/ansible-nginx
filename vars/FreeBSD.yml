@@ -2,7 +2,4 @@ nginx_events_use: 'kqueue'
 nginx_pid: '/var/run/nginx.pid'
 nginx_etc_dir: '/usr/local/etc/nginx'
 
-# Specific sites
-nginx_fcgiwrap_sock: '/var/run/fcgiwrap/fcgiwrap.sock'
-
 nginx_acmesh_bin: '/usr/local/sbin/acme.sh'
