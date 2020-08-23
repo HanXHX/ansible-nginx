@@ -1,0 +1,16 @@
+# {{ ansible_managed }} - custom template
+
+server {
+	listen 80;
+	listen 8888 http2;
+	listen 9999 http2 proxy_protocol;
+	server_name {{ item.name }};
+
+	index index.html index.htm;
+
+	root {{ item.root }};
+
+	location / {
+		try_files $uri $uri/ =404;
+	}
+}

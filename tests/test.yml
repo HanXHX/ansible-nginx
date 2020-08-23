@@ -277,6 +277,9 @@
         ssl_name: '{{ ngrok.stdout }}'
         headers:
           'X-acme': '1'
+      - name: 'test-custom-template.local'
+        custom_template: 'templates/custom_template.conf.j2'
+        root: '/tmp/custom-template'
 
     nginx_php: "{{ [{'upstream_name': 'manual', 'sockets': [{'host': '127.0.0.1', 'port': '9636' }] }] }}"
     nginx_dh_length: 1024
@@ -301,6 +304,14 @@
         - 'test-php-index.local'
         - 'test-php-index2.local'
 
+    - name: -- Add Directories --
+      file:
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - "{{ nginx_root }}/test-htpasswd.local/public/hello"
+        - "/tmp/custom-template"
+
     - name: -- Add HTML file --
       copy:
         dest: "{{ item }}/index.html"
@@ -314,11 +325,7 @@
         - '{{ nginx_root }}/test-ssl-predeployed.local/public'
         - '{{ nginx_root }}/test-ssl-proxy-protocol.local/public'
         - '{{ nginx_root }}/{{ ngrok.stdout }}/public'
-
-    - name: -- Create directory --
-      file:
-        path: "{{ nginx_root }}/test-htpasswd.local/public/hello"
-        state: directory
+        - '/tmp/custom-template'
 
     - name: -- Add HTML file hello --
       copy:
@@ -536,7 +543,7 @@
 # --------------------------------
 # Check HTTP2
 # --------------------------------
-    - name: SHELL | Check HTTP2
+    - name: SHELL | Check HTTPS HTTP2
       shell: nghttp -nv https://localhost 2> /dev/null | grep -q h2
       args:
         executable: /bin/sh
@@ -544,3 +551,28 @@
       when: nginx_auto_config_httpv2 and 'http_v2' in nginx_modules
       tags:
         - skip_ansible_lint
+
+
+    - block:
+
+      - name: SHELL | Check HTTP2C (on custom template)
+        shell: curl --http2-prior-knowledge http://localhost:8888
+        args:
+          executable: /bin/sh
+          warn: no
+        changed_when: false
+        when: nginx_auto_config_httpv2 and 'http_v2' in nginx_modules
+        tags:
+          - skip_ansible_lint
+
+      - name: SHELL | Check HTTP2C + proxy protocol (on custom template)
+        shell: curl --http2-prior-knowledge --haproxy-protocol http://localhost:9999
+        args:
+          executable: /bin/sh
+          warn: no
+        changed_when: false
+        when: nginx_auto_config_httpv2 and 'http_v2' in nginx_modules
+        tags:
+          - skip_ansible_lint
+
+      when: not (ansible_distribution == 'Debian' and ansible_distribution_major_version is version('9', 'eq'))
