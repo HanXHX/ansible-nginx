@@ -229,9 +229,6 @@
         state: 'absent'
       - name: 'redirect-to.local'
         redirect_to: 'http://test.local'
-      - name: 'backuppc.local'
-        template: '_backuppc'
-        htpasswd: 'hello'
       - name: 'test-ssl.local'
         proto: ['http', 'https']
         template: '_base'
@@ -428,20 +425,6 @@
         user: "hanx"
         password: "qwerty"
         force_basic_auth: yes
-
-# --------------------------------
-# BackupPC
-# --------------------------------
-    - name: -- VERIFY BACKUPPC --
-      uri:
-        url: "http://backuppc.local/"
-        user: "hanx"
-        password: "qwerty"
-        force_basic_auth: yes
-        return_content: yes
-      register: authbpc
-      when: ansible_distribution != 'FreeBSD'
-      failed_when: authbpc.content.find('BackupPC Server Status') == -1
 
 # --------------------------------
 # SSL

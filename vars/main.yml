@@ -40,7 +40,6 @@ nginx_dirs:
     owner: "root"
 
 nginx_templates_no_dir:
-  - '_backuppc'
   - '_proxy'
 
 nginx_servers_default_headers:

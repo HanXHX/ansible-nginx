@@ -10,8 +10,3 @@ About modules
 -------------
 
 Dynamic modules must be set with full path (see `nginx_load_modules` path).
-
-Sites not tested
-----------------
-
-- BackupPC
