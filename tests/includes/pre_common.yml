@@ -13,8 +13,9 @@
   when: ngrok.changed
 
 - name: SHELL | Get ngrok public address
-  shell: curl 'http://127.0.0.1:4040/api/tunnels/command_line' | jq '.public_url' | grep -oE '[[:alnum:]]+\.ngrok\.io'
+  shell: set -o pipefail && curl 'http://127.0.0.1:4040/api/tunnels/command_line' 2> /dev/null | jq -r '.public_url' | cut -d '/' -f 3
   args:
+    executable: /bin/bash
     warn: false
   register: ngrok
   changed_when: false
