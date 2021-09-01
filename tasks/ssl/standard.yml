@@ -34,7 +34,7 @@
     state: directory
   loop: "{{ nginx_ssl_pairs }}"
   when: item.dest_key is not defined or item.dest_cert is not defined
-  no_log: not nginx_debug_role
+  no_log: "{{ not nginx_debug_role }}"
 
 - name: COPY | Deploy SSL keys
   copy:
@@ -44,7 +44,7 @@
   loop: "{{ nginx_ssl_pairs }}"
   when: item.key is defined
   notify: restart nginx
-  no_log: not nginx_debug_role
+  no_log: "{{ not nginx_debug_role }}"
 
 - name: COPY | Deploy SSL certs
   copy:
@@ -54,7 +54,9 @@
   loop: "{{ nginx_ssl_pairs }}"
   when: item.cert is defined
   notify: restart nginx
-  no_log: not nginx_debug_role
+  no_log: "{{ not nginx_debug_role }}"
+
+
 
 - name: COMMAND | Create self-signed certificates
   command: |
@@ -69,4 +71,4 @@
   loop: "{{ nginx_ssl_pairs }}"
   when: item.self_signed is defined
   notify: restart nginx
-  no_log: not nginx_debug_role
+  no_log: "{{ not nginx_debug_role }}"
