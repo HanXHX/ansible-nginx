@@ -4,12 +4,18 @@
   template:
     src: "etc/nginx/nginx.conf.j2"
     dest: "{{ nginx_etc_dir }}/nginx.conf"
+    mode: 0644
+    owner: root
+    group: root
   notify: reload nginx
 
 - name: TEMPLATE | Deploy all helpers
   template:
     src: "{{ item }}"
     dest: "{{ nginx_helper_dir }}/{{ item | basename | regex_replace('.j2$','') }}"
+    mode: 0644
+    owner: root
+    group: root
   with_fileglob: '../templates/etc/nginx/helper/*.j2'
   notify: reload nginx
 
@@ -17,6 +23,9 @@
   template:
     src: "etc/nginx/conf.d/custom.conf.j2"
     dest: "{{ nginx_etc_dir }}/conf.d/custom.conf"
+    mode: 0644
+    owner: root
+    group: root
   notify: reload nginx
 
 - name: LINEINFILE | Fix path
@@ -42,4 +51,7 @@
       load_module {{ m }};
       {% endfor %}
     dest: "{{ nginx_etc_dir }}/modules-enabled/000-modules.conf"
+    mode: 0644
+    owner: root
+    group: root
   notify: reload nginx

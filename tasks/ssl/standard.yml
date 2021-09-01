@@ -25,6 +25,9 @@
   copy:
     content: "{{ nginx_dh }}"
     dest: "{{ nginx_dh_path }}"
+    owner: root
+    group: root
+    mode: 0640
   when: nginx_dh is string
   notify: restart nginx
 
@@ -32,6 +35,9 @@
   file:
     path: "{{ item | nginx_ssl_dir(nginx_ssl_dir) }}"
     state: directory
+    owner: root
+    group: root
+    mode: 0750
   loop: "{{ nginx_ssl_pairs }}"
   when: item.dest_key is not defined or item.dest_cert is not defined
   no_log: "{{ not nginx_debug_role }}"
@@ -40,6 +46,8 @@
   copy:
     content: "{{ item.key }}"
     dest: "{{ item | nginx_key_path(nginx_ssl_dir) }}"
+    owner: root
+    group: root
     mode: 0640
   loop: "{{ nginx_ssl_pairs }}"
   when: item.key is defined
@@ -50,6 +58,8 @@
   copy:
     content: "{{ item.cert }}"
     dest: "{{ item | nginx_cert_path(nginx_ssl_dir) }}"
+    owner: root
+    group: root
     mode: 0644
   loop: "{{ nginx_ssl_pairs }}"
   when: item.cert is defined

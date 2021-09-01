@@ -22,6 +22,9 @@
   file:
     path: "{{ nginx_root }}"
     state: directory
+    mode: 0755
+    owner: root
+    group: root
 
 - name: FILE | Create root public folders (foreach nginx_sites)
   file:
@@ -43,6 +46,9 @@
   template:
     src: "etc/nginx/sites-available/{{ item.template if item.redirect_to is not defined else '_redirect' }}.j2"
     dest: "{{ nginx_etc_dir }}/sites-available/{{ item | nginx_site_filename }}"
+    mode: 0644
+    owner: root
+    group: root
   notify: ['reload nginx', 'restart nginx freebsd']
   when: item.state is not defined or item.state != 'absent'
   loop: "{{ nginx_sites }}"

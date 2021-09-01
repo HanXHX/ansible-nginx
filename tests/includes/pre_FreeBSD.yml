@@ -25,6 +25,7 @@
     state: present
   vars:
     packages:
+      - bash
       - curl
       - daemonize
       - fcgiwrap
