@@ -4,12 +4,13 @@ galaxy_info:
   description: Nginx for Debian / FreeBSD
   company:
   license: GPLv2
-  min_ansible_version: 2.6
+  min_ansible_version: 2.11
   platforms:
   - name: Debian
     versions:
     - stretch
     - buster
+    - bullseye
   - name: FreeBSD
     versions:
     - 11.0
@@ -17,6 +18,7 @@ galaxy_info:
     - 12.0
   galaxy_tags:
   - web
+  - debian
   - proxy
   - http
   - http2

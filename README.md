@@ -20,18 +20,20 @@ Features:
 
 Supported OS:
 
-| OS                 | Working | Stable (active support) |
-| ------------------ | ------- | ----------------------- |
-| Debian Jessie (8)  | Yes     | Check latest supported version ([1.5.0](https://github.com/HanXHX/ansible-nginx/releases/tag/1.5.0)) |
-| Debian Stretch (9) | Yes     | Yes                     |
-| Debian Buster (10) | Yes     | No                      |
-| FreeBSD 11         | Yes     | No                      |
-| FreeBSD 12         | Yes     | No                      |
+| OS                   | Working | Stable (active support) |
+| -------------------- | ------- | ----------------------- |
+| Debian Jessie (8)    | Yes     | Check latest supported version ([1.5.0](https://github.com/HanXHX/ansible-nginx/releases/tag/1.5.0)) |
+| Debian Stretch (9)   | Yes     | Yes                     |
+| Debian Buster (10)   | Yes     | Yes                     |
+| Debian Bullseye (11) | Yes     | Yes                     |
+| FreeBSD 11           | Yes     | No                      |
+| FreeBSD 12           | Yes     | No                      |
 
 Requirements
 ------------
 
-Ansible 2.6+. If you set true to `nginx_backports`, you must install backports repository before lauching this role.
+- Ansible >=2.11
+- If you set true to `nginx_backports`, you must install backports repository before lauching this role.
 
 Role Variables
 --------------
@@ -70,7 +72,7 @@ FreeBSD:
 
 ### Misc
 
-- `nginx_debug_role`: set _true_ if you need to see output of no\_log tasks 
+- `nginx_debug_role`: set _true_ if you need to see output of no\_log tasks
 
 About modules
 -------------
@@ -99,7 +101,6 @@ Note
 
 - Active support for Debian.
 - FreeBSD support is experimental (no Travis). I only test (for the moment) 10.2 (but it can work on other versions).
-- I don't manage BackupPC for FreeBSD (PR welcome).
 
 Dependencies
 ------------
