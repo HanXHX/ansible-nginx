@@ -1,3 +1,5 @@
+---
+
 env:
   - PLATFORM='docker-debian-stretch'          ANSIBLE_VERSION='ansible>=2.6,<2.7'
   - PLATFORM='docker-debian-buster'           ANSIBLE_VERSION='ansible>=2.6,<2.7'

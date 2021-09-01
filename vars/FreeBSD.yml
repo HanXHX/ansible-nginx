@@ -1,3 +1,5 @@
+---
+
 nginx_events_use: 'kqueue'
 nginx_pid: '/var/run/nginx.pid'
 nginx_etc_dir: '/usr/local/etc/nginx'

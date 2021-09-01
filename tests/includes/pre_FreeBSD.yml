@@ -17,8 +17,6 @@
         sockets:
           - host: '127.0.0.1'
             port: 9000
-#   nginx_load_modules:
-#     - /usr/local/libexec/nginx/ngx_http_geoip_module.so
     ngrok_path: '/usr/local/bin/ngrok'
 
 - name: PKGNG | Install needed packages
@@ -30,22 +28,16 @@
       - curl
       - daemonize
       - fcgiwrap
-#     - GeoIP
       - jq
       - nghttp2
       - php74
       - vim
 
-#- name: COMMAND | Get geoip database
-#  command: geoipupdate.sh
-#  args:
-#    creates: /usr/local/share/GeoIP/GeoIP.dat
-
 - name: SERVICE | Force start services
   service:
     name: "{{ item }}"
     state: started
-    enabled: yes
+    enabled: true
   register: sf
   loop:
     - php-fpm

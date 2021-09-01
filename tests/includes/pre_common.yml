@@ -24,7 +24,7 @@
   lineinfile:
     line: "set mouse="
     dest: "{{ item }}/.vimrc"
-    create: yes
+    create: true
   loop:
     - /root
     - /home/vagrant

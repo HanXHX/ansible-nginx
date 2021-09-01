@@ -5,7 +5,7 @@
   - name: STAT | Get info about DH file
     stat:
       path: "{{ nginx_dh_path }}"
-      get_checksum: no
+      get_checksum: false
     register: stat_dh_file
 
   - name: SHELL | Get info about DH file
@@ -55,8 +55,6 @@
   when: item.cert is defined
   notify: restart nginx
   no_log: "{{ not nginx_debug_role }}"
-
-
 
 - name: COMMAND | Create self-signed certificates
   command: |

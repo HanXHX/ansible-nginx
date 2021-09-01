@@ -1,3 +1,5 @@
+---
+
 nginx_events_use: 'epoll'
 nginx_pid: '/run/nginx.pid'
 nginx_etc_dir: '/etc/nginx'

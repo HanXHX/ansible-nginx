@@ -7,7 +7,7 @@
 
 - name: APT | Update cache
   apt:
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
   changed_when: false
 
@@ -33,22 +33,21 @@
 
 - block:
 
-  - name: APT | Install git
-    apt:
-      pkg: git
+    - name: APT | Install git
+      apt:
+        pkg: git
 
-  - name: GIT | Get acme.sh
-    git:
-      repo: 'https://github.com/Neilpang/acme.sh.git'
-      dest: '{{ nginx_acmesh_git_dir }}'
-      update: no
-      version: master
+    - name: GIT | Get acme.sh
+      git:
+        repo: 'https://github.com/Neilpang/acme.sh.git'
+        dest: '{{ nginx_acmesh_git_dir }}'
+        update: false
+        version: master
 
-  - name: COMMAND | Install acme.sh
-    command: ./acme.sh --install --home "{{ nginx_acmesh_dir }}"
-    args:
-      chdir: "{{ nginx_acmesh_git_dir }}"
-      creates: "{{ nginx_acmesh_dir }}"
+    - name: COMMAND | Install acme.sh
+      command: ./acme.sh --install --home "{{ nginx_acmesh_dir }}"
+      args:
+        chdir: "{{ nginx_acmesh_git_dir }}"
+        creates: "{{ nginx_acmesh_dir }}"
 
   when: not acme.stat.exists
-

@@ -1,3 +1,5 @@
+---
+
 nginx_upstream_server_params:
   - key: 'weight'
     default: 1

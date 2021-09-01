@@ -6,7 +6,7 @@
     executable: /bin/sh
   register: nginx_version
   changed_when: false
-  check_mode: no
+  check_mode: false
   tags:
     - skip_ansible_lint
 
@@ -22,7 +22,7 @@
     executable: /bin/sh
   register: shell_modules
   changed_when: false
-  check_mode: no
+  check_mode: false
   tags:
     - skip_ansible_lint
 

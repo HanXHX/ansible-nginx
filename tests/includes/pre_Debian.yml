@@ -9,7 +9,7 @@
 - name: APT | Install needed packages
   apt:
     pkg: "{{ packages }}"
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
     state: present
   vars:
@@ -27,7 +27,7 @@
 - name: APT | Install PHP
   apt:
     pkg: "{{ pkgs }}"
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
     state: present
   vars:
@@ -61,7 +61,7 @@
   unarchive:
     src: "/tmp/ngrok.zip"
     dest: "/tmp"
-    remote_src: yes
+    remote_src: true
 
 - name: SET_FACT | ngrok_path
   set_fact:
@@ -70,7 +70,7 @@
 - name: USER | Create PHP User foo
   user:
     name: foo
-    system: yes
+    system: true
 
 - name: INCLUDE_ROLE | HanXHX.php
   include_role:

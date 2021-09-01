@@ -39,13 +39,13 @@
           {% endif %}
           {% endfor %}
         dest: "/etc/hosts"
-        unsafe_writes: yes
+        unsafe_writes: true
 
   vars:
-# Internal vars
+    # Internal vars
     int_ansible_ssl_dir: '/etc/ansible-ssl'
-# Role vars
-    nginx_worker_processes: 1 # Ansible+FreeBSD can't detect CPU number
+    # Role vars
+    nginx_worker_processes: 1    # Ansible+FreeBSD can't detect CPU number
     nginx_apt_package: 'nginx-extras'
     nginx_module_packages: ['libnginx-mod-http-headers-more-filter']
     nginx_upstreams:
@@ -85,7 +85,7 @@
         force: false
       - name:
           - 'test-ssl-predeployed.local'
-          - 'test-multiple-name.local' # Hack: tests for acme with multiple name, without using acme
+          - 'test-multiple-name.local'    # Hack: tests for acme with multiple name, without using acme
         dest_key: "{{ int_ansible_ssl_dir }}/test.key"
         dest_cert: "{{ int_ansible_ssl_dir }}/test.crt"
       - name: 'test-ssl.local'
@@ -154,7 +154,7 @@
           - 'test-alias.local'
           - 'test2-alias.local'
         template: '_base'
-        filename : 'first-test'
+        filename: 'first-test'
         override_try_files: '$uri/ $uri =404'
         headers:
           'X-Frame-Options': 'deny always'
@@ -283,15 +283,15 @@
   roles:
     - ../../
   post_tasks:
-# --------------------------------
-# Apps
-# --------------------------------
+    # --------------------------------
+    # Apps
+    # --------------------------------
     - name: INCLUDE_TASKS | Post_tasks related to OS version
       include_tasks: "includes/post_{{ ansible_distribution }}.yml"
 
-# --------------------------------
-# Deploy index files
-# --------------------------------
+    # --------------------------------
+    # Deploy index files
+    # --------------------------------
     - name: -- Add PHP file --
       copy:
         dest: "{{ nginx_root }}/{{ item }}/public/index.php"
@@ -325,15 +325,16 @@
         dest: "{{ nginx_root }}/test-htpasswd.local/public/hello/index.html"
         content: "hello\n"
 
-# --------------------------------
-# Test custom facts
-# --------------------------------
+    # --------------------------------
+    # Test custom facts
+    # --------------------------------
     - name: -- CHECK FACTS --
       assert:
         that: "'{{ ansible_local.nginx.fact_nginx_sites[0].name[0] }}' == 'test.local'"
-# --------------------------------
-# Simple sites tests
-# --------------------------------
+
+    # --------------------------------
+    # Simple sites tests
+    # --------------------------------
     - name: -- VERIFY SITES --
       uri:
         url: "http://{{ item | nginx_site_name }}{% if item.listen is defined %}:{{ item.listen[0] }}{% endif %}/"
@@ -362,18 +363,18 @@
         url: "https://{{ item.redirect_from[0] }}:{{ item.listen_ssl[0] | default(443) }}/"
         status_code: 301
         follow_redirects: none
-        validate_certs: no
+        validate_certs: false
       loop: "{{ nginx_sites }}"
       when: item.redirect_from is defined and (item.state is undefined or item.state != "absent") and item.proto is defined and 'https' in item.proto
       changed_when: false
 
-# --------------------------------
-# PHP
-# --------------------------------
+    # --------------------------------
+    # PHP
+    # --------------------------------
     - name: -- VERIFY PHP SITES --
       uri:
         url: "http://{{ item.name }}/"
-        return_content: yes
+        return_content: true
       register: p
       loop: "{{ nginx_sites }}"
       when: >
@@ -384,13 +385,13 @@
     - name: -- VERIFY INDEX2 --
       uri:
         url: "http://test-php-index2.local/lorem.php?ipsum=sit&dolor=amet"
-        return_content: yes
+        return_content: true
       register: p2
       failed_when: p2.content.find('PHP Version') == -1
 
-# --------------------------------
-# Basic Auth
-# --------------------------------
+    # --------------------------------
+    # Basic Auth
+    # --------------------------------
     - name: -- VERIFY AUTH BASIC NONE --
       uri:
         url: "http://test-htpasswd.local/hello/"
@@ -402,14 +403,14 @@
         status_code: 401
         user: "fail"
         password: "fail"
-        force_basic_auth: yes
+        force_basic_auth: true
 
     - name: -- VERIFY AUTH BASIC OK --
       uri:
         url: "http://test-htpasswd.local/hello/"
         user: "hanx"
         password: "qwerty"
-        force_basic_auth: yes
+        force_basic_auth: true
 
     - name: -- VERIFY AUTH BASIC FAIL GLOBAL --
       uri:
@@ -417,23 +418,23 @@
         status_code: 401
         user: "fail"
         password: "fail"
-        force_basic_auth: yes
+        force_basic_auth: true
 
     - name: -- VERIFY AUTH BASIC OK GLOBAL --
       uri:
         url: "http://test-htpasswd-all.local/"
         user: "hanx"
         password: "qwerty"
-        force_basic_auth: yes
+        force_basic_auth: true
 
-# --------------------------------
-# SSL
-# --------------------------------
+    # --------------------------------
+    # SSL
+    # --------------------------------
     - name: -- VERIFY SSL --
       uri:
         url: "https://{{ item }}/"
-        return_content: yes
-        validate_certs: no
+        return_content: true
+        validate_certs: false
       register: sslok
       failed_when: sslok.content.find('Index HTML test OK') == -1
       loop:
@@ -445,9 +446,9 @@
     - name: -- VERIFY SSL REDIRECT --
       uri:
         url: "http://{{ item.name }}/"
-        validate_certs: no
+        validate_certs: false
         status_code: 301
-        return_content: yes
+        return_content: true
         follow_redirects: none
       register: sslredirok
       failed_when: '"https://%s%s" % (item.name, ":" + item.port if item.port is defined else "") not in sslredirok.location'
@@ -458,13 +459,13 @@
         - name: 'test-ssl-redirect-many2.local'
           port: '8443'
 
-# --------------------------------
-# Default sites
-# --------------------------------
+    # --------------------------------
+    # Default sites
+    # --------------------------------
     - name: -- VERIFY DEFAULT SITE --
       uri:
         url: 'http://127.0.0.1/'
-        return_content: yes
+        return_content: true
       register: vdefault
       failed_when: >
         vdefault.content.find('Index HTML test OK') == -1 or
@@ -473,7 +474,7 @@
     - name: -- VERIFY DEFAULT SITE + STUB STATUS--
       uri:
         url: 'http://127.0.0.1/status'
-        return_content: yes
+        return_content: true
       register: vdefault_status
       failed_when: >
         vdefault_status.content.find('Active connections') == -1 or
@@ -482,8 +483,8 @@
     - name: -- VERIFY DEFAULT SSL SITE --
       uri:
         url: 'https://127.0.0.1/'
-        return_content: yes
-        validate_certs: no
+        return_content: true
+        validate_certs: false
       register: vdefault
       failed_when: >
         vdefault.content.find('Index HTML test OK') == -1 or
@@ -492,55 +493,46 @@
     - name: -- VERIFY NOT DEFAULT SITE --
       uri:
         url: 'http://test-php.local/'
-        return_content: yes
+        return_content: true
       register: vphp
       failed_when: vphp.x_ansible_default is defined
 
     - name: -- VERIFY NOT DEFAULT SSL SITE --
       uri:
         url: 'https://test-ssl.local/'
-        return_content: yes
-        validate_certs: no
+        return_content: true
+        validate_certs: false
       register: notdefaultssl
       failed_when: notdefaultssl.x_ansible_default is defined
 
-
-# --------------------------------
-# Check Proxy protocol
-# --------------------------------
-
-# Note: Debian Stretch doesn't any version of curl with "--haproxy-protocol" argument
-
+    # --------------------------------
+    # Check Proxy protocol
+    # Note: Debian Stretch doesn't any version of curl with "--haproxy-protocol" argument
+    # --------------------------------
     - block:
 
-      - name: SHELL | Check HTTP proxy protocol
-        shell: curl -I --haproxy-protocol http://test-ssl-proxy-protocol.local:20080 | grep -qi 'X-Proxy-Protocol'
-        args:
-          executable: /bin/sh
-          warn: no
-        changed_when: false
-        tags:
-          - skip_ansible_lint
+        - name: SHELL | Check HTTP proxy protocol
+          shell: curl -I --haproxy-protocol http://test-ssl-proxy-protocol.local:20080 | grep -qi 'X-Proxy-Protocol'
+          args:
+            executable: /bin/sh
+            warn: false
+          changed_when: false
 
-      - name: SHELL | Check HTTPS proxy protocol
-        shell: curl -I --haproxy-protocol -k https://test-ssl-proxy-protocol.local:20443 | grep -qi 'X-Proxy-Protocol'
-        args:
-          executable: /bin/sh
-          warn: no
-        changed_when: false
-        tags:
-          - skip_ansible_lint
+        - name: SHELL | Check HTTPS proxy protocol
+          shell: curl -I --haproxy-protocol -k https://test-ssl-proxy-protocol.local:20443 | grep -qi 'X-Proxy-Protocol'
+          args:
+            executable: /bin/sh
+            warn: false
+          changed_when: false
 
       when: not (ansible_distribution == 'Debian' and ansible_distribution_major_version is version('9', 'eq'))
 
-# --------------------------------
-# Check HTTP2
-# --------------------------------
+    # --------------------------------
+    # Check HTTP2
+    # --------------------------------
     - name: SHELL | Check HTTP2
       shell: nghttp -nv https://localhost 2> /dev/null | grep -q h2
       args:
         executable: /bin/sh
       changed_when: false
       when: nginx_auto_config_httpv2 and 'http_v2' in nginx_modules
-      tags:
-        - skip_ansible_lint
