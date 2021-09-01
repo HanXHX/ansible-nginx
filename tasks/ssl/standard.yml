@@ -3,26 +3,26 @@
 - block:
 
   - name: STAT | Get info about DH file
-    stat:
+    ansible.builtin.stat:
       path: "{{ nginx_dh_path }}"
       get_checksum: false
     register: stat_dh_file
 
   - name: SHELL | Get info about DH file
-    shell: openssl dhparam -in {{ nginx_dh_path }} -text -noout 2>&1 | awk '/DH Parameters/ { print substr($3, 2) }'
+    ansible.builtin.shell: openssl dhparam -in {{ nginx_dh_path }} -text -noout 2>&1 | awk '/DH Parameters/ { print substr($3, 2) }'
     changed_when: false
     register: dh_info
     when: stat_dh_file.stat.exists
 
   - name: COMMAND | Generate DH file
-    command: openssl dhparam -out {{ nginx_dh_path }} {{ nginx_dh_length }}
+    ansible.builtin.command: openssl dhparam -out {{ nginx_dh_path }} {{ nginx_dh_length }}
     when: not stat_dh_file.stat.exists or (dh_info.stdout | int != nginx_dh_length | int)
     notify: restart nginx
 
   when: nginx_dh is not string
 
 - name: COPY | Deploy DH file from vars
-  copy:
+  ansible.builtin.copy:
     content: "{{ nginx_dh }}"
     dest: "{{ nginx_dh_path }}"
     owner: root
@@ -32,7 +32,7 @@
   notify: restart nginx
 
 - name: FILE | Create SSL directories
-  file:
+  ansible.builtin.file:
     path: "{{ item | nginx_ssl_dir(nginx_ssl_dir) }}"
     state: directory
     owner: root
@@ -43,7 +43,7 @@
   no_log: "{{ not nginx_debug_role }}"
 
 - name: COPY | Deploy SSL keys
-  copy:
+  ansible.builtin.copy:
     content: "{{ item.key }}"
     dest: "{{ item | nginx_key_path(nginx_ssl_dir) }}"
     owner: root
@@ -55,7 +55,7 @@
   no_log: "{{ not nginx_debug_role }}"
 
 - name: COPY | Deploy SSL certs
-  copy:
+  ansible.builtin.copy:
     content: "{{ item.cert }}"
     dest: "{{ item | nginx_cert_path(nginx_ssl_dir) }}"
     owner: root
@@ -67,7 +67,7 @@
   no_log: "{{ not nginx_debug_role }}"
 
 - name: COMMAND | Create self-signed certificates
-  command: |
+  ansible.builtin.command: |
     openssl req
       -new -newkey rsa:2048 -sha256 -days 3650 -nodes -x509
       -subj '/CN={{ item | nginx_site_name }}'

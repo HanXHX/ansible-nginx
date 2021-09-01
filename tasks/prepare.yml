@@ -1,7 +1,7 @@
 ---
 
 - name: SHELL | Get Nginx version
-  shell: nginx -v 2>&1 | sed -r 's#.*/##;' | cut -d ' ' -f 1
+  ansible.builtin.shell: nginx -v 2>&1 | sed -r 's#.*/##;' | cut -d ' ' -f 1
   args:
     executable: /bin/sh
   register: nginx_version
@@ -11,7 +11,7 @@
     - skip_ansible_lint
 
 - name: SHELL | Get module list
-  shell: |
+  ansible.builtin.shell: |
     nginx -V 2>&1 |
     tr -- - '\n' |
     grep -A 1 with |
@@ -27,11 +27,11 @@
     - skip_ansible_lint
 
 - name: SET_FACT | Save modules
-  set_fact:
+  ansible.builtin.set_fact:
     nginx_modules: "{{ shell_modules.stdout_lines }}"
 
 - name: FILE | Create folders
-  file:
+  ansible.builtin.file:
     dest: "{{ item.dir }}"
     owner: "{{ item.owner }}"
     mode: "{{ item.mode }}"
@@ -39,7 +39,7 @@
   loop: "{{ nginx_dirs }}"
 
 - name: FILE | Create ansible facts dir
-  file:
+  ansible.builtin.file:
     path: /etc/ansible/facts.d
     state: directory
     mode: 0755

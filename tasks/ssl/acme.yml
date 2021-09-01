@@ -1,18 +1,18 @@
 ---
 
 - name: SET_FACT | Assign default...
-  set_fact:
+  ansible.builtin.set_fact:
     acme_create: []
 
 - name: STAT | Check if certificates are already installed
-  stat:
+  ansible.builtin.stat:
     path: "{{ item | nginx_cert_path(nginx_ssl_dir) }}"
   loop: "{{ nginx_ssl_pairs }}"
   when: item.acme is defined and item.acme
   register: acme_installed_certs
 
 - name: SET_FACT | Assign var with certificates to create
-  set_fact:
+  ansible.builtin.set_fact:
     acme_create: "{{ acme_create | default([]) + [ (item.item) ] }}"
   loop: "{{ acme_installed_certs.results }}"
   when: item.skipped is not defined and (not item.stat.exists or item.stat.size == 0)
@@ -21,7 +21,7 @@
   block:
 
     - name: TEMPLATE | Create fake site
-      template:
+      ansible.builtin.template:
         src: "etc/nginx/conf.d/FAKESITE.conf.j2"
         dest: "{{ nginx_etc_dir }}/conf.d/FAKESITE_{{ item | nginx_site_name }}.conf"
         mode: 0644
@@ -31,26 +31,26 @@
       register: fake_site
 
     - name: FILE | Delete current site if needed
-      file:
+      ansible.builtin.file:
         path: "{{ nginx_etc_dir }}/sites-enabled/{{ item | nginx_site_name }}"
         state: absent
       loop: "{{ acme_create }}"
       when: fake_site.changed
 
     - name: SERVICE | Restart nginx
-      service:
+      ansible.builtin.service:
         name: nginx
         state: restarted
       when: fake_site.changed and ansible_virtualization_type != 'docker'
 
     - name: COMMAND | Restart nginx
-      command: service nginx restart
+      ansible.builtin.command: service nginx restart
       args:
         warn: false
       when: fake_site.changed and ansible_virtualization_type == 'docker'
 
     - name: COMMAND | Get certificates
-      command: |
+      ansible.builtin.command: |
         {{ nginx_acmesh_bin }}
           --home {{ nginx_acmesh_dir }}
           --issue{% for s in nginx_sites | nginx_search_by_ssl_name(item.name) | nginx_all_site_names %} -d {{ s }}{% endfor %}
@@ -64,12 +64,12 @@
       no_log: "{{ not nginx_debug_role }}"
 
     - name: FILE | Create SSL dir per site
-      file:
+      ansible.builtin.file:
         path: "{{ nginx_ssl_dir }}/{{ item | nginx_site_name }}"
       loop: "{{ acme_create }}"
 
     - name: COMMAND | Install certificates
-      command: |
+      ansible.builtin.command: |
         {{ nginx_acmesh_bin }}
           --home {{ nginx_acmesh_dir }}
           --install-cert -d {{ nginx_sites | nginx_search_by_ssl_name(item | nginx_site_name) | nginx_site_name }}
@@ -85,17 +85,17 @@
   rescue:
 
     - name: FAIL | Explicit
-      fail:
+      ansible.builtin.fail:
         msg: "Something is bad... Auto crash!"
 
   always:
 
     - name: FILE | Delete fake sites
-      file:
+      ansible.builtin.file:
         path: "{{ nginx_etc_dir }}/conf.d/FAKESITE_{{ item | nginx_site_name }}.conf"
         state: absent
       loop: "{{ acme_create }}"
       notify: restart nginx
 
     - name: META | Flush handlers
-      meta: flush_handlers
+      ansible.builtin.meta: flush_handlers

@@ -16,20 +16,20 @@
 - block:
 
     - name: COMMAND | Create /usr/local/etc/fdfs/http.conf
-      command: touch /usr/local/etc/fdfs/http.conf
+      ansible.builtin.command: touch /usr/local/etc/fdfs/http.conf
       args:
         creates: /usr/local/etc/fdfs/http.conf
       register: fd1
 
     - name: LINEINFILE | Tune fdfs
-      lineinfile:
+      ansible.builtin.lineinansible.builtin.file:
         regexp: ^load_fdfs_parameters_from_tracker
         line: load_fdfs_parameters_from_tracker=false
         path: /usr/local/etc/fdfs/mod_fastdfs.conf
       register: fd2
 
     - name: SERVICE | Restart nginx when fdfs is tuned
-      service:
+      ansible.builtin.service:
         name: nginx
         state: restarted
       when: fd1.changed or fd2.changed
@@ -37,7 +37,7 @@
   when: true
 
 - name: FILE | Create configuration dir (like Debian)
-  file:
+  ansible.builtin.file:
     path: "{{ nginx_etc_dir }}/{{ item }}"
     state: directory
     mode: 0755
@@ -49,7 +49,7 @@
     - sites-enabled
 
 - name: FILE | Create log directory
-  file:
+  ansible.builtin.file:
     path: "{{ nginx_log_dir }}"
     owner: "{{ nginx_user }}"
     group: wheel
@@ -57,6 +57,6 @@
     state: directory
 
 - name: SERVICE | Enable nginx
-  service:
+  ansible.builtin.service:
     name: nginx
     enabled: true

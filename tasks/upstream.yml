@@ -1,7 +1,7 @@
 ---
 
 - name: TEMPLATE | Deploy PHP upstream to Nginx
-  template:
+  ansible.builtin.template:
     src: "etc/nginx/conf.d/php.conf.j2"
     dest: "{{ nginx_etc_dir }}/conf.d/php.conf"
     mode: 0644
@@ -10,7 +10,7 @@
   notify: reload nginx
 
 - name: TEMPLATE | Deploy other upstreams
-  template:
+  ansible.builtin.template:
     src: "etc/nginx/conf.d/_upstream.conf.j2"
     dest: "{{ nginx_etc_dir }}/conf.d/upstream-{{ item.name }}.conf"
     mode: 0644
@@ -21,7 +21,7 @@
   notify: reload nginx
 
 - name: FILE | Delete other upstreams
-  file:
+  ansible.builtin.file:
     path: "{{ nginx_etc_dir }}/conf.d/upstream-{{ item.name }}.conf"
     state: absent
   loop: "{{ nginx_upstreams }}"

@@ -1,51 +1,51 @@
 ---
 
 - name: SET_FACT | Bypass https://github.com/ansible/ansible/issues/19874
-  set_fact:
+  ansible.builtin.set_fact:
     ansible_distribution_release: 'buster'
   when: ansible_facts.distribution_major_version == "buster/sid"
 
 - name: APT | Update cache
-  apt:
+  ansible.builtin.apt:
     update_cache: true
     cache_valid_time: 3600
   changed_when: false
 
 - name: APT | Install nginx and dependencies
-  apt:
+  ansible.builtin.apt:
     pkg: "{{ nginx_apt_package }}"
     default_release: "{{ ansible_distribution_release + '-backports' if nginx_backports else ansible_distribution_release }}"
 
 - name: APT | Install nginx modules
-  apt:
+  ansible.builtin.apt:
     pkg: "{{ nginx_module_packages }}"
     state: present
 
 - name: APT | Install python-passlib
-  apt:
+  ansible.builtin.apt:
     pkg: "python{% if ansible_python_version is version('3', '>=') %}3{% endif %}-passlib"
     state: present
 
 - name: STAT | Check acme.sh is installed
-  stat:
+  ansible.builtin.stat:
     path: "{{ nginx_acmesh_dir }}"
   register: acme
 
 - block:
 
     - name: APT | Install git
-      apt:
+      ansible.builtin.apt:
         pkg: git
 
     - name: GIT | Get acme.sh
-      git:
+      ansible.builtin.git:
         repo: 'https://github.com/Neilpang/acme.sh.git'
         dest: '{{ nginx_acmesh_git_dir }}'
         update: false
         version: master
 
     - name: COMMAND | Install acme.sh
-      command: ./acme.sh --install --home "{{ nginx_acmesh_dir }}"
+      ansible.builtin.command: ./acme.sh --install --home "{{ nginx_acmesh_dir }}"
       args:
         chdir: "{{ nginx_acmesh_git_dir }}"
         creates: "{{ nginx_acmesh_dir }}"

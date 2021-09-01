@@ -1,7 +1,7 @@
 ---
 
 - name: FAIL | Check filenames
-  fail:
+  ansible.builtin.fail:
     msg: "Forbidden keyword default on site {{ item | nginx_site_name }}"
   when: item.filename is defined and item.filename == 'default'
   loop: "{{ nginx_sites }}"
@@ -9,7 +9,7 @@
     label: "{{ item | nginx_site_name }}"
 
 - name: FAIL | Check HTTPS redir and proto
-  fail:
+  ansible.builtin.fail:
     msg: "You can't have HTTP proto and HTTPS redirection at the same time"
   when:
     ((item.proto is defined and 'http' in item.proto) or (item.proto is not defined)) and
@@ -19,7 +19,7 @@
     label: "{{ item | nginx_site_name }}"
 
 - name: FILE | Create root directory
-  file:
+  ansible.builtin.file:
     path: "{{ nginx_root }}"
     state: directory
     mode: 0755
@@ -27,7 +27,7 @@
     group: root
 
 - name: FILE | Create root public folders (foreach nginx_sites)
-  file:
+  ansible.builtin.file:
     path: "{{ nginx_root }}/{{ item | nginx_site_filename }}/public"
     state: directory
     owner: "{{ item.owner | default(nginx_user) }}"
@@ -43,7 +43,7 @@
     label: "{{ item | nginx_site_name }}"
 
 - name: TEMPLATE | Create sites
-  template:
+  ansible.builtin.template:
     src: "etc/nginx/sites-available/{{ item.template if item.redirect_to is not defined else '_redirect' }}.j2"
     dest: "{{ nginx_etc_dir }}/sites-available/{{ item | nginx_site_filename }}"
     mode: 0644
@@ -56,7 +56,7 @@
     label: "{{ item | nginx_site_name }}"
 
 - name: FILE | Delete sites
-  file:
+  ansible.builtin.file:
     path: "{{ nginx_etc_dir }}/{{ item.1 }}/{{ item.0 | nginx_site_filename }}"
     state: absent
   loop: "{{ nginx_sites | product(dirs) | list }}"
@@ -68,7 +68,7 @@
     label: "{{ nginx_etc_dir }}/{{ item.1 }}/{{ item.0 | nginx_site_filename }}"
 
 - name: FILE | Enable sites
-  file:
+  ansible.builtin.file:
     src: "{{ nginx_etc_dir }}/sites-available/{{ item | nginx_site_filename }}"
     dest: "{{ nginx_etc_dir }}/sites-enabled/{{ item | nginx_site_filename }}"
     state: link
@@ -80,7 +80,7 @@
     label: "{{ item | nginx_site_name }}"
 
 - name: FILE | Disable sites
-  file:
+  ansible.builtin.file:
     path: "{{ nginx_etc_dir }}/sites-enabled/{{ item | nginx_site_filename }}"
     state: absent
   loop: "{{ nginx_sites }}"
@@ -90,14 +90,14 @@
     label: "{{ item | nginx_site_name }}"
 
 - name: FILE | Delete default site when explicitely defined
-  file:
+  ansible.builtin.file:
     path: "{{ nginx_etc_dir }}/sites-enabled/default"
     state: absent
   notify: ['reload nginx', 'restart nginx freebsd']
   when: nginx_default_site is not none
 
 - name: FILE | Auto set default site
-  file:
+  ansible.builtin.file:
     src: "{{ nginx_etc_dir }}/sites-available/default"
     dest: "{{ nginx_etc_dir }}/sites-enabled/default"
     state: link
@@ -105,7 +105,7 @@
   when: nginx_default_site is none
 
 - name: TEMPLATE | Deploy facts
-  template:
+  ansible.builtin.template:
     src: etc/ansible/facts.d/nginx.fact.j2
     dest: /etc/ansible/facts.d/nginx.fact
     mode: 0644

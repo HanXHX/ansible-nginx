@@ -1,30 +1,30 @@
 ---
 
 - name: INCLUDE_VARS | Related to OS
-  include_vars: "{{ ansible_distribution }}.yml"
+  ansible.builtin.include_vars: "{{ ansible_distribution }}.yml"
   tags: ['nginx::site', 'nginx::ssl']
 
 - name: INCLUDE_TASKS | Install
-  include_tasks: "install_{{ ansible_distribution }}.yml"
+  ansible.builtin.include_tasks: "install_{{ ansible_distribution }}.yml"
   tags: ['nginx::site', 'nginx::ssl']
 
 - name: IMPORT_TASKS| Prepare
-  import_tasks: prepare.yml
+  ansible.builtin.import_tasks: prepare.yml
   tags: ['nginx::site', 'nginx::ssl']
 
 - name: IMPORT_TASKS| Install
-  import_tasks: config.yml
+  ansible.builtin.import_tasks: config.yml
 
 - name: IMPORT_TASKS| Upstream configuration
-  import_tasks: upstream.yml
+  ansible.builtin.import_tasks: upstream.yml
 
 - name: IMPORT_TASKS| htpasswd configuration
-  import_tasks: htpasswd.yml
+  ansible.builtin.import_tasks: htpasswd.yml
 
 - name: IMPORT_TASKS| SSL configuration
-  import_tasks: ssl/main.yml
+  ansible.builtin.import_tasks: ssl/main.yml
   tags: ['nginx::ssl']
 
 - name: IMPORT_TASKS| Sites configuration
-  import_tasks: site.yml
+  ansible.builtin.import_tasks: site.yml
   tags: ['nginx::site']
