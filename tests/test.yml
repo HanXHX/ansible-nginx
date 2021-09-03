@@ -320,9 +320,10 @@
         - 'test-php-index2.local'
 
     - name: -- Add Directories --
-      file:
+      ansible.builtin.file:
         path: "{{ item }}"
         state: directory
+        mode: 0755
       loop:
         - "{{ nginx_root }}/test-htpasswd.local/public/hello"
         - "/tmp/custom-template"
