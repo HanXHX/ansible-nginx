@@ -3,6 +3,3 @@
 nginx_events_use: 'epoll'
 nginx_pid: '/run/nginx.pid'
 nginx_etc_dir: '/etc/nginx'
-
-# Specific sites
-nginx_fcgiwrap_sock: '/var/run/fcgiwrap.socket'

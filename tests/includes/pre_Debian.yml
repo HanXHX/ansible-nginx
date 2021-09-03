@@ -17,7 +17,6 @@
       - cron
       - curl
       - daemonize
-      - fcgiwrap
       - jq
       - nghttp2
       - strace
@@ -39,11 +38,6 @@
   shell: php --version | awk '/^PHP/ { print $2 }' | grep -o -E '^.{3}'
   changed_when: false
   register: cur_php_version
-
-- name: SERVICE | Force start fcgiwrap
-  service:
-    name: "fcgiwrap"
-    state: started
 
 # Bypasses Ansible+Docker issue. With service module... php is not really started!
 - name: COMMAND | Force start PHP

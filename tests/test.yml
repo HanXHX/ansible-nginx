@@ -289,6 +289,9 @@
         ssl_name: '{{ ngrok.stdout }}'
         headers:
           'X-acme': '1'
+      - name: 'test-custom-template.local'
+        custom_template: 'templates/custom_template.conf.j2'
+        root: '/tmp/custom-template'
 
     nginx_php: "{{ [{'upstream_name': 'manual', 'sockets': [{'host': '127.0.0.1', 'port': '9636' }] }] }}"
     nginx_dh_length: 1024
@@ -315,6 +318,14 @@
         - 'test-php.local'
         - 'test-php-index.local'
         - 'test-php-index2.local'
+
+    - name: -- Add Directories --
+      file:
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - "{{ nginx_root }}/test-htpasswd.local/public/hello"
+        - "/tmp/custom-template"
 
     - name: -- Add HTML file --
       ansible.builtin.copy:
