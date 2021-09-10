@@ -28,3 +28,47 @@
   loop:
     - /root
     - /home/vagrant
+
+- name: FILE | Create an internal SSL dir
+  ansible.builtin.file:
+    path: "{{ int_ansible_ssl_dir }}"
+    state: directory
+    mode: 0750
+    owner: root
+    group: root
+
+- name: COPY | Deploy test certificate
+  ansible.builtin.copy:
+    src: "file/test.crt"
+    dest: "{{ int_ansible_ssl_dir }}/test.crt"
+    mode: 0640
+    owner: root
+    group: root
+
+- name: COPY | Deploy test key
+  ansible.builtin.copy:
+    src: "file/test.key"
+    dest: "{{ int_ansible_ssl_dir }}/test.key"
+    mode: 0640
+    owner: root
+    group: root
+
+- name: COPY | Add all hosts in /etc/hosts
+  ansible.builtin.copy:
+    content: |
+      127.0.0.1 localhost
+      {% for s in nginx_sites %}
+      {% if s.name is string %}
+      127.0.0.1 {{ s.name }}
+      {% else %}
+      127.0.0.1 {% for n in s.name %}{{ n }} {% endfor %}
+      {% endif %}
+      {% if s.redirect_from is defined %}
+      127.0.0.1 {% for rf in s.redirect_from %}{{ rf }} {% endfor %}
+      {% endif %}
+      {% endfor %}
+    dest: "/etc/hosts"
+    mode: 0644
+    owner: root
+    group: root
+    unsafe_writes: true
