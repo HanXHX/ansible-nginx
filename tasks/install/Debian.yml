@@ -21,7 +21,7 @@
     pkg: "{{ nginx_module_packages }}"
     state: present
 
-- name: APT | Install python-passlib
+- name: APT | Install passlib lib
   ansible.builtin.apt:
-    pkg: "python{% if ansible_python_version is version('3', '>=') %}3{% endif %}-passlib"
+    pkg: "python3-passlib"
     state: present
