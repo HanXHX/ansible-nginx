@@ -24,4 +24,12 @@
         chdir: "{{ nginx_acmesh_git_dir }}"
         creates: "{{ nginx_acmesh_dir }}"
 
+    - name: COMMAND | Force acme.sh to use letsencrypt (instead of zerossl)
+      ansible.builtin.command: '{{ nginx_acmesh_dir }}/acme.sh --set-default-ca --server letsencrypt --home "{{ nginx_acmesh_dir }}"'
+
   when: not acme.stat.exists
+
+- name: FILE | Remove temp acme.sh dir
+  ansible.builtin.file:
+    path: '{{ nginx_acmesh_git_dir }}'
+    state: absent

@@ -4,4 +4,5 @@
   ansible.builtin.include_tasks: "{{ ansible_distribution }}.yml"
 
 - name: IMPORT_TASKS | acme
-  ansible.builtin.include_tasks: "acme.yml"
+  ansible.builtin.import_tasks: "acme.yml"
+  when: nginx_acmesh
