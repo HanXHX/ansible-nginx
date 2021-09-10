@@ -5,7 +5,7 @@
   tags: ['nginx::site', 'nginx::ssl']
 
 - name: INCLUDE_TASKS | Install
-  ansible.builtin.include_tasks: "install_{{ ansible_distribution }}.yml"
+  ansible.builtin.import_tasks: "install/main.yml"
   tags: ['nginx::site', 'nginx::ssl']
 
 - name: IMPORT_TASKS| Prepare

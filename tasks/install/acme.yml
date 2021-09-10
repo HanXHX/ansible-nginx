@@ -1,0 +1,27 @@
+---
+
+- name: STAT | Check acme.sh is installed
+  ansible.builtin.stat:
+    path: "{{ nginx_acmesh_dir }}"
+  register: acme
+
+- block:
+
+    - name: APT | Install git
+      ansible.builtin.apt:
+        pkg: git
+
+    - name: GIT | Get acme.sh
+      ansible.builtin.git:
+        repo: 'https://github.com/Neilpang/acme.sh.git'
+        dest: '{{ nginx_acmesh_git_dir }}'
+        update: false
+        version: master
+
+    - name: COMMAND | Install acme.sh
+      ansible.builtin.command: ./acme.sh --install --home "{{ nginx_acmesh_dir }}"
+      args:
+        chdir: "{{ nginx_acmesh_git_dir }}"
+        creates: "{{ nginx_acmesh_dir }}"
+
+  when: not acme.stat.exists
