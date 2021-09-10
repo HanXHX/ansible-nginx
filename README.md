@@ -23,7 +23,7 @@ Supported OS:
 | OS                   | Working | Stable (active support) |
 | -------------------- | ------- | ----------------------- |
 | Debian Jessie (8)    | Yes     | Check latest supported version ([1.5.0](https://github.com/HanXHX/ansible-nginx/releases/tag/1.5.0)) |
-| Debian Stretch (9)   | Yes     | Yes                     |
+| Debian Stretch (9)   | Yes     | Check latest supported version ([1.9.0](https://github.com/HanXHX/ansible-nginx/releases/tag/1.9.0)) | 
 | Debian Buster (10)   | Yes     | Yes                     |
 | Debian Bullseye (11) | Yes     | Yes                     |
 | FreeBSD 11           | Yes     | No                      |

@@ -239,25 +239,20 @@
 
 # --------------------------------
 # Check Proxy protocol
-# Note: Debian Stretch doesn't any version of curl with "--haproxy-protocol" argument
 # --------------------------------
-- block:
+- name: SHELL | Check HTTP proxy protocol
+  ansible.builtin.shell: set -o pipefail && curl -I --haproxy-protocol http://test-ssl-proxy-protocol.local:20080 | grep -qi 'X-Proxy-Protocol'
+  args:
+    executable: /bin/bash
+    warn: false
+  changed_when: false
 
-    - name: SHELL | Check HTTP proxy protocol
-      ansible.builtin.shell: set -o pipefail && curl -I --haproxy-protocol http://test-ssl-proxy-protocol.local:20080 | grep -qi 'X-Proxy-Protocol'
-      args:
-        executable: /bin/bash
-        warn: false
-      changed_when: false
-
-    - name: SHELL | Check HTTPS proxy protocol
-      ansible.builtin.shell: set -o pipefail && curl -I --haproxy-protocol -k https://test-ssl-proxy-protocol.local:20443 | grep -qi 'X-Proxy-Protocol'
-      args:
-        executable: /bin/bash
-        warn: false
-      changed_when: false
-
-  when: not (ansible_distribution == 'Debian' and ansible_distribution_major_version is version('9', 'eq'))
+- name: SHELL | Check HTTPS proxy protocol
+  ansible.builtin.shell: set -o pipefail && curl -I --haproxy-protocol -k https://test-ssl-proxy-protocol.local:20443 | grep -qi 'X-Proxy-Protocol'
+  args:
+    executable: /bin/bash
+    warn: false
+  changed_when: false
 
 # --------------------------------
 # Check HTTP2

@@ -6,7 +6,6 @@
 Vagrant.configure("2") do |config|
 
   vms_debian = [
-    { :name => "debian-stretch", :box => "debian/stretch64", :vars => {} },
     { :name => "debian-buster", :box => "debian/buster64", :vars => {} },
     { :name => "debian-bullseye", :box => "debian/bullseye64", :vars => {} }
   ]
@@ -17,7 +16,6 @@ Vagrant.configure("2") do |config|
   ]
 
   conts = [
-    { :name => "docker-debian-stretch", :docker => "hanxhx/vagrant-ansible:debian9", :vars => {} },
     { :name => "docker-debian-buster", :docker => "hanxhx/vagrant-ansible:debian10", :vars => {} },
     { :name => "docker-debian-bullseye", :docker => "hanxhx/vagrant-ansible:debian11", :vars => {} },
   ]

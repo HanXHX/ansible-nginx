@@ -4,7 +4,6 @@ env:
   global:
     - VAGRANT_VERSION='2.2.18'
   jobs:
-    - PLATFORM='docker-debian-stretch'  ANSIBLE_VERSION='>=2.11,<2.12'
     - PLATFORM='docker-debian-bullseye' ANSIBLE_VERSION='>=2.11,<2.12'
     - PLATFORM='docker-debian-buster'   ANSIBLE_VERSION='>=2.11,<2.12'
 
