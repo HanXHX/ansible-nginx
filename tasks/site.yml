@@ -49,7 +49,7 @@
     mode: 0644
     owner: root
     group: root
-  notify: ['reload nginx', 'restart nginx freebsd']
+  notify: ['Reload nginx', 'Restart nginx freebsd']
   when: (item.state is not defined or item.state != 'absent') and item.custom_template is not defined
   loop: "{{ nginx_sites }}"
   loop_control:
@@ -62,7 +62,7 @@
     mode: 0644
     owner: root
     group: root
-  notify: ['reload nginx', 'restart nginx freebsd']
+  notify: ['Reload nginx', 'Restart nginx freebsd']
   when: (item.state is not defined or item.state != 'absent') and item.custom_template is defined
   loop: "{{ nginx_sites }}"
   loop_control:
@@ -73,7 +73,7 @@
     path: "{{ nginx_etc_dir }}/{{ item.1 }}/{{ item.0 | nginx_site_filename }}"
     state: absent
   loop: "{{ nginx_sites | product(dirs) | list }}"
-  notify: ['reload nginx', 'restart nginx freebsd']
+  notify: ['Reload nginx', 'Restart nginx freebsd']
   when: item.0.state is defined and item.0.state == 'absent'
   vars:
     dirs: ['sites-available', 'sites-enabled']
@@ -86,7 +86,7 @@
     dest: "{{ nginx_etc_dir }}/sites-enabled/{{ item | nginx_site_filename }}"
     state: link
   loop: "{{ nginx_sites }}"
-  notify: ['reload nginx', 'restart nginx freebsd']
+  notify: ['Reload nginx', 'Restart nginx freebsd']
   when: >
     item.state is not defined or item.state == 'present'
   loop_control:
@@ -97,7 +97,7 @@
     path: "{{ nginx_etc_dir }}/sites-enabled/{{ item | nginx_site_filename }}"
     state: absent
   loop: "{{ nginx_sites }}"
-  notify: ['reload nginx', 'restart nginx freebsd']
+  notify: ['Reload nginx', 'Restart nginx freebsd']
   when: item.state is defined and item.state == 'disabled'
   loop_control:
     label: "{{ item | nginx_site_name }}"
@@ -106,7 +106,7 @@
   ansible.builtin.file:
     path: "{{ nginx_etc_dir }}/sites-enabled/default"
     state: absent
-  notify: ['reload nginx', 'restart nginx freebsd']
+  notify: ['Reload nginx', 'Restart nginx freebsd']
   when: nginx_default_site is not none
 
 - name: FILE | Auto set default site
@@ -114,7 +114,7 @@
     src: "{{ nginx_etc_dir }}/sites-available/default"
     dest: "{{ nginx_etc_dir }}/sites-enabled/default"
     state: link
-  notify: ['reload nginx', 'restart nginx freebsd']
+  notify: ['Reload nginx', 'Restart nginx freebsd']
   when: nginx_default_site is none
 
 - name: TEMPLATE | Deploy facts
@@ -122,4 +122,4 @@
     src: etc/ansible/facts.d/nginx.fact.j2
     dest: /etc/ansible/facts.d/nginx.fact
     mode: 0644
-  notify: ['setup']
+  notify: ['Setup']

@@ -5,7 +5,9 @@
     path: "{{ nginx_acmesh_dir }}"
   register: acme
 
-- block:
+- name: Install acme.sh if needed
+  when: not acme.stat.exists
+  block:
 
     - name: APT | Install git
       ansible.builtin.apt:
@@ -26,8 +28,7 @@
 
     - name: COMMAND | Force acme.sh to use letsencrypt (instead of zerossl)
       ansible.builtin.command: '{{ nginx_acmesh_dir }}/acme.sh --set-default-ca --server letsencrypt --home "{{ nginx_acmesh_dir }}"'
-
-  when: not acme.stat.exists
+      changed_when: true
 
 - name: FILE | Remove temp acme.sh dir
   ansible.builtin.file:

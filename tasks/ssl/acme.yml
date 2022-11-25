@@ -13,7 +13,7 @@
 
 - name: SET_FACT | Assign var with certificates to create
   ansible.builtin.set_fact:
-    acme_create: "{{ acme_create | default([]) + [ (item.item) ] }}"
+    acme_create: "{{ acme_create | default([]) + [(item.item)] }}"
   loop: "{{ acme_installed_certs.results }}"
   when: item.skipped is not defined and (not item.stat.exists or item.stat.size == 0)
 
@@ -80,7 +80,7 @@
         creates: "{{ item | nginx_cert_path(nginx_ssl_dir) }}"
       loop: "{{ nginx_ssl_pairs }}"
       when: item.acme is defined and item.acme
-      notify: restart nginx
+      notify: Restart nginx
 
   rescue:
 
@@ -95,7 +95,7 @@
         path: "{{ nginx_etc_dir }}/conf.d/FAKESITE_{{ item | nginx_site_name }}.conf"
         state: absent
       loop: "{{ acme_create }}"
-      notify: restart nginx
+      notify: Restart nginx
 
     - name: META | Flush handlers
       ansible.builtin.meta: flush_handlers

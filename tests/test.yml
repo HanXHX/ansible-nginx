@@ -1,6 +1,7 @@
 ---
 
-- hosts: all
+- name: Launch tests
+  hosts: all
   pre_tasks:
     - name: INCLUDE_TASKS | Pre_tasks related to OS version
       ansible.builtin.include_tasks: "includes/pre_{{ ansible_distribution }}.yml"

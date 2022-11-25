@@ -1,46 +1,46 @@
 ---
 
-- name: reload nginx
+- name: Reload nginx
   ansible.builtin.command: nginx -t
   notify:
-    - real-reload nginx
-    - docker reload nginx
+    - Real-reload nginx
+    - Docker reload nginx
 
-- name: restart nginx
+- name: Restart nginx
   ansible.builtin.command: nginx -t
   notify:
-    - real-restart nginx
-    - docker restart nginx
+    - Real-restart nginx
+    - Docker restart nginx
 
-- name: real-reload nginx
+- name: Real-reload nginx
   ansible.builtin.service:
     name: nginx
     state: reloaded
   when: ansible_virtualization_type != 'docker'
 
-- name: real-restart nginx
+- name: Real-restart nginx
   ansible.builtin.service:
     name: nginx
     state: restarted
   when: ansible_virtualization_type != 'docker'
 
-- name: docker reload nginx
+- name: Docker reload nginx
   ansible.builtin.command: service nginx reload
   args:
     warn: false
   when: ansible_virtualization_type == 'docker'
 
-- name: docker restart nginx
+- name: Docker restart nginx
   ansible.builtin.command: service nginx restart
   args:
     warn: false
   when: ansible_virtualization_type == 'docker'
 
-- name: restart nginx freebsd
+- name: Restart nginx freebsd
   ansible.builtin.service:
     name: nginx
     state: restarted
   when: ansible_distribution == "FreeBSD"
 
-- name: setup
+- name: Setup
   ansible.builtin.setup:

@@ -1,6 +1,8 @@
 ---
 
-- block:
+- name: Generate DH if needed
+  when: nginx_dh is not string
+  block:
 
   - name: STAT | Get info about DH file
     ansible.builtin.stat:
@@ -17,9 +19,7 @@
   - name: COMMAND | Generate DH file
     ansible.builtin.command: openssl dhparam -out {{ nginx_dh_path }} {{ nginx_dh_length }}
     when: not stat_dh_file.stat.exists or (dh_info.stdout | int != nginx_dh_length | int)
-    notify: restart nginx
-
-  when: nginx_dh is not string
+    notify: Restart nginx
 
 - name: COPY | Deploy DH file from vars
   ansible.builtin.copy:
@@ -29,7 +29,7 @@
     group: root
     mode: 0640
   when: nginx_dh is string
-  notify: restart nginx
+  notify: Restart nginx
 
 - name: FILE | Create SSL directories
   ansible.builtin.file:
@@ -51,7 +51,7 @@
     mode: 0640
   loop: "{{ nginx_ssl_pairs }}"
   when: item.key is defined
-  notify: restart nginx
+  notify: Restart nginx
   no_log: "{{ not nginx_debug_role }}"
 
 - name: COPY | Deploy SSL certs
@@ -63,7 +63,7 @@
     mode: 0644
   loop: "{{ nginx_ssl_pairs }}"
   when: item.cert is defined
-  notify: restart nginx
+  notify: Restart nginx
   no_log: "{{ not nginx_debug_role }}"
 
 - name: COMMAND | Create self-signed certificates
@@ -78,5 +78,5 @@
     creates: "{{ '/tmp/dummy' if item.force is defined and item.force else item | nginx_cert_path(nginx_ssl_dir) }}"
   loop: "{{ nginx_ssl_pairs }}"
   when: item.self_signed is defined
-  notify: restart nginx
+  notify: Restart nginx
   no_log: "{{ not nginx_debug_role }}"

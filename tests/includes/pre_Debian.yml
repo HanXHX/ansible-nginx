@@ -66,9 +66,9 @@
     name: foo
     system: true
 
-- name: INCLUDE_ROLE | HanXHX.php
+- name: INCLUDE_ROLE | hanxhx.php
   include_role:
-    name: "{{ playbook_dir }}/HanXHX.php"
+    name: "{{ playbook_dir }}/hanxhx.php"
   vars:
     php_version: "{{ cur_php_version.stdout }}"
     php_autoremove_default_pool: false

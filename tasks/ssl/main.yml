@@ -1,8 +1,8 @@
 ---
 
 - name: IMPORT_TASKS | standard.yml
-  import_tasks: standard.yml
+  ansible.builtin.import_tasks: standard.yml
 
 - name: IMPORT_TASKS | acme.yml
-  import_tasks: acme.yml
+  ansible.builtin.import_tasks: acme.yml
   when: nginx_acmesh

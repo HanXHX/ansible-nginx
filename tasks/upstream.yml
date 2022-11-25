@@ -7,7 +7,7 @@
     mode: 0644
     owner: root
     group: root
-  notify: reload nginx
+  notify: Reload nginx
 
 - name: TEMPLATE | Deploy other upstreams
   ansible.builtin.template:
@@ -18,7 +18,7 @@
     group: root
   loop: "{{ nginx_upstreams }}"
   when: item.state is not defined or item.state == 'present'
-  notify: reload nginx
+  notify: Reload nginx
 
 - name: FILE | Delete other upstreams
   ansible.builtin.file:
@@ -26,4 +26,4 @@
     state: absent
   loop: "{{ nginx_upstreams }}"
   when: item.state is defined and item.state == 'absent'
-  notify: reload nginx
+  notify: Reload nginx

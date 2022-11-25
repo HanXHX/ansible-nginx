@@ -1,7 +1,7 @@
 ---
 
 - name: PKGNG | Install nginx and related tools
-  pkgng:
+  community.general.pkgng:
     name: "{{ item }}"
     state: present
   loop:
@@ -13,7 +13,9 @@
 #
 # Bypass https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=224166#c1
 #
-- block:
+- name: Bypass https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=224166#c1
+  when: true
+  block:
 
     - name: COMMAND | Create /usr/local/etc/fdfs/http.conf
       ansible.builtin.command: touch /usr/local/etc/fdfs/http.conf
@@ -33,8 +35,6 @@
         name: nginx
         state: restarted
       when: fd1.changed or fd2.changed
-
-  when: true
 
 - name: FILE | Create configuration dir (like Debian)
   ansible.builtin.file:

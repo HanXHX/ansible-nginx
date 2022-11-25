@@ -7,17 +7,17 @@
     mode: 0644
     owner: root
     group: root
-  notify: reload nginx
+  notify: Reload nginx
 
 - name: TEMPLATE | Deploy all helpers
   ansible.builtin.template:
     src: "{{ item }}"
-    dest: "{{ nginx_helper_dir }}/{{ item | basename | regex_replace('.j2$','') }}"
+    dest: "{{ nginx_helper_dir }}/{{ item | basename | regex_replace('.j2$', '') }}"
     mode: 0644
     owner: root
     group: root
   with_fileglob: '../templates/etc/nginx/helper/*.j2'
-  notify: reload nginx
+  notify: Reload nginx
 
 - name: TEMPLATE | Deploy custom http configuration
   ansible.builtin.template:
@@ -26,7 +26,7 @@
     mode: 0644
     owner: root
     group: root
-  notify: reload nginx
+  notify: Reload nginx
 
 - name: LINEINFILE | Fix path
   ansible.builtin.lineinfile:
@@ -54,4 +54,4 @@
     mode: 0644
     owner: root
     group: root
-  notify: reload nginx
+  notify: Reload nginx
