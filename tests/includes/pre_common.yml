@@ -19,20 +19,6 @@
   register: ngrok
   changed_when: false
 
-- name: LINEINFILE | Tune vimrc
-  ansible.builtin.lineinfile:
-    line: "set mouse="
-    dest: "{{ item.path }}/.vimrc"
-    create: true
-    owner: "{{ item.owner }}"
-    group: "{{ item.owner }}"
-    mode: 0644
-  loop:
-    - path: /root
-      owner: root
-    - path: /home/vagrant
-      owner: vagrant
-
 - name: FILE | Create an internal SSL dir
   ansible.builtin.file:
     path: "{{ int_ansible_ssl_dir }}"
