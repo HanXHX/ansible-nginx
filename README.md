@@ -1,7 +1,7 @@
 Nginx for Debian/FreeBSD Ansible role
 =====================================
 
-[![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-HanXHX.nginx-blue.svg)](https://galaxy.ansible.com/HanXHX/nginx/)
+[![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-HanXHX.nginx-blue.svg)](https://galaxy.ansible.com/HanXHX/nginx/) ![GitHub Workflow Status (master branch)](https://img.shields.io/github/actions/workflow/status/hanxhx/ansible-nginx/molecule.yml?branch=master)
 
 Install and configure Nginx on Debian/FreeBSD.
 
