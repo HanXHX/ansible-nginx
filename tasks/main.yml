@@ -1,7 +1,7 @@
 ---
 
 - name: INCLUDE_VARS | Related to OS
-  ansible.builtin.include_vars: "{{ ansible_distribution }}.yml"
+  ansible.builtin.include_vars: "{{ ansible_os_family }}.yml"
   tags: ['nginx::site', 'nginx::ssl']
 
 - name: INCLUDE_TASKS | Install
