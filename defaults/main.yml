@@ -84,6 +84,7 @@ nginx_http_gzip_disable: '"msie6"'
 # Custom global configuration
 #
 nginx_custom_http: []
+nginx_custom_core: []
 
 #
 # Nginx default

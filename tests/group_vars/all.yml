@@ -6,6 +6,8 @@ int_ansible_ssl_dir: '/etc/ansible-ssl'
 nginx_worker_processes: 1    # Ansible+FreeBSD can't detect CPU number
 nginx_apt_package: 'nginx-extras'
 nginx_module_packages: ['libnginx-mod-http-headers-more-filter']
+nginx_custom_core:
+  - 'worker_rlimit_nofile 4242;'
 
 nginx_upstreams:
   - name: 'test'
