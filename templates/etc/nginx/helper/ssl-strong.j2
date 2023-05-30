@@ -1,18 +1,21 @@
 #
 # {{ ansible_managed }}
-#
+# See: https://ssl-config.mozilla.org/#server=nginx&version=1.18.0&config=modern&openssl=1.1.1n&hsts=false&guideline=5.7
 
-ssl_ciphers "ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384";
-ssl_protocols TLSv1.2{% if nginx_version.stdout is version('1.13.0', 'ge') %} TLSv1.3{% endif %};
-ssl_prefer_server_ciphers on;
-ssl_ecdh_curve secp384r1;
-ssl_session_timeout 10m;
-ssl_session_cache shared:SSL:10m;
+ssl_session_timeout 1d;
+ssl_session_cache shared:MozSSL:10m;  # about 40000 sessions
 ssl_session_tickets off;
+
+# modern configuration
+ssl_protocols TLSv1.3;
+ssl_prefer_server_ciphers off;
+
+# OCSP stapling
 ssl_stapling on;
 ssl_stapling_verify on;
+
+# Replace with the IP address of your resolver
 resolver {{ nginx_resolver_hosts | join(' ') }} valid={{ nginx_resolver_valid }};
 resolver_timeout {{ nginx_resolver_timeout }};
-ssl_dhparam {{ nginx_dh_path }};
 
 # vim:filetype=nginx
