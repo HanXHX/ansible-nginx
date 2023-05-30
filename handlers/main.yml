@@ -1,42 +1,14 @@
 ---
 
-- name: Reload nginx  # noqa: no-changed-when
-  ansible.builtin.command: nginx -t
-  notify:
-    - Real-reload nginx
-    - Docker reload nginx
-
-- name: Restart nginx  # noqa: no-changed-when
-  ansible.builtin.command: nginx -t
-  notify:
-    - Real-restart nginx
-    - Docker restart nginx
-
-- name: Real-reload nginx
+- name: Reload nginx
   ansible.builtin.service:
     name: nginx
     state: reloaded
-  when: ansible_virtualization_type != 'docker'
 
-- name: Real-restart nginx
+- name: Restart nginx
   ansible.builtin.service:
     name: nginx
     state: restarted
-  when: ansible_virtualization_type != 'docker'
-
-- name: Docker reload nginx  # noqa: no-changed-when  command-instead-of-module
-  ansible.builtin.command: service nginx reload
-  when: ansible_virtualization_type == 'docker'
-
-- name: Docker restart nginx  # noqa: no-changed-when command-instead-of-module
-  ansible.builtin.command: service nginx restart
-  when: ansible_virtualization_type == 'docker'
-
-- name: Restart nginx freebsd
-  ansible.builtin.service:
-    name: nginx
-    state: restarted
-  when: ansible_distribution == "FreeBSD"
 
 - name: Setup
   ansible.builtin.setup:

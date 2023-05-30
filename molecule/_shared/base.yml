@@ -1,0 +1,39 @@
+---
+
+scenario:
+  test_sequence:
+    - dependency
+    - syntax
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - verify
+    - destroy
+dependency:
+  name: galaxy
+  options:
+    requirements-file: ./molecule/_shared/requirements.yml
+    role-file: ./molecule/_shared/requirements.yml
+driver:
+  name: docker
+role_name_check: 1
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_FILTER_PLUGINS: "../../filter_plugins"
+  config_options:
+    defaults:
+      deprecation_warnings: false
+      callback_whitelist: timer,profile_tasks
+      fact_caching: jsonfile
+      fact_caching_connection: ./cache
+      forks: 100
+    connection:
+      pipelining: true
+  playbooks:
+    converge: ../_shared/converge.yml
+    prepare: ../_shared/prepare.yml
+    verify: ../_shared/verify.yml
+verifier:
+  name: ansible

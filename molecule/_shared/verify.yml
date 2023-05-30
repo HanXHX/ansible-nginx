@@ -1,0 +1,19 @@
+---
+
+- name: Verify
+  hosts: all
+  gather_facts: true
+  vars_files:
+    - vars/misc.yml
+  vars:
+    nginx_root: "/srv/www"
+  tasks:
+    - name: SHELL | Get ngrok public address
+      ansible.builtin.shell: set -o pipefail && curl 'http://127.0.0.1:4040/api/tunnels/command_line' 2> /dev/null | jq -r '.public_url' | cut -d '/' -f 3
+      args:
+        executable: /bin/bash
+      register: ngrok
+      changed_when: false
+
+    - name: INCLUDE_TASKS | Post_tasks common
+      ansible.builtin.include_tasks: "../../tests/includes/post_common.yml"

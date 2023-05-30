@@ -1,12 +1,12 @@
 ---
 
-- name: SHELL | Start ngrok
-  ansible.builtin.shell: daemonize -l /tmp/ngrok.lock {{ ngrok_path }} http 80 --scheme http
+- name: COMMAND | Start ngrok
+  ansible.builtin.command: daemonize -l /tmp/ngrok.lock {{ ngrok_path }} http 80 --scheme http
   failed_when: false
   changed_when: ngrok.stderr.find("Can't lock the lock file") == -1
   register: ngrok
 
-- name: WAIT_FOR | ngrok started
+- name: WAIT_FOR | ngrok started  # noqa: no-handler
   ansible.builtin.wait_for:
     delay: 2
     port: 4040
@@ -22,11 +22,16 @@
 - name: LINEINFILE | Tune vimrc
   ansible.builtin.lineinfile:
     line: "set mouse="
-    dest: "{{ item }}/.vimrc"
+    dest: "{{ item.path }}/.vimrc"
     create: true
+    owner: "{{ item.owner }}"
+    group: "{{ item.owner }}"
+    mode: 0644
   loop:
-    - /root
-    - /home/vagrant
+    - path: /root
+      owner: root
+    - path: /home/vagrant
+      owner: vagrant
 
 - name: FILE | Create an internal SSL dir
   ansible.builtin.file:
@@ -36,21 +41,16 @@
     owner: root
     group: root
 
-- name: COPY | Deploy test certificate
+- name: COPY | Deploy test cert/key
   ansible.builtin.copy:
-    src: "file/test.crt"
-    dest: "{{ int_ansible_ssl_dir }}/test.crt"
+    src: "file/{{ item }}"
+    dest: "{{ int_ansible_ssl_dir }}/{{ item }}"
     mode: 0640
     owner: root
     group: root
-
-- name: COPY | Deploy test key
-  ansible.builtin.copy:
-    src: "file/test.key"
-    dest: "{{ int_ansible_ssl_dir }}/test.key"
-    mode: 0640
-    owner: root
-    group: root
+  loop:
+    - 'test.key'
+    - 'test.crt'
 
 - name: COPY | Add all hosts in /etc/hosts
   ansible.builtin.copy:

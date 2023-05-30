@@ -1,0 +1,15 @@
+---
+
+- name: Prepare
+  hosts: all
+  gather_facts: true
+  vars_files:
+    - vars/misc.yml
+
+  tasks:
+
+    - name: INCLUDE_TASKS | Pre tasks related to OS
+      ansible.builtin.include_tasks: "../../tests/includes/pre_{{ ansible_distribution }}.yml"
+
+    - name: INCLUDE_TASKS | Pre_tasks common
+      ansible.builtin.include_tasks: "../../tests/includes/pre_common.yml"
