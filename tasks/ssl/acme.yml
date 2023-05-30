@@ -29,25 +29,27 @@
         group: root
       loop: "{{ acme_create }}"
       register: fake_site
+      notify: Restart nginx
 
-    - name: FILE | Delete current site if needed
+    - name: TEMPLATE | Create fake site
+      ansible.builtin.template:
+        src: "etc/nginx/conf.d/FAKESITE.conf.j2"
+        dest: "/tmp/FAKESITE_{{ item | nginx_site_name }}.conf"
+        mode: 0644
+        owner: root
+        group: root
+      loop: "{{ acme_create }}"
+
+    - name: FILE | Delete current site if needed  # noqa: no-handler
       ansible.builtin.file:
         path: "{{ nginx_etc_dir }}/sites-enabled/{{ item | nginx_site_name }}"
         state: absent
       loop: "{{ acme_create }}"
       when: fake_site.changed
+      notify: Restart nginx
 
-    - name: SERVICE | Restart nginx
-      ansible.builtin.service:
-        name: nginx
-        state: restarted
-      when: fake_site.changed and ansible_virtualization_type != 'docker'
-
-    - name: COMMAND | Restart nginx
-      ansible.builtin.command: service nginx restart
-      args:
-        warn: false
-      when: fake_site.changed and ansible_virtualization_type == 'docker'
+    - name: META | Ensure nginx is restarted if needed
+      ansible.builtin.meta: flush_handlers
 
     - name: COMMAND | Get certificates
       ansible.builtin.command: |

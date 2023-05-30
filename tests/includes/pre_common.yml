@@ -1,27 +1,26 @@
 ---
 
 - name: SHELL | Start ngrok
-  shell: daemonize -l /tmp/ngrok.lock {{ ngrok_path }} http 80 -bind-tls=false
+  ansible.builtin.shell: daemonize -l /tmp/ngrok.lock {{ ngrok_path }} http 80 --scheme http
   failed_when: false
   changed_when: ngrok.stderr.find("Can't lock the lock file") == -1
   register: ngrok
 
 - name: WAIT_FOR | ngrok started
-  wait_for:
+  ansible.builtin.wait_for:
     delay: 2
     port: 4040
   when: ngrok.changed
 
 - name: SHELL | Get ngrok public address
-  shell: set -o pipefail && curl 'http://127.0.0.1:4040/api/tunnels/command_line' 2> /dev/null | jq -r '.public_url' | cut -d '/' -f 3
+  ansible.builtin.shell: set -o pipefail && curl 'http://127.0.0.1:4040/api/tunnels/command_line' 2> /dev/null | jq -r '.public_url' | cut -d '/' -f 3
   args:
     executable: /bin/bash
-    warn: false
   register: ngrok
   changed_when: false
 
 - name: LINEINFILE | Tune vimrc
-  lineinfile:
+  ansible.builtin.lineinfile:
     line: "set mouse="
     dest: "{{ item }}/.vimrc"
     create: true

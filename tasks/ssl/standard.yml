@@ -4,22 +4,26 @@
   when: nginx_dh is not string
   block:
 
-  - name: STAT | Get info about DH file
-    ansible.builtin.stat:
-      path: "{{ nginx_dh_path }}"
-      get_checksum: false
-    register: stat_dh_file
+    - name: STAT | Get info about DH file
+      ansible.builtin.stat:
+        path: "{{ nginx_dh_path }}"
+        get_checksum: false
+      register: stat_dh_file
 
-  - name: SHELL | Get info about DH file
-    ansible.builtin.shell: openssl dhparam -in {{ nginx_dh_path }} -text -noout 2>&1 | awk '/DH Parameters/ { print substr($3, 2) }'
-    changed_when: false
-    register: dh_info
-    when: stat_dh_file.stat.exists
+    - name: SHELL | Get info about DH file
+      ansible.builtin.shell: |
+        set -o pipefail &&
+        openssl dhparam -in {{ nginx_dh_path }} -text -noout 2>&1 | awk '/DH Parameters/ { print substr($3, 2) }'
+      args:
+        executable: /bin/bash
+      changed_when: false
+      register: dh_info
+      when: stat_dh_file.stat.exists
 
-  - name: COMMAND | Generate DH file
-    ansible.builtin.command: openssl dhparam -out {{ nginx_dh_path }} {{ nginx_dh_length }}
-    when: not stat_dh_file.stat.exists or (dh_info.stdout | int != nginx_dh_length | int)
-    notify: Restart nginx
+    - name: COMMAND | Generate DH file  # noqa: no-changed-when
+      ansible.builtin.command: openssl dhparam -out {{ nginx_dh_path }} {{ nginx_dh_length }}
+      when: not stat_dh_file.stat.exists or (dh_info.stdout | int != nginx_dh_length | int)
+      notify: Restart nginx
 
 - name: COPY | Deploy DH file from vars
   ansible.builtin.copy:

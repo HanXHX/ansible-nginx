@@ -1,13 +1,13 @@
 ---
 
 - name: APT_REPOSITORY | Install backports
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: 'deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main'
     state: present
   when: nginx_backports
 
 - name: APT | Install needed packages
-  apt:
+  ansible.builtin.apt:
     pkg: "{{ packages }}"
     update_cache: true
     cache_valid_time: 3600
@@ -24,7 +24,7 @@
       - unzip
 
 - name: APT | Install PHP
-  apt:
+  ansible.builtin.apt:
     pkg: "{{ pkgs }}"
     update_cache: true
     cache_valid_time: 3600
@@ -35,39 +35,38 @@
       - php-fpm
 
 - name: SHELL | Get current PHP version
-  shell: php --version | awk '/^PHP/ { print $2 }' | grep -o -E '^.{3}'
+  ansible.builtin.shell: php --version | awk '/^PHP/ { print $2 }' | grep -o -E '^.{3}'
   changed_when: false
   register: cur_php_version
 
 # Bypasses Ansible+Docker issue. With service module... php is not really started!
 - name: COMMAND | Force start PHP
-  command: "service php{{ cur_php_version.stdout }}-fpm start"
+  ansible.builtin.command: "service php{{ cur_php_version.stdout }}-fpm start"
   args:
     creates: "/run/php/php{{ cur_php_version.stdout }}-fpm.pid"
-    warn: false
 
 - name: GET_URL | Download ngrok
-  get_url:
-    url: "https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip"
+  ansible.builtin.get_url:
+    url: "https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz"
     dest: "/tmp/ngrok.zip"
 
 - name: UNARCHIVE | Uncompress ngrok
-  unarchive:
+  ansible.builtin.unarchive:
     src: "/tmp/ngrok.zip"
     dest: "/tmp"
     remote_src: true
 
 - name: SET_FACT | ngrok_path
-  set_fact:
+  ansible.builtin.set_fact:
     ngrok_path: '/tmp/ngrok'
 
 - name: USER | Create PHP User foo
-  user:
+  ansible.builtin.user:
     name: foo
     system: true
 
 - name: INCLUDE_ROLE | hanxhx.php
-  include_role:
+  ansible.builtin.include_role:
     name: "{{ playbook_dir }}/hanxhx.php"
   vars:
     php_version: "{{ cur_php_version.stdout }}"

@@ -244,14 +244,12 @@
   ansible.builtin.shell: set -o pipefail && curl -I --haproxy-protocol http://test-ssl-proxy-protocol.local:20080 | grep -qi 'X-Proxy-Protocol'
   args:
     executable: /bin/bash
-    warn: false
   changed_when: false
 
 - name: SHELL | Check HTTPS proxy protocol
   ansible.builtin.shell: set -o pipefail && curl -I --haproxy-protocol -k https://test-ssl-proxy-protocol.local:20443 | grep -qi 'X-Proxy-Protocol'
   args:
     executable: /bin/bash
-    warn: false
   changed_when: false
 
 # --------------------------------
