@@ -21,20 +21,17 @@
       ansible.builtin.command: touch /usr/local/etc/fdfs/http.conf
       args:
         creates: /usr/local/etc/fdfs/http.conf
-      register: fd1
+      notify: Restart nginx
 
     - name: LINEINFILE | Tune fdfs
-      ansible.builtin.lineinansible.builtin.file:
+      ansible.builtin.lineinfile:
         regexp: ^load_fdfs_parameters_from_tracker
         line: load_fdfs_parameters_from_tracker=false
         path: /usr/local/etc/fdfs/mod_fastdfs.conf
-      register: fd2
+      notify: Restart nginx
 
-    - name: SERVICE | Restart nginx when fdfs is tuned
-      ansible.builtin.service:
-        name: nginx
-        state: restarted
-      when: fd1.changed or fd2.changed
+    - name: META | Flush handlers (Restart nginx when fdfs is tuned)
+      ansible.builtin.meta: flush_handlers
 
 - name: FILE | Create configuration dir (like Debian)
   ansible.builtin.file:

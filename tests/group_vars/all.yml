@@ -246,5 +246,5 @@ nginx_sites:
     custom_template: 'templates/custom_template.conf.j2'
     root: '/tmp/custom-template'
 
-nginx_php: "{{ [{'upstream_name': 'manual', 'sockets': [{'host': '127.0.0.1', 'port': '9636' }] }] }}"
+nginx_php: "{{ [{'upstream_name': 'manual', 'sockets': [{'host': '127.0.0.1', 'port': '9636'}]}] }}"
 nginx_dh_length: 1024

@@ -1,12 +1,12 @@
 ---
 
-- name: Reload nginx
+- name: Reload nginx  # noqa: no-changed-when
   ansible.builtin.command: nginx -t
   notify:
     - Real-reload nginx
     - Docker reload nginx
 
-- name: Restart nginx
+- name: Restart nginx  # noqa: no-changed-when
   ansible.builtin.command: nginx -t
   notify:
     - Real-restart nginx
@@ -24,16 +24,12 @@
     state: restarted
   when: ansible_virtualization_type != 'docker'
 
-- name: Docker reload nginx
+- name: Docker reload nginx  # noqa: no-changed-when  command-instead-of-module
   ansible.builtin.command: service nginx reload
-  args:
-    warn: false
   when: ansible_virtualization_type == 'docker'
 
-- name: Docker restart nginx
+- name: Docker restart nginx  # noqa: no-changed-when command-instead-of-module
   ansible.builtin.command: service nginx restart
-  args:
-    warn: false
   when: ansible_virtualization_type == 'docker'
 
 - name: Restart nginx freebsd

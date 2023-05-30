@@ -1,6 +1,6 @@
 ---
 
-- name: Launch tests
+- name: Launch tests  # noqa: role-name[path]
   hosts: all
   pre_tasks:
     - name: INCLUDE_TASKS | Pre_tasks related to OS version
