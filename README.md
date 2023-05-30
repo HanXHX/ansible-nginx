@@ -1,7 +1,7 @@
 Nginx for Debian/FreeBSD Ansible role
 =====================================
 
-[![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-HanXHX.nginx-blue.svg)](https://galaxy.ansible.com/HanXHX/nginx/) [![Build Status](https://app.travis-ci.com/HanXHX/ansible-nginx.svg?branch=master)](https://app.travis-ci.com/HanXHX/ansible-nginx)
+[![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-HanXHX.nginx-blue.svg)](https://galaxy.ansible.com/HanXHX/nginx/)
 
 Install and configure Nginx on Debian/FreeBSD.
 
@@ -102,7 +102,7 @@ Note
 ----
 
 - Active support for Debian.
-- FreeBSD support is experimental (no Travis). I only test (for the moment) 10.2 (but it can work on other versions).
+- FreeBSD support is experimental. I only test (for the moment) 10.2 (but it can work on other versions).
 
 Dependencies
 ------------
