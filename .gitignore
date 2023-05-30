@@ -3,3 +3,4 @@
 *.retry
 *.pyc
 /tests/hanxhx.php
+/.idea
