@@ -1,7 +1,4 @@
 ---
 
-roles:
-  - name: hanxhx.php
-
 collections:
   - community.general
