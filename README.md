@@ -66,6 +66,7 @@ FreeBSD:
 - `nginx_pid`: daemon pid file
 - `nginx_events_*`: all variables in events block
 - `nginx_http_*`: all variables in http block
+- `nginx_custom_core`: instructions list (for core, will put data in `/etc/nginx/nginx.conf`)
 - `nginx_custom_http`: instructions list (will put data in `/etc/nginx/conf.d/custom.conf`)
 - `nginx_module_packages`: package list module to install (Debian)
 - `nginx_load_modules`: module list to load (full path), should be used only on FreeBSD

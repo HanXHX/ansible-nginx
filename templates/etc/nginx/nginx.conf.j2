@@ -5,6 +5,9 @@
 user {{ nginx_user }};
 worker_processes {{ nginx_worker_processes }};
 pid {{ nginx_pid }};
+{% for i in nginx_custom_core %}
+{{ i }}
+{% endfor %}
 include {{ nginx_etc_dir }}/modules-enabled/*.conf;
 
 events {
