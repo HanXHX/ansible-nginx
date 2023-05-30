@@ -4,7 +4,7 @@
   ansible.builtin.apt_repository:
     repo: 'deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main'
     state: present
-  when: nginx_backports
+  when: nginx_backports is defined and nginx_backports
 
 - name: APT | Install needed packages
   ansible.builtin.apt:
@@ -65,9 +65,9 @@
     name: foo
     system: true
 
-- name: INCLUDE_ROLE | hanxhx.php
+- name: INCLUDE_ROLE | hanxhx.php  # TODO: repair vagrant
   ansible.builtin.include_role:
-    name: "{{ playbook_dir }}/hanxhx.php"
+    name: "hanxhx.php"
   vars:
     php_version: "{{ cur_php_version.stdout }}"
     php_autoremove_default_pool: false
