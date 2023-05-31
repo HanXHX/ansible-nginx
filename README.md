@@ -29,7 +29,6 @@ Supported OS:
 | Debian Bookworm (12) | Yes     | Not yet :)                                                                                           |
 | FreeBSD 11           | NA      | No                                                                                                   |
 | FreeBSD 12           | NA      | No                                                                                                   |
-| Ubuntu 18.04         | Yes     | Yes                                                                                                  |
 | Ubuntu 20.04         | Yes     | Yes                                                                                                  |
 | Ubuntu 22.04         | Yes     | Yes                                                                                                  |
 

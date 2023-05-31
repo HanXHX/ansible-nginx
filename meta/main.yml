@@ -16,7 +16,6 @@ galaxy_info:
         - bookworm
     - name: Ubuntu
       versions:
-        - bionic
         - focal
         - jammy
     - name: FreeBSD
