@@ -11,3 +11,10 @@ platforms:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
     privileged: true
+
+# Segfault on Ubuntu 20.04 with `nginx-extras` package...
+provisioner:
+  inventory:
+    host_vars:
+      ubuntu-20.04:
+        nginx_apt_package: 'nginx-full'
