@@ -14,7 +14,7 @@
 - name: APT | Install nginx and dependencies
   ansible.builtin.apt:
     pkg: "{{ nginx_apt_package }}"
-    default_release: "{{ ansible_distribution_release + '-backports' if nginx_backports else ansible_distribution_release }}"
+    default_release: "{{ ansible_distribution_release + '-backports' if (nginx_backports and ansible_distribution == 'Debian') else ansible_distribution_release }}"
 
 - name: APT | Install nginx modules
   ansible.builtin.apt:

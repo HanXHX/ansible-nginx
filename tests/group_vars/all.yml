@@ -104,7 +104,7 @@ nginx_ssl_pairs:
 
 nginx_custom_http:
   - 'add_header X-ansible 1;'
-  - 'geoip_country {% if ansible_distribution == "Debian" %}/usr/share/GeoIP/GeoIP.dat{% else %}/usr/local/share/GeoIP/GeoIP.dat{% endif %};'
+  - 'geoip_country {% if ansible_os_family == "Debian" %}/usr/share/GeoIP/GeoIP.dat{% else %}/usr/local/share/GeoIP/GeoIP.dat{% endif %};'
   - 'map $geoip_country_code $allowed_country {'
   - '    default yes;'
   - '    MA no;'

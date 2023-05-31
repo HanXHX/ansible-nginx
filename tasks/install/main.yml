@@ -1,7 +1,7 @@
 ---
 
 - name: INCLUDE_TASKS | Install
-  ansible.builtin.include_tasks: "{{ ansible_distribution }}.yml"
+  ansible.builtin.include_tasks: "{{ ansible_os_family }}.yml"
 
 - name: IMPORT_TASKS | acme
   ansible.builtin.import_tasks: "acme.yml"
