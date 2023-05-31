@@ -11,7 +11,6 @@ name: Molecule
 jobs:
   build:
     runs-on: ubuntu-latest
-    continue-on-error: ${{ matrix.allowed-to-fail }}
     strategy:
       fail-fast: false
       matrix:
@@ -19,7 +18,6 @@ jobs:
           - debian-10
           - debian-11
           - debian-12
-          - ubuntu-18.04
           - ubuntu-22.04
         allowed-to-fail:
           - false
@@ -39,3 +37,7 @@ jobs:
           molecule_options: --base-config molecule/_shared/base.yml
           molecule_args: --scenario-name ${{ matrix.scenario }}
           molecule_working_dir: "HanXHX/ansible-nginx"
+        continue-on-error: ${{ matrix.allowed-to-fail }}
+
+      - name: Fake command
+        run: echo "End of job"
