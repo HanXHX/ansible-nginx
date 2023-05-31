@@ -104,22 +104,33 @@ Fine configuration
 Note
 ----
 
-- Active support for Debian.
+- Active support for Debian/Ubuntu.
 - FreeBSD support is experimental. I only test (for the moment) 10.2 (but it can work on other versions).
 
 Dependencies
 ------------
 
-None
+See: [requirements.yml](requirements.yml).
 
 
-If you need to dev this role locally
-------------------------------------
+If you need to dev this role locally on Vagrant
+------------------------------------------------
 
 Before use vagrant, run once:
 
-```
+```commandline
 ansible-galaxy install -p ./tests/ HanXHX.php,master
+```
+
+If you need to dev this role locally with molecule
+--------------------------------------------------
+
+Check available scenarios in [molecule](molecule) directory.
+
+With `debian-12` scenario:
+
+```commandline
+molecule -v -c molecule/_shared/base.yml verify -s debian-12
 ```
 
 Example Playbook

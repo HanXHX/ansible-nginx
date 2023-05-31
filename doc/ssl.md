@@ -8,7 +8,7 @@ Variables
 
 - `nginx_dh`: DH content
 - `nginx_dh_length`: DH key length (default is 2048)
-- `nginx_dh_path`: file localation
+- `nginx_dh_path`: file location
 - `nginx_ssl_dir`: directory where you install your SSL/TLS keys
 - `nginx_ssl_pairs`
 
@@ -20,7 +20,7 @@ Note: `name` is used to deploy key/cert. With defaults values dans `name` = "foo
 
 ### Content mode
 
-Key/Cert content is stored in variable. Usefull with vault.
+Key/Cert content is stored in variable. Useful with vault.
 
 - `key`: content of the private key
 - `cert`: content of the public key
@@ -36,7 +36,7 @@ You can use these variables if you use another task/role to manages your certifi
 
 Create a self-signed pair and deploy it. Do not use this feature in production.
 
-- `self_signed`: set true to use this featrure
+- `self_signed`: set true to use this feature
 - `force`: optional feature (default: false), force regen pair (not idempotent)
 
 ### Acme
@@ -45,7 +45,7 @@ Uses acme.sh to create free certificates. It uses HTTP-01 challenge. Use this fe
 
 - `acme`: set true to use this feature. It uses `name` (can be a string or string list).
 
-Have a look to [acme configuratuion](acme.md configuration).
+Have a look to [acme configuration](acme.md configuration).
 
 Tips
 ----
