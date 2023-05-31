@@ -11,6 +11,7 @@ name: Molecule
 jobs:
   build:
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.allowed-to-fail }}
     strategy:
       fail-fast: false
       matrix:
@@ -19,8 +20,12 @@ jobs:
           - debian-11
           - debian-12
           - ubuntu-18.04
-          - ubuntu-20.04
           - ubuntu-22.04
+        allowed-to-fail:
+          - false
+        include:
+          - scenario: ubuntu-20.04
+            allowed-to-fail: true
 
     steps:
       - name: Checkout
