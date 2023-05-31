@@ -9,7 +9,7 @@
   tasks:
 
     - name: INCLUDE_TASKS | Pre tasks related to OS
-      ansible.builtin.include_tasks: "../../tests/includes/pre_{{ ansible_distribution }}.yml"
+      ansible.builtin.include_tasks: "../../tests/includes/pre_{{ ansible_os_family }}.yml"
 
     - name: INCLUDE_TASKS | Pre_tasks common
       ansible.builtin.include_tasks: "../../tests/includes/pre_common.yml"
