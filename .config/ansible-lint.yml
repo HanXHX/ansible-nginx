@@ -1,0 +1,12 @@
+---
+
+profile: production
+
+warn_list: []
+
+skip_list: []
+
+exclude_paths:
+  - .github/
+  - .venv/
+  - venv/
