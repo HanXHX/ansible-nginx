@@ -26,9 +26,11 @@ Supported OS:
 | Debian Stretch (9)   | Yes     | Check latest supported version ([1.9.0](https://github.com/HanXHX/ansible-nginx/releases/tag/1.9.0)) | 
 | Debian Buster (10)   | Yes     | Yes                                                                                                  |
 | Debian Bullseye (11) | Yes     | Yes                                                                                                  |
-| Debian Bookworm (12) | Yes     | Not yet :)                                                                                           |
+| Debian Bookworm (12) | Yes     | Yes                                                                                                  |
+| Debian Trixie (13)   | WIP     | Not yet                                                                                              |
 | Ubuntu 20.04         | Yes     | Yes                                                                                                  |
 | Ubuntu 22.04         | Yes     | Yes                                                                                                  |
+| Ubuntu 24.04         | Yes     | Yes                                                                                                  |
 
 Requirements
 ------------
