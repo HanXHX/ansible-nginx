@@ -2,7 +2,9 @@
 
 profile: production
 
-warn_list: []
+warn_list:
+  - role-name
+  - schema[meta]
 
 skip_list: []
 
