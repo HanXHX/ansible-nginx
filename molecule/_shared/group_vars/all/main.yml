@@ -3,7 +3,7 @@
 # Internal vars
 int_ansible_ssl_dir: '/etc/ansible-ssl'
 # Role vars
-nginx_worker_processes: 1    # Ansible+FreeBSD can't detect CPU number
+nginx_worker_processes: 1    # Ansible can't detect CPU count
 nginx_apt_package: 'nginx-extras'
 nginx_module_packages: ['libnginx-mod-http-headers-more-filter']
 nginx_custom_core:

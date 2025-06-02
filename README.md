@@ -1,9 +1,9 @@
-Nginx for Debian/FreeBSD Ansible role
+Nginx for Debian/Ubuntu Ansible role
 =====================================
 
 [![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-HanXHX.nginx-blue.svg)](https://galaxy.ansible.com/HanXHX/nginx/) ![GitHub Workflow Status (master branch)](https://img.shields.io/github/actions/workflow/status/hanxhx/ansible-nginx/molecule.yml?branch=master)
 
-Install and configure Nginx on Debian/FreeBSD.
+Install and configure Nginx on Debian/Ubuntu.
 
 Features:
 
@@ -27,8 +27,6 @@ Supported OS:
 | Debian Buster (10)   | Yes     | Yes                                                                                                  |
 | Debian Bullseye (11) | Yes     | Yes                                                                                                  |
 | Debian Bookworm (12) | Yes     | Not yet :)                                                                                           |
-| FreeBSD 11           | NA      | No                                                                                                   |
-| FreeBSD 12           | NA      | No                                                                                                   |
 | Ubuntu 20.04         | Yes     | Yes                                                                                                  |
 | Ubuntu 22.04         | Yes     | Yes                                                                                                  |
 
@@ -47,10 +45,6 @@ Debian:
 
 - `nginx_apt_package`: APT nginx package (try: apt-cache search ^nginx)
 - `nginx_backports`: Install nginx from backport repository (bool)
-
-FreeBSD:
-
-- `nginx_pkgng_package`: PKGNG nginx package (should be "nginx" or "nginx-devel")
 
 ### Shared
 
@@ -72,7 +66,6 @@ FreeBSD:
 - `nginx_custom_core`: instructions list (for core, will put data in `/etc/nginx/nginx.conf`)
 - `nginx_custom_http`: instructions list (will put data in `/etc/nginx/conf.d/custom.conf`)
 - `nginx_module_packages`: package list module to install (Debian)
-- `nginx_load_modules`: module list to load (full path), should be used only on FreeBSD
 
 ### Misc
 
@@ -96,15 +89,12 @@ Fine configuration
 
 [Basic Auth](doc/auth.md)
 
-[FreeBSD](doc/freebsd.md)
-
 [acme.sh](doc/acme.md)
 
 Note
 ----
 
 - Active support for Debian/Ubuntu.
-- FreeBSD support is experimental. I only test (for the moment) 10.2 (but it can work on other versions).
 
 Dependencies
 ------------
