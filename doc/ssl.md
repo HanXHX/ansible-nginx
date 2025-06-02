@@ -32,7 +32,7 @@ You can use these variables if you use another task/role to manages your certifi
 - `dest_cert`: remote path where certificate is located
 - `dest_key`: remote path where key is located
 
-### Self signed
+### Self-signed
 
 Create a self-signed pair and deploy it. Do not use this feature in production.
 
@@ -45,7 +45,7 @@ Uses acme.sh to create free certificates. It uses HTTP-01 challenge. Use this fe
 
 - `acme`: set true to use this feature. It uses `name` (can be a string or string list).
 
-Have a look to [acme configuration](acme.md configuration).
+Have a look to [acme configuration](acme.md).
 
 Tips
 ----
@@ -61,7 +61,7 @@ Example
 -------
 
 ```yaml
-nginx_sites;
+nginx_sites:
   - name: 'test-ssl.local'
     proto: ['http', 'https']
     template: '_base'

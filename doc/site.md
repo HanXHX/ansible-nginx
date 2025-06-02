@@ -1,7 +1,7 @@
 Site management
 ===============
 
-You can see many examples in: [tests/test.yml](../tests/test.yml).
+You can see many examples in: [molecule/_shared/group_vars/all/main.yml](../molecule/_shared/group_vars/all/main.yml).
 
 `nginx_sites`: List of dict. A site has few keys. See bellow.
 
@@ -34,7 +34,7 @@ Pre-built site config
 - `redirect_to_code`: Redirect code (default: 302)
 - `redirect_https`: (O) Boolean. Redirect HTTP to HTTPS. If "true", you _MUST_ set `proto` to `['https']`.
 - `location`: (O) Add new custom locations (it does not overwrite!)
-- `location_order`: (O) Due to non preditive `location` order, you can provide the good order (see test-location.local in [tests/test.yml](../tests/test.yml)).
+- `location_order`: (O) Due to non preditive `location` order, you can provide the good order (see test-location.local in [molecule/_shared/group_vars/all/main.yml](../molecule/_shared/group_vars/all/main.yml)).
 - `location_before`: (O) Add new custom locations before generated location by template
 - `location_order_before`: (O) Manages location order for `location_before`
 - `more`: (O) Add more custom infos.
@@ -87,7 +87,7 @@ You can manage default site by setting domain name to these variables.
 
 
 ```yaml
-- nginx_sites:
+nginx_sites:
   - name: 'mywebsite.com'
     template: '_wordpress'
     headers:
@@ -108,7 +108,7 @@ You can add some extra infos if needed.
 ### Example:
 
 ```yaml
-- nginx_sites:
+nginx_sites:
   - name: 'mycustom-website.com'
     custom_template: 'my/template_dir/the-template.conf.j2'
     allow_admin: '192.168.0.0/24'
@@ -137,5 +137,3 @@ server {
 	}
 }
 ```
-
-
