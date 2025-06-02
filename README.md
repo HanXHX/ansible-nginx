@@ -102,15 +102,6 @@ Dependencies
 See: [requirements.yml](requirements.yml).
 
 
-If you need to dev this role locally on Vagrant
-------------------------------------------------
-
-Before use vagrant, run once:
-
-```commandline
-ansible-galaxy install -p ./tests/ HanXHX.php,master
-```
-
 If you need to dev this role locally with molecule
 --------------------------------------------------
 
@@ -121,11 +112,6 @@ With `debian-12` scenario:
 ```commandline
 molecule -v -c molecule/_shared/base.yml verify -s debian-12
 ```
-
-Example Playbook
-----------------
-
-See [tests/test.yml](tests/test.yml).
 
 License
 -------
