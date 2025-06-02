@@ -35,5 +35,8 @@ provisioner:
     converge: ../_shared/converge.yml
     prepare: ../_shared/prepare.yml
     verify: ../_shared/verify.yml
+  inventory:
+    links:
+      group_vars: ../_shared/group_vars
 verifier:
   name: ansible

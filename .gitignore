@@ -4,3 +4,6 @@
 *.pyc
 /tests/hanxhx.php
 /.idea
+/.venv
+/venv
+/.ansible

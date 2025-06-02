@@ -3,13 +3,107 @@
 - name: Prepare
   hosts: all
   gather_facts: true
-  vars_files:
-    - vars/misc.yml
-
   tasks:
+    - name: APT_REPOSITORY | Install backports
+      ansible.builtin.apt_repository:
+        repo: 'deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main'
+        state: present
+      when: nginx_backports is defined and nginx_backports
 
-    - name: INCLUDE_TASKS | Pre tasks related to OS
-      ansible.builtin.include_tasks: "../../tests/includes/pre_{{ ansible_os_family }}.yml"
+    - name: APT | Install needed packages
+      ansible.builtin.apt:
+        pkg: "{{ packages }}"
+        update_cache: true
+        cache_valid_time: 3600
+        state: present
+      vars:
+        packages:
+          - cron
+          - curl
+          - daemonize
+          - jq
+          - nghttp2
+          - strace
+          - vim
+          - unzip
 
-    - name: INCLUDE_TASKS | Pre_tasks common
-      ansible.builtin.include_tasks: "../../tests/includes/pre_common.yml"
+    - name: APT | Install PHP
+      ansible.builtin.apt:
+        pkg: "{{ pkgs }}"
+        update_cache: true
+        cache_valid_time: 3600
+        state: present
+      vars:
+        pkgs:
+          - php-cli
+          - php-fpm
+
+    - name: SHELL | Get current PHP version  # noqa: risky-shell-pipe
+      ansible.builtin.shell: php --version | awk '/^PHP/ { print $2 }' | grep -o -E '^.{3}'
+      changed_when: false
+      register: cur_php_version
+
+    - name: SERVICE | Ensure PHP-FPM is started
+      ansible.builtin.service:
+        name: "php{{ cur_php_version.stdout }}-fpm"
+        state: started
+
+    - name: USER | Create PHP User foo
+      ansible.builtin.user:
+        name: foo
+        system: true
+
+    - name: INCLUDE_ROLE | hanxhx.php
+      ansible.builtin.include_role:
+        name: "hanxhx.php"
+      vars:
+        php_version: "{{ cur_php_version.stdout }}"
+        php_autoremove_default_pool: false
+        php_fpm_poold:
+          - name: 'hx_unix'
+            user: 'foo'
+            php_value:
+              display_errors: 'Off'
+            php_admin_value:
+              memory_limit: '98M'
+          - name: 'hx_ip'
+            listen: '127.0.0.1:9636'
+
+    - name: FILE | Create an internal SSL dir
+      ansible.builtin.file:
+        path: "{{ int_ansible_ssl_dir }}"
+        state: directory
+        mode: "0750"
+        owner: root
+        group: root
+
+    - name: COPY | Deploy test cert/key
+      ansible.builtin.copy:
+        src: "file/{{ item }}"
+        dest: "{{ int_ansible_ssl_dir }}/{{ item }}"
+        mode: "0640"
+        owner: root
+        group: root
+      loop:
+        - 'test.key'
+        - 'test.crt'
+
+    - name: COPY | Add all hosts in /etc/hosts
+      ansible.builtin.copy:
+        content: |
+          127.0.0.1 localhost
+          {% for s in nginx_sites %}
+          {% if s.name is string %}
+          127.0.0.1 {{ s.name }}
+          {% else %}
+          127.0.0.1 {% for n in s.name %}{{ n }} {% endfor %}
+          {% endif %}
+          {% if s.redirect_from is defined %}
+          127.0.0.1 {% for rf in s.redirect_from %}{{ rf }} {% endfor %}
+          {% endif %}
+          {% endfor %}
+        dest: "/etc/hosts"
+        mode: "0644"
+        owner: root
+        group: root
+        unsafe_writes: true

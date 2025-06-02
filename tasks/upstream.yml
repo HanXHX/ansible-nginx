@@ -4,7 +4,7 @@
   ansible.builtin.template:
     src: "etc/nginx/conf.d/php.conf.j2"
     dest: "{{ nginx_etc_dir }}/conf.d/php.conf"
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   notify: Reload nginx
@@ -13,7 +13,7 @@
   ansible.builtin.template:
     src: "etc/nginx/conf.d/_upstream.conf.j2"
     dest: "{{ nginx_etc_dir }}/conf.d/upstream-{{ item.name }}.conf"
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   loop: "{{ nginx_upstreams }}"

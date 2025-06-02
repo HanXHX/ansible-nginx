@@ -20,12 +20,12 @@ Example
 
 ```yaml
 nginx_sites:
-# htpasswd on all site
+  # htpasswd on all site
   - name: test.local
     htpasswd: 'hello'
     template: '_base'
 
-# htpasswd only in /hello
+  # htpasswd only in /hello
   - name: test-location.local
     template: '_base'
     location:

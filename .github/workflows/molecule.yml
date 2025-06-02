@@ -18,11 +18,13 @@ jobs:
           - debian-10
           - debian-11
           - debian-12
+          - ubuntu-20.04
           - ubuntu-22.04
+          - ubuntu-24.04
         allowed-to-fail:
           - false
         include:
-          - scenario: ubuntu-20.04
+          - scenario: debian-13
             allowed-to-fail: true
 
     steps:
@@ -32,11 +34,10 @@ jobs:
           path: "${{ github.repository }}"
 
       - name: Molecule
-        uses: gofrolist/molecule-action@v2.3.19
+        uses: gofrolist/molecule-action@v2.7.62
         with:
           molecule_options: --base-config molecule/_shared/base.yml
           molecule_args: --scenario-name ${{ matrix.scenario }}
-          molecule_working_dir: "HanXHX/ansible-nginx"
         continue-on-error: ${{ matrix.allowed-to-fail }}
 
       - name: Fake command

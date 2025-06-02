@@ -22,7 +22,7 @@
   ansible.builtin.file:
     path: "{{ nginx_root }}"
     state: directory
-    mode: 0755
+    mode: "0755"
     owner: root
     group: root
 
@@ -46,7 +46,7 @@
   ansible.builtin.template:
     src: "etc/nginx/sites-available/{{ item.template if item.redirect_to is not defined else '_redirect' }}.j2"
     dest: "{{ nginx_etc_dir }}/sites-available/{{ item | nginx_site_filename }}"
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   notify: 'Reload nginx'
@@ -59,7 +59,7 @@
   ansible.builtin.template:
     src: "{{ item.custom_template }}"
     dest: "{{ nginx_etc_dir }}/sites-available/{{ item | nginx_site_filename }}"
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   notify: 'Reload nginx'
@@ -121,5 +121,5 @@
   ansible.builtin.template:
     src: etc/ansible/facts.d/nginx.fact.j2
     dest: /etc/ansible/facts.d/nginx.fact
-    mode: 0644
+    mode: "0644"
   notify: ['Setup']

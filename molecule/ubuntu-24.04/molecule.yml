@@ -1,8 +1,8 @@
 ---
 
 platforms:
-  - name: debian-13
-    image: dokken/debian-13
+  - name: ubuntu-24.04
+    image: dokken/ubuntu-24.04
     command: /lib/systemd/systemd
     dockerfile: ../_shared/Dockerfile.j2
     capabilities:

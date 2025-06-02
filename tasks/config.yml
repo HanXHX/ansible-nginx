@@ -4,7 +4,7 @@
   ansible.builtin.template:
     src: "etc/nginx/nginx.conf.j2"
     dest: "{{ nginx_etc_dir }}/nginx.conf"
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   notify: Reload nginx
@@ -13,7 +13,7 @@
   ansible.builtin.template:
     src: "{{ item }}"
     dest: "{{ nginx_helper_dir }}/{{ item | basename | regex_replace('.j2$', '') }}"
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   with_fileglob: '../templates/etc/nginx/helper/*.j2'
@@ -23,7 +23,7 @@
   ansible.builtin.template:
     src: "etc/nginx/conf.d/custom.conf.j2"
     dest: "{{ nginx_etc_dir }}/conf.d/custom.conf"
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   notify: Reload nginx
@@ -51,7 +51,7 @@
       load_module {{ m }};
       {% endfor %}
     dest: "{{ nginx_etc_dir }}/modules-enabled/000-modules.conf"
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   notify: Reload nginx
