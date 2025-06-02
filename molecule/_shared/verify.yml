@@ -3,17 +3,264 @@
 - name: Verify
   hosts: all
   gather_facts: true
-  vars_files:
-    - vars/misc.yml
   vars:
     nginx_root: "/srv/www"
   tasks:
-    - name: SHELL | Get ngrok public address
-      ansible.builtin.shell: set -o pipefail && curl 'http://127.0.0.1:4040/api/tunnels/command_line' 2> /dev/null | jq -r '.public_url' | cut -d '/' -f 3
-      args:
-        executable: /bin/bash
-      register: ngrok
+    # --------------------------------
+    # Deploy index files
+    # --------------------------------
+    - name: -- Add PHP file --
+      ansible.builtin.copy:
+        dest: "{{ nginx_root }}/{{ item }}/public/index.php"
+        content: "<?php phpinfo();"
+        mode: 0644
+        owner: root
+        group: root
+      loop:
+        - 'test-php.local'
+        - 'test-php-index.local'
+        - 'test-php-index2.local'
+
+    - name: -- Add Directories --
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: 0755
+      loop:
+        - "{{ nginx_root }}/test-htpasswd.local/public/hello"
+        - "/tmp/custom-template"
+
+    - name: -- Add HTML file --
+      ansible.builtin.copy:
+        dest: "{{ item }}/index.html"
+        content: "Index HTML test OK\n"
+        mode: 0644
+        owner: root
+        group: root
+      loop:
+        - '{{ nginx_root }}/first-test/public'
+        - '/var/tmp'
+        - '{{ nginx_root }}/test-htpasswd-all.local/public'
+        - '{{ nginx_root }}/test-ssl.local/public'
+        - '{{ nginx_root }}/test-ssl-selfsigned.local/public'
+        - '{{ nginx_root }}/test-ssl-predeployed.local/public'
+        - '{{ nginx_root }}/test-ssl-proxy-protocol.local/public'
+
+    - name: -- Create directory --
+      ansible.builtin.file:
+        path: "{{ nginx_root }}/test-htpasswd.local/public/hello"
+        state: directory
+        mode: 0755
+        owner: root
+        group: root
+
+    - name: -- Add HTML file hello --
+      ansible.builtin.copy:
+        dest: "{{ nginx_root }}/test-htpasswd.local/public/hello/index.html"
+        content: "hello\n"
+        mode: 0644
+        owner: root
+        group: root
+
+    # --------------------------------
+    # Test custom facts
+    # --------------------------------
+    - name: -- CHECK FACTS --
+      ansible.builtin.assert:
+        that: "ansible_local.nginx.fact_nginx_sites[0].name[0] == 'test.local'"
+
+    # --------------------------------
+    # Simple sites tests
+    # --------------------------------
+    - name: -- VERIFY SITES --
+      ansible.builtin.uri:
+        url: "http://{{ item | nginx_site_name }}{% if item.listen is defined %}:{{ item.listen[0] }}{% endif %}/"
+        status_code: '200,301,302,401,403'
+        follow_redirects: none
+      loop: "{{ nginx_sites }}"
+      when: item.state is undefined or item.state != "absent"
       changed_when: false
 
-    - name: INCLUDE_TASKS | Post_tasks common
-      ansible.builtin.include_tasks: "../../tests/includes/post_common.yml"
+    - name: -- VERIFY FORBIDDEN --
+      ansible.builtin.uri:
+        url: "http://test-php-index.local/phpinfo.php"
+        status_code: 403
+
+    - name: -- VERIFY REDIRECT SITES --
+      ansible.builtin.uri:
+        url: "http://{{ item.redirect_from[0] }}/"
+        status_code: 301
+        follow_redirects: none
+      loop: "{{ nginx_sites }}"
+      when: item.redirect_from is defined and (item.state is undefined or item.state != "absent") and (item.proto is not defined or 'https' not in item.proto)
+      changed_when: false
+
+    - name: -- VERIFY REDIRECT HTTPS SITES --
+      ansible.builtin.uri:
+        url: "https://{{ item.redirect_from[0] }}:{{ item.listen_ssl[0] | default(443) }}/"
+        status_code: 301
+        follow_redirects: none
+        validate_certs: false
+      loop: "{{ nginx_sites }}"
+      when: item.redirect_from is defined and (item.state is undefined or item.state != "absent") and item.proto is defined and 'https' in item.proto
+      changed_when: false
+
+    # --------------------------------
+    # PHP
+    # --------------------------------
+    - name: -- VERIFY PHP SITES --
+      ansible.builtin.uri:
+        url: "http://{{ item.name }}/"
+        return_content: true
+      register: p
+      loop: "{{ nginx_sites }}"
+      when: >
+        item.template is defined and
+        (item.template == '_php' or item.template == '_php_index' or item.template == '_php_index2')
+      failed_when: p.content.find('PHP Version') == -1
+
+    - name: -- VERIFY INDEX2 --
+      ansible.builtin.uri:
+        url: "http://test-php-index2.local/lorem.php?ipsum=sit&dolor=amet"
+        return_content: true
+      register: p2
+      failed_when: p2.content.find('PHP Version') == -1
+
+    # --------------------------------
+    # Basic Auth
+    # --------------------------------
+    - name: -- VERIFY AUTH BASIC NONE --
+      ansible.builtin.uri:
+        url: "http://test-htpasswd.local/hello/"
+        status_code: 401
+
+    - name: -- VERIFY AUTH BASIC FAIL --
+      ansible.builtin.uri:
+        url: "http://test-htpasswd.local/hello/"
+        status_code: 401
+        user: "fail"
+        password: "fail"
+        force_basic_auth: true
+
+    - name: -- VERIFY AUTH BASIC OK --
+      ansible.builtin.uri:
+        url: "http://test-htpasswd.local/hello/"
+        user: "hanx"
+        password: "qwerty"
+        force_basic_auth: true
+
+    - name: -- VERIFY AUTH BASIC FAIL GLOBAL --
+      ansible.builtin.uri:
+        url: "http://test-htpasswd-all.local/"
+        status_code: 401
+        user: "fail"
+        password: "fail"
+        force_basic_auth: true
+
+    - name: -- VERIFY AUTH BASIC OK GLOBAL --
+      ansible.builtin.uri:
+        url: "http://test-htpasswd-all.local/"
+        user: "hanx"
+        password: "qwerty"
+        force_basic_auth: true
+
+    # --------------------------------
+    # SSL
+    # --------------------------------
+    - name: -- VERIFY SSL --
+      ansible.builtin.uri:
+        url: "https://{{ item }}/"
+        return_content: true
+        validate_certs: false
+      register: sslok
+      failed_when: sslok.content.find('Index HTML test OK') == -1
+      loop:
+        - 'test-ssl-predeployed.local'
+        - 'test-ssl-selfsigned.local'
+        - 'test-ssl.local'
+
+    - name: -- VERIFY SSL REDIRECT --
+      ansible.builtin.uri:
+        url: "http://{{ item.name }}/"
+        validate_certs: false
+        status_code: 301
+        return_content: true
+        follow_redirects: none
+      register: sslredirok
+      failed_when: '"https://%s%s" % (item.name, ":" + item.port if item.port is defined else "") not in sslredirok.location'
+      loop:
+        - name: 'test-ssl-redirect.local'
+        - name: 'test-ssl-redirect-many.local'
+          port: '8443'
+        - name: 'test-ssl-redirect-many2.local'
+          port: '8443'
+
+    # --------------------------------
+    # Default sites
+    # --------------------------------
+    - name: -- VERIFY DEFAULT SITE --
+      ansible.builtin.uri:
+        url: 'http://127.0.0.1/'
+        return_content: true
+      register: vdefault
+      failed_when: >
+        vdefault.content.find('Index HTML test OK') == -1 or
+        vdefault.x_ansible_default is not defined
+
+    - name: -- VERIFY DEFAULT SITE + STUB STATUS--
+      ansible.builtin.uri:
+        url: 'http://127.0.0.1/status'
+        return_content: true
+      register: vdefault_status
+      failed_when: >
+        vdefault_status.content.find('Active connections') == -1 or
+        vdefault_status.x_ansible_default is not defined
+
+    - name: -- VERIFY DEFAULT SSL SITE --
+      ansible.builtin.uri:
+        url: 'https://127.0.0.1/'
+        return_content: true
+        validate_certs: false
+      register: vdefault
+      failed_when: >
+        vdefault.content.find('Index HTML test OK') == -1 or
+        vdefault.x_ansible_default is not defined
+
+    - name: -- VERIFY NOT DEFAULT SITE --
+      ansible.builtin.uri:
+        url: 'http://test-php.local/'
+        return_content: true
+      register: vphp
+      failed_when: vphp.x_ansible_default is defined
+
+    - name: -- VERIFY NOT DEFAULT SSL SITE --
+      ansible.builtin.uri:
+        url: 'https://test-ssl.local/'
+        return_content: true
+        validate_certs: false
+      register: notdefaultssl
+      failed_when: notdefaultssl.x_ansible_default is defined
+
+    # --------------------------------
+    # Check Proxy protocol
+    # --------------------------------
+    - name: SHELL | Check HTTP proxy protocol
+      ansible.builtin.shell: set -o pipefail && curl -I --haproxy-protocol http://test-ssl-proxy-protocol.local:20080 | grep -qi 'X-Proxy-Protocol'
+      args:
+        executable: /bin/bash
+      changed_when: false
+
+    - name: SHELL | Check HTTPS proxy protocol
+      ansible.builtin.shell: set -o pipefail && curl -I --haproxy-protocol -k https://test-ssl-proxy-protocol.local:20443 | grep -qi 'X-Proxy-Protocol'
+      args:
+        executable: /bin/bash
+      changed_when: false
+
+    # --------------------------------
+    # Check HTTP2
+    # --------------------------------
+    - name: SHELL | Check HTTP2
+      ansible.builtin.shell: set -o pipefail && nghttp -nv https://localhost 2> /dev/null | grep -q h2
+      args:
+        executable: /bin/bash
+      changed_when: false

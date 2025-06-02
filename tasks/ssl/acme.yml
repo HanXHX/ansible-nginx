@@ -13,7 +13,7 @@
 
 - name: SET_FACT | Assign var with certificates to create
   ansible.builtin.set_fact:
-    acme_create: "{{ acme_create | default([]) + [(item.item)] }}"
+    acme_create: "{{ acme_create | default([]) + [item.item] }}"
   loop: "{{ acme_installed_certs.results }}"
   when: item.skipped is not defined and (not item.stat.exists or item.stat.size == 0)
 

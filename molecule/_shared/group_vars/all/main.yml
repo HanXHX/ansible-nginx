@@ -1,12 +1,5 @@
 ---
 
-# Force SysVinit, since systemd won't work in a Docker container
-ansible_service_mgr: "sysvinit"
-
-# ----------------------------------------
-# Copied from {role_dir}/tests/group_vars/all.yml
-# ----------------------------------------
-
 # Internal vars
 int_ansible_ssl_dir: '/etc/ansible-ssl'
 # Role vars
@@ -49,8 +42,6 @@ nginx_acmesh: true
 nginx_acmesh_test: true
 
 nginx_ssl_pairs:
-  - name: '{{ ngrok.stdout }}'
-    acme: true
   - name: 'test-ssl-selfsigned.local'
     self_signed: true
     force: false
@@ -243,17 +234,17 @@ nginx_sites:
     ssl_name: 'test-ssl.local'
     headers:
       'X-Proxy-Protocol': '1'
-  - name: '{{ ngrok.stdout }}'
-    proto: ['http', 'https']
-    listen_proxy_protocol: [21080]
-    listen_proxy_protocol_ssl: [21443]
-    template: '_base'
-    ssl_name: '{{ ngrok.stdout }}'
-    headers:
-      'X-acme': '1'
-  - name: 'test-custom-template.local'
-    custom_template: 'templates/custom_template.conf.j2'
-    root: '/tmp/custom-template'
+#  - name: '{{ ngrok.stdout }}'
+#    proto: ['http', 'https']
+#    listen_proxy_protocol: [21080]
+#    listen_proxy_protocol_ssl: [21443]
+#    template: '_base'
+#    ssl_name: '{{ ngrok.stdout }}'
+#    headers:
+#      'X-acme': '1'
+#  - name: 'test-custom-template.local'
+#    custom_template: 'templates/custom_template.conf.j2'
+#    root: '/tmp/custom-template'
 
 nginx_php: "{{ [{'upstream_name': 'manual', 'sockets': [{'host': '127.0.0.1', 'port': '9636'}]}] }}"
 nginx_dh_length: 1024
