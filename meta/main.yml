@@ -2,7 +2,7 @@
 
 galaxy_info:
   author: Emilien Mantel
-  namespace: hanxhx
+  namespace: HanXHX
   role_name: nginx
   description: Nginx for Debian / Ubuntu
   company: TripleStack

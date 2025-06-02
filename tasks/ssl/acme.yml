@@ -24,7 +24,7 @@
       ansible.builtin.template:
         src: "etc/nginx/conf.d/FAKESITE.conf.j2"
         dest: "{{ nginx_etc_dir }}/conf.d/FAKESITE_{{ item | nginx_site_name }}.conf"
-        mode: 0644
+        mode: "0644"
         owner: root
         group: root
       loop: "{{ acme_create }}"
@@ -35,7 +35,7 @@
       ansible.builtin.template:
         src: "etc/nginx/conf.d/FAKESITE.conf.j2"
         dest: "/tmp/FAKESITE_{{ item | nginx_site_name }}.conf"
-        mode: 0644
+        mode: "0644"
         owner: root
         group: root
       loop: "{{ acme_create }}"
